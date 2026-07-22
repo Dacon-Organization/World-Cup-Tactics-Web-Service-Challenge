@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문서 체계 재편 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>문서 체계 재편 — gc-dating-app × spec-kit/EARS/ADR/GWT 융합</h1>
+  <div class="meta">
+    📅 <b>2026-07-22 (KST)</b> · 🌿 브랜치 <b>docs/worldcup/doc-system-restructure</b> · 🔗 PR (병합 후 갱신)
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>외부 방법론 자체 리서치 4종 (원문 대조)<div class="sub">github/spec-kit ⭐123k(SDD) · EARS(AWS Kiro 채택) · ADR ⭐16k(Nygard) · Given-When-Then — 채택 요소를 마스터인덱스에 출처 기록</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>버전 폴더 체계 도입 (전역 §7.1 정합)<div class="sub">마스터인덱스 + features/version1.0 + ui/version1.0 + decisions/ + _changes/ · research 폴더는 링크 보존 우선으로 재편 제외</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>기능별 문서 분리: F01~F16 개별 파일 16종<div class="sub">융합 템플릿 8섹션 — EARS 요구사항(기능당 IF-THEN ≥3) + GWT 수용 기준 + [NEEDS CLARIFICATION] 게이트</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>ADR 5건 (000 문서체계 · 001 역할범위 · 002 슬라이더 · 003 프리셋 · 004 기본전술)<div class="sub">역할 범위 확정: 익명 방문자 단일, 관리자 기능 없음</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>기존 문서 git mv 이력 보존 이동 + 인덱스(요약본) 개편 + README 위임</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>구경로(기능명세.md·화면흐름.md) 참조 잔존 0건 (grep 전수)</div></li>
+      <li><span class="tag t-done">OK</span><div>16파일 전부: EARS·GWT·시나리오·체크리스트 섹션 존재 + IF-THEN ≥3행</div></li>
+      <li><span class="tag t-done">OK</span><div>[NEEDS CLARIFICATION] 실미해소 2건뿐(토큰 표기·기본 상대) — 마스터인덱스 게이트 표와 일치, 데이터 설계에서 해소</div></li>
+      <li><span class="tag t-done">OK</span><div>실명·연상 표기 0건 / 비하 카피 0건 유지</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>데이터 설계 — JSON 스키마 + 가공명 체계 (NEEDS CLARIFICATION 2건 해소 게이트)<div class="sub">우선순위: 1</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>기획서 절별 원고 작성 (골격+v1.0 명세 → 원고) + 원장 상태 전이<div class="sub">우선순위: 2 — 마감 7/27 10:00</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>구현 중 발견 예외는 _changes/vNEXT-변경노트에 누적 → 마일스톤 일괄 버전업<div class="sub">우선순위: 상시 규칙</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-todo">없음</span><div>블로킹 없음. 미해소 2건은 데이터 설계 게이트로 관리(구현 착수 전 해소 의무)</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
