@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기획서 골격(절 구성) 설계 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>기획서 골격(절 구성) 설계</h1>
+  <div class="meta">
+    📅 <b>2026-07-22 (KST)</b> · 🌿 브랜치 <b>docs/worldcup/plan-skeleton</b> · 🔗 <a href="https://github.com/Dacon-Organization/World-Cup-Tactics-Web-Service-Challenge/pull/8">PR #8 (병합됨, 73e7dd9)</a>
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>docs/planning/기획서-골격.md 신규 — 절 구성 정본<div class="sub">16절 구성 · 심사 기준(참신성30·감동경험25·완성도25·기획일관성20) 역매핑 총괄표 · 절별 카드(핵심 메시지/확정 사항 Pn 역추적/시각자료/금지사항/분량) · 최종 검토 체크리스트</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>W1 반영 신설 절 배치<div class="sub">12절 결과 공유 설계(P8) · 13절 디자인 시스템·에셋/라이선스 전략(P7·P10) — 초안에 없던 실격 방어·1차투표 전략 절 확보</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>docs/planning/README.md 목차 구성안 교체<div class="sub">W1 회수 전 초안 표 → 골격 정본 요약표(방어 심사 항목 컬럼 추가) + 시각자료 목록 갱신</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>워크트리 origin/main 동기화<div class="sub">P8 회수 커밋(#7) fast-forward 반영 — W0+W1 리서치 12건 전량 회수 상태 확인</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>대회 필수 6항목 ↔ 4·6·7·8·9·11절 1:1 대조 완료</div></li>
+      <li><span class="tag t-done">OK</span><div>골격 내 모든 수치가 원장(RESEARCH-LOG) Pn `회수됨` 항목으로 역추적됨</div></li>
+      <li><span class="tag t-done">OK</span><div>README 요약표 ↔ 골격 문서 총괄표의 절 번호·제목 일치</div></li>
+      <li><span class="tag t-done">OK</span><div>PR #8 squash 병합 확인(73e7dd9) · 원격 브랜치 수동 삭제(worktree 규약)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>상세 설계: 기능 명세·화면 흐름 (골격 6·7·8·11절의 원고 재료)<div class="sub">우선순위: 1 — 사용자 "계속" 후 착수 (R3)</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>절별 원고 작성 → 원장 상태 전이(회수됨→반영됨) 동반<div class="sub">우선순위: 2 — 기획서 마감 7/27 10:00 KST</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>W2 검증 리서치(P13~P17) 발주 — 원고·구현 착수 시 묶어서<div class="sub">우선순위: 3 — 전부 비블로킹, 자체 리서치 방식</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-todo">없음</span><div>블로킹 항목 없음. W2 5건(P13~P17)은 비블로킹 대기 — 현 확정값(멕시코 개최·Opta xG·RPS 방어선·에셋 채택)은 이 항목들과 무관하게 확정</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
