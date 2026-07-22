@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상세 설계: 기능 명세·화면 흐름 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>상세 설계: 기능 명세·화면 흐름</h1>
+  <div class="meta">
+    📅 <b>2026-07-22 (KST)</b> · 🌿 브랜치 <b>docs/worldcup/detail-spec</b> · 🔗 PR (병합 후 갱신)
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>docs/planning/기능명세.md 신규 — 기능 F1~F16<div class="sub">P0(전술보드+온디바이스 예측 8종)·P1(리플레이 4종)·P2(공유 4종) 3단계 우선순위 · 기능별 수용 기준 · 지연 예산표 · 실패·폴백 설계 · 데이터 인터페이스 경계</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>docs/planning/화면흐름.md 신규 — IA·화면 S1~S3·흐름 U1~U4<div class="sub">모바일 우선 레이아웃(ASCII 와이어프레임) · 화면 상태 변형(빈 상태 설계상 부재) · 심사자 10분 시나리오(U4, 시연 영상 콘티 공통 원본)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>docs/planning/README.md 문서 목록 절 추가<div class="sub">골격·기능명세·화면흐름 3문서 내비게이션</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>F↔S↔U 상호 참조 무결성 — 전 화면이 담당 기능 명시, 전 흐름 단계가 S·F ID 참조</div></li>
+      <li><span class="tag t-done">OK</span><div>모든 수치 Pn 역추적 또는 [설계 결정]/[추정 설계목표] 명시 구분</div></li>
+      <li><span class="tag t-done">OK</span><div>골격 6·7·8·11절 카드의 확정 사항이 상세 설계에 전부 등장</div></li>
+      <li><span class="tag t-done">OK</span><div>실명·연상 표기 0건(완전 추상 표기 FW-A/MF-B) · 비하 카피 0건</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>데이터 설계 — players.json/matches.json 상세 스키마 + 가공명 체계 확정<div class="sub">우선순위: 1 — 기능명세의 데이터 인터페이스 경계에서 이관</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>기획서 절별 원고 작성 (골격+기능명세+화면흐름 → 원고) + 원장 상태 전이<div class="sub">우선순위: 2 — 마감 7/27 10:00 KST</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>W2 검증 발주 (P13 경고 상충 — F10이 미표시 처리로 의존, P17 URL 길이 — F13 의존)<div class="sub">우선순위: 3 — 리플레이·공유 구현 착수 시 자체 리서치</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-todo">없음</span><div>블로킹 없음. P13(남아공전 경고 상충)은 F10에서 "확정 전 미표시"로 우회 설계 — 구현을 막지 않음</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
