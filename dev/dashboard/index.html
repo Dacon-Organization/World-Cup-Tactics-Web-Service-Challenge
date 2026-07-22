@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>월드컵 전술 웹서비스 · 프로젝트 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 6px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  .pct { color: var(--muted); font-size: .85rem; margin-bottom: 24px; }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>월드컵 전술 웹서비스 챌린지</h1>
+  <div class="meta">
+    🏁 기획서 마감 <b>2026-07-27 10:00 KST</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋 = 실격) · 최종 갱신 <b>2026-07-22</b>
+  </div>
+  <div class="bar"><i style="width:30%"></i></div>
+  <div class="pct">전체 진척률 약 30% — 리서치 완료 · 기획 골격 확정 · 상세 설계 착수 전</div>
+
+  <section>
+    <h2>🗺️ 단계별 진척</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>W0+W1 리서치 12건 전량 회수 (P1~P12)<div class="sub">데이터·모델 노선, 실명·에셋 경계, UX·시각화, 리플레이 팩트, 공유 설계 근거 전부 확정</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>기획서 골격(절 구성) 확정 — 16절 · 심사 기준 역매핑<div class="sub">정본: docs/planning/기획서-골격.md</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>상세 설계 (기능 명세·화면 흐름)</div></li>
+      <li><span class="tag t-todo">TODO</span><div>기획서 절별 원고 작성 + 원장 상태 전이(회수됨→반영됨)</div></li>
+      <li><span class="tag t-todo">TODO</span><div>기획서 조판·최종 검토(비하 금지·실명·FIFA IP 전수 검수)·PDF 제출 (~7/27)</div></li>
+      <li><span class="tag t-todo">TODO</span><div>구현: 전술보드 D&amp;D + 온디바이스 예측 → 리플레이 → 공유 (~8/3)</div></li>
+      <li><span class="tag t-todo">TODO</span><div>배포·모바일 실동작 검증·저장소 동결 (8/3 10:00 전)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📂 작업 로그</h2>
+    <ul>
+      <li><span class="tag t-done">07-22</span><div><a href="log/2026-07-22-plan-skeleton.html">기획서 골격(절 구성) 설계</a><div class="sub">16절 정본 확정 · 심사 기준 역매핑 · PR #8 병합</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 리스크 워치</h2>
+    <ul>
+      <li><span class="tag t-progress">WATCH</span><div>실격 직결 규칙 3종 상시 관리<div class="sub">① 8/3 10:00 이후 커밋 금지 ② 라이선스(가공명·FIFA IP·CC BY-SA 분리 고지) ③ 비하 금지 카피 단위 검수</div></div></li>
+      <li><span class="tag t-todo">HOLD</span><div>W2 검증 리서치 5건(P13~P17) 비블로킹 대기<div class="sub">원고·구현 착수 시 자체 리서치로 묶음 발주</div></div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
