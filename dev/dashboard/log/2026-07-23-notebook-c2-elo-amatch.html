@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>노트북 c2-2 — Elo A매치 확장·감쇠 제거 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>노트북 c2-2 — Elo A매치 확장·감쇠 제거 (c2 사이클 완료)</h1>
+  <div class="meta">
+    📅 <b>2026-07-23 (KST)</b> · 🌿 브랜치 <b>feature/worldcup/notebook-c2-elo-amatch</b> · 01·02장 보강 — 반복 사이클 c2의 마지막 단계
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>01_eda 보강(19셀) — 수집·마스킹 절을 00장으로 이관, 입력 게이트+전처리 결정 절(DB-02') 신설<div class="sub">NB-R5·실명 재검증·스키마 가정 게이트 · 00장 인계 과제 3건 해소 · §6 스캔 커밋 핀 전환 · <b>조판 인용 수치 보존: 기저율 52.2/25.5/22.3 · d̂ 26.4%</b></div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>02_fe 재설계(16셀) — Elo 입력 964경기 → 49,520 A매치 (DB-04')</b><div class="sub">사전 레이팅 = "경기일 이전(&lt;) 경기만"의 함수(bisect lookup) · HA=100 기대 스코어 한정 · K sweep 강건 · features_v1 저장(964행×26열)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>FT-R7 감쇠 제거 확정</b> — 대회 첫 경기 시점 공백 중앙값 <b>1,456일(4.0년) → 12일</b> (404측정)<div class="sub">체코 사례: c1 "8대회 공백" → c2 최근 경기까지 생존(1729.5) · 남는 위험(신생팀 초기값 1500·승계 미연결)은 03장 재검 등재</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>Elo↔홈승률 ρ 0.221 → 0.308</b> (p=1.2e-22) — 입력 확장의 효과가 수치로 증명</div></li>
+      <li><span class="tag t-done">DONE</span><div>개정 이력 셀(01·02)·jupytext 페어 3종 · ITERATION-LOG c2 완료 기록 · 변경노트 2행 추가</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>00→01→02 순차 실행 전부 성공 (에러 셀 0) · 실명 스팟 검사 0건</div></li>
+      <li><span class="tag t-done">OK</span><div><b>2026 본선 차단 증명</b> — 무작위 월드컵 경기 3건×양팀 "경기일 이전 행만" 재생 = lookup 일치(&lt;1e-9). 2022 결승 이후 3,730행 구조적 무영향</div></li>
+      <li><span class="tag t-done">OK</span><div>form 재계산 20건 · 분할 마스크 1,672/128/128(경기 단위 64·64) · 단조성 assert 통과</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div><b>기획서 조판·PDF (~7/27 10:00)</b> — 10절 Elo 그림·한계 고지 서술을 c2 실측으로 갱신(궤적 그림 교체·"공백 한계 해소" 서술) + 9절 martj42 출처 추가<div class="sub">비Elo 수치(기저율·포아송·개최국)는 불변 — 갱신 범위 한정적</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>03~09장 모델링 (features_v1 입력) — 03장 재검 항목: 신생팀 초기값·승계 미연결·form 중립값</div></li>
+      <li><span class="tag t-todo">TODO</span><div>eda-workflow 스킬화 (노트북 09장 완료 후 → 스킬로 재검토 루프)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-progress">WATCH</span><div>기획서 원고 10절의 c1 기준 서술("공백 감쇠 φ^g로 보정")이 c2와 불일치 상태 — 조판 블록에서 반드시 동기화</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
