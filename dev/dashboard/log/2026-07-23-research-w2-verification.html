@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W2 검증 리서치 P13~P17 전량 회수 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>W2 검증 리서치 P13~P17 전량 회수 (조판 블록 작업 1)</h1>
+  <div class="meta">
+    📅 <b>2026-07-23 (KST)</b> · 🌿 브랜치 <b>feature/worldcup/research-w2-verification</b> (PR #20 병합) · 자체 리서치 체제 — FIFA 공식 1차 문서 직접 대조
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b>P13 경기팩트 최종 확정</b> — FIFA FullTimeMatchReport PDF 3건 원문 파싱<div class="sub">남아공전 경고 <b>각 팀 1건 확정</b>(한국 조규성 78' — "김민재 65'"는 교체 오기재로 규명) · 체코전 킥오프 <b>20:00 정정</b>(3중 수렴) · <b>FIFA 공식 xG PMSR 실존 확정</b>(0.89/0.74 — Opta 별개 모델) · 관중·심판·득점 서사 확정</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>P14 논문 원문 지표</b> — DC1997·KN2003 전문 파싱 + HA2010 OA 상태 확정<div class="sub">3편 모두 성능 수치 인용 불가 → <b>기법 각주 전용</b>, 방어선(RPS 0.19~0.22)은 공개 실측 유지</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>P15 잔여 라이선스 5건 실측</b> — Understat ToS 부재·HF license 필드 부재 2건·Kaggle Apache 2.0 확인·OpenML 업로더 지정<div class="sub">전부 채택 불가/보수적 유지 — 1차 joshfjelstul·2차 martj42 방어선 무변</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>P16 국기법·엠블럼·아이콘</b> — 국기법 제11조 활용 원칙 허용 · KFA 엠블럼 상표 확인(미사용 재확인)<div class="sub">아이콘 4세트 gh api 실측: <b>Lucide 축구공·휘슬 부재</b> → Tabler/Phosphor(MIT) 병용 · 휘슬 자체 SVG 확정</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>P17 공유 기술 실측</b> — 카카오 스크랩 캐시 <b>TTL 1시간</b>(공식 답변 원문) · URL 안전선 2,000자 대비 여유 13배 · Web Share files <b>iOS 15+</b></div></li>
+      <li><span class="tag t-done">DONE</span><div>RESEARCH-LOG 회수됨 전이 + 개정 이력·모순 채택 기록 · P11 추기 배너 · <b>원장 대기 0건</b></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>findings 5건 전부 "로컬 자체 검증" 절 포함 — 방법·출처 URL 명기</div></li>
+      <li><span class="tag t-done">OK</span><div>경고 확정은 3층 교차: FIFA 공식 집계(p3) = 선수별 Y 컬럼(p4) = 타임라인(p2) = 위키 현재본. LLM 스키마 추출 오분류(교체 분→경고)를 발견하고 원문 판독으로 전환</div></li>
+      <li><span class="tag t-done">OK</span><div>PR #20 스쿼시 머지 → MERGED 확인 → 원격 브랜치 삭제 (검증된 절차 준수)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div><b>10절 동기화 (필수)</b> — "공백 감쇠 φ^g" → "A매치 확장으로 공백 해소(1,456→12일), 감쇠 제거" · Elo 궤적 그림 c2 갱신본 교체 · 한계 고지 개정(신생팀 1500·승계 미연결)</div></li>
+      <li><span class="tag t-todo">TODO</span><div><b>9절 동기화 (필수)</b> — 2차 출처 martj42/international_results(CC0 1.0) 추가, DATA-LICENSE.md 정합</div></li>
+      <li><span class="tag t-todo">TODO</span><div>조판 파이프라인 확정(md→PDF 도구 결정 필요) → 조판 → PDF → 최종 검수 (~7/27 10:00)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-progress">WATCH</span><div>PMSR 체코전 한국 xG 렌더 "177"(소수점 소실 추정 — 1.77?) — 인용 시 재확인 필요. 현 원고는 xG 미인용이라 조판 무영향</div></li>
+      <li><span class="tag t-progress">WATCH</span><div>md→PDF 도구 미확정 — 조판 착수 전 결정 필요(다음 블록 첫 안건)</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

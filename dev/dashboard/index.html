@@ -39,8 +39,8 @@
   <div class="meta">
     🏁 기획서 마감 <b>2026-07-27 10:00 KST</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋 = 실격) · 최종 갱신 <b>2026-07-23</b>
   </div>
-  <div class="bar"><i style="width:63%"></i></div>
-  <div class="pct">전체 진척률 약 63% — 분석 노트북 01·02 완료(Elo 자체 산출·리키지 검증, EDA 실측 확보) · 임계 경로: 조판·PDF 제출 (~7/27 10:00, 실측 반영)</div>
+  <div class="bar"><i style="width:66%"></i></div>
+  <div class="pct">전체 진척률 약 66% — W2 검증 리서치 전량 회수(원장 대기 0건, 조판 인용 게이트 해제) · 임계 경로: 10·9절 동기화 → 조판·PDF 제출 (~7/27 10:00)</div>
 
   <section>
     <h2>🗺️ 단계별 진척</h2>
@@ -54,6 +54,7 @@
       <li><span class="tag t-done">DONE</span><div>기획서 절별 원고 v1.0 — 16절 전량 + 원장 P1~P12 반영됨 전이 (필수 6항목 충족)</div></li>
       <li><span class="tag t-done">DONE</span><div>분석 노트북 01 EDA·02 FE — 기저율·포아송 적합·Elo 자체 산출·리키지 검증 (03~09 모델링 예정)</div></li>
       <li><span class="tag t-done">DONE</span><div>노트북 c2 사이클 완료 — 00장(수집·탐색) 신설 + 01·02 보강: Elo A매치 확장(공백 1,456→12일·감쇠 제거·ρ 0.308)·반복 사이클 규약 가동</div></li>
+      <li><span class="tag t-done">DONE</span><div>W2 검증 리서치 5건 전량 회수 (P13~P17) — 원장 대기 0건<div class="sub">FIFA 공식 리포트 원문 대조: 남아공전 경고 각 1건 확정 · 체코전 킥오프 20:00 정정 · FIFA xG(PMSR) 실존 · 논문 3편 기법 각주 전용 · 카카오 캐시 1시간</div></div></li>
       <li><span class="tag t-todo">TODO</span><div>기획서 조판·최종 검토(비하 금지·실명·FIFA IP 전수 검수)·PDF 제출 (~7/27)</div></li>
       <li><span class="tag t-todo">TODO</span><div>구현: 전술보드 D&amp;D + 온디바이스 예측 → 리플레이 → 공유 (~8/3)</div></li>
       <li><span class="tag t-todo">TODO</span><div>배포·모바일 실동작 검증·저장소 동결 (8/3 10:00 전)</div></li>
@@ -63,6 +64,7 @@
   <section>
     <h2>📂 작업 로그</h2>
     <ul>
+      <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-research-w2-verification.html">W2 검증 리서치 P13~P17 전량 회수 (조판 블록 작업 1)</a><div class="sub">FIFA FullTimeMatchReport·PMSR 원문 파싱 — 남아공전 경고 각 1건(김민재 65'=교체 오기재 규명) · 체코전 20:00 정정 · FIFA xG 실존 · 논문 3편 인용 불가 확정 · 잔여 라이선스 5건 종결 · Lucide 축구공 부재→Tabler/Phosphor 병용 · 카카오 TTL 1시간 · PR #20</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-notebook-c2-elo-amatch.html">노트북 c2-2 — Elo A매치 확장·감쇠 제거 (c2 완료)</a><div class="sub">Elo 입력 964→49,520경기 · 공백 중앙값 1,456일→12일(FT-R7 제거 확정) · ρ 0.221→0.308 · 2026 본선 차단 재생 증명 · features_v1</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-notebook-00-collect-explore.html">노트북 00장 수집·탐색 신설 (c2-1)</a><div class="sub">커밋 핀·체크섬 수집 대장 · 마스킹 00장 이동 · pandera/FK/키 게이트 · 팀명 85팀 전부 연결(수동 6건) · 발견: fg-data-profiling 철회, 2026 본선 포함→02 컷오프 필수, 타히티 더블헤더</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-notebook-feedback-p18.html">노트북 피드백 반영 설계 · P18 도구 리서치</a><div class="sub">00장 신설안·마스킹 셀 이동·반복 사이클 규약(c1/c2)·ITERATION-LOG 신설 · P18: fg-data-profiling·pandera·missingno 채택 · <b>martj42(CC0) 채택 확정 — Elo 입력 전체 A매치 확장, c2 최우선·조판은 c2 후</b></div></div></li>
