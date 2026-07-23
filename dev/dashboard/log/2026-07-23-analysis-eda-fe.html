@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>분석 노트북 01 EDA · 02 FE · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>분석 노트북 01 EDA · 02 FE — 기초 데이터분석</h1>
+  <div class="meta">
+    📅 <b>2026-07-23 (KST)</b> · 🌿 브랜치 <b>feature/worldcup/analysis-eda-fe</b> · 🔗 PR (병합 후 갱신) · 순서 변경: 사용자 결정 — 조판 전 기초 분석 선행
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>01_eda.ipynb — 수집·마스킹·기저율·포아송·개최국·전술 컬럼 부재<div class="sub">남자 964경기·22개 대회 검증 · 90분 기저율 52.2/25.5/22.3% · d̂ 후보 26.4%(1990~) · 개최국 +26.7%p · 저점수 이탈 관측(DC τ 근거) · <b>27테이블 410컬럼 전수 스캔 전술 키워드 0건(ADR-008 재확인)</b></div></div></li>
+      <li><span class="tag t-done">DONE</span><div>02_fe.ipynb — 피처 6종·Elo 자체 산출·리키지 검증·단조성<div class="sub">Elo 964경기·85팀(K=32·φ=0.85, 감쇠 φ^g) · K sweep 순위 상관 ≥0.966(강건) · 장기 공백 팀 실측 표 · 리키지 ①(form 재계산·Elo 부분 재생)·③(분할 배타·포괄) 통과 — <b>valid/test 각 64경기 = P12 측정 조건 정합</b> · Elo↔승률 ρ=0.221 단조 확인</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>DATA-LICENSE.md 신설 — CC BY-SA 4.0 분리 고지 (P10 의무 발생 시점에 이행)<div class="sub">figures 등 데이터셋 산출물 커밋 시작 → 고지 대상·제외 범위 명문화. 원본 CSV는 data/ .gitignore로 비커밋(ML-R3)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>3조 노트북 패턴 이식 — Decision Box(DB-01~04)·파일럿 검증·K sweep(robustness)·질문/답 서사</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>전 셀 실행 성공(출력 포함 커밋) · 에러 셀 0 · 시드 42 고정</div></li>
+      <li><span class="tag t-done">OK</span><div>실명 게이트: 마스킹 셀(family/given_name drop) + 출력 전수 grep — 선수명 패턴 0건("Son" 매치는 json/poisson 오탐 확인)</div></li>
+      <li><span class="tag t-done">OK</span><div>라벨·피처 정의가 피처_정의서 §2~§3과 일치 · figures 5종 산출(노트북_서사 §2 매핑 경로)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>기획서 조판·PDF — EDA 실측(포아송 적합·Elo 궤적·단조성 그림) 반영해 10절 보강<div class="sub">우선순위: 1 — 마감 7/27 10:00</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>모델링 03~09장 (LightGBM→XGBoost→CatBoost→Optuna→앙상블→SHAP→보고서)<div class="sub">lightgbm·catboost·optuna 설치 필요 · 방어선 대조는 여기서</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>research findings 재편·F v1.1 버전업·구현 (기존 큐)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-progress">WATCH</span><div>02장 form 초기 결측 중립값 대체·ET 골득실 포함은 [기초 검토] — 03장 모델링에서 재검 예약</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
