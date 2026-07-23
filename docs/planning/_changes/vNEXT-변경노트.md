@@ -16,6 +16,8 @@
 | 07-23 | 노트북_서사 | §6에 NB-R7(사이클 개정 시 이력 셀+ITERATION-LOG 동시 기록)·NB-R8(pandera 게이트 실패 시 하류 중단) 신설, 반복 사이클 규약 절 추가 | 사용자 피드백 ②(반복 사이클 버전 관리) — [notebooks/ITERATION-LOG.md](../../../notebooks/ITERATION-LOG.md) 신설됨 |
 | 07-23 | ML_설계·피처_정의서 | 도구 채택 반영: fg-data-profiling(00장 프로파일)·pandera(전 장 게이트, `src/analysis/schemas.py`)·missingno(결측 시각화)·jupytext(조건부) + data/raw·interim·processed 계층 | P18 리서치 회수 — 사용자 피드백 ③(고스타 도구 커스터마이징) |
 | 07-23 | 피처_정의서 §3·ML_설계 | **Elo 입력을 월드컵 한정 → 전체 남자 A매치(1872~)로 확장** — 2차 출처 martj42/international_results(CC0) 채택, FT-R7(공백 감쇠)은 c2 실측으로 재평가(재추정 또는 제거) | 사용자 확정 2026-07-23 ("이득이 크므로 채택") — 근거 P18 Q4, 통합 설계 [개정안 §6.5](노트북-개정안-2026-07-23.md) |
+| 07-23 | 피처_정의서 §3 (FT-R7) | **감쇠 φ 제거 확정** — c2 실측: 대회 첫 경기 시점 공백 중앙값 1,456일→12일, Elo↔승률 ρ 0.221→0.308. DB-04' 신설(HA=100 기대 스코어 한정·S는 최종 스코어). 신생팀 초기값 1500·승계 미연결(체코슬로바키아↔체코)은 03장 재검 | c2-2 완료 — [ITERATION-LOG c2 완료 기록](../../notebooks/ITERATION-LOG.md) |
+| 07-23 | 노트북_서사 §5 | 실행 순서 "01→09" → "00→09" 실현 · 03장 입력 계약 features_v0 → **features_v1** · requirements.txt 확정(버전 고정) | c2 전체 완료 |
 
 ## 기록 형식
 
