@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>노트북 00장 수집·탐색 신설 (c2-1) · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>노트북 00장 수집·탐색 신설 — c2-1 완료</h1>
+  <div class="meta">
+    📅 <b>2026-07-23 (KST)</b> · 🌿 브랜치 <b>feature/worldcup/notebook-00-collect-explore</b> · 개정안 §3+§6.5-1·2 구현 · jupytext 페어링 첫 적용 (00_collect_explore.py ↔ .ipynb)
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>00_collect_explore.ipynb — 수집 서사·마스킹 이동·탐색 전수·팀명 정합 (23셀, 에러 0)<div class="sub">커밋 핀 2종(jfjelstul 35a8667·martj42 a16ff3e)·SHA-256 대장 · data/raw(불변)→interim 계층 · 실명 마스킹 00장 이동(goals 2컬럼 제거, goalscorers는 다운로드 자체 금지) · pandera 계약+FK 정합+키 유일성 게이트 · missingno 결측 구조 · 프로파일 요약표(pandas 직접)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>팀명 정합 해소</b> — 남자 월드컵 85팀 전부 martj42 연결, 수동 매핑 6건, 미해소 0<div class="sub">서독→Germany · <b>동독→German DR(승계 없음, 별도 팀 298경기 실측)</b> · 소련→Russia · 세르비아몬테네그로→Serbia · 자이르→DR Congo · 네덜란드령 동인도→Indonesia · team_name_map.parquet 저장(02장 입력 계약)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>requirements.txt 신설 (버전 고정) · ITERATION-LOG c2 진행 기록 · P18 모순 추기</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify) — 실행 중 발견 4건 포함</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>전 셀 실행 성공 · 게이트 5종(마스킹·조인 키·pandera·FK·팀명) 전부 출력 확인 · 실명 스팟 검사 0건</div></li>
+      <li><span class="tag t-progress">발견</span><div><b>fg-data-profiling 채택 철회</b> — pandas&lt;3.0 요구 vs 로컬 3.0.3(c1 커밋 기준). 다운그레이드는 NB-R3 파괴 → pandas 직접 구현 대체 (P18 모순 기록)</div></li>
+      <li><span class="tag t-progress">발견</span><div>results (날짜,대진) 중복 2행 = 1974 타히티 더블헤더(실제 역사) → 유지, 진짜 키 아님 명시</div></li>
+      <li><span class="tag t-progress">발견</span><div><b>results가 2026-07-19까지(49,520경기) — 2026 월드컵 본선 포함</b> → 02장 Elo 분할 경계 컷오프 필수(리키지)</div></li>
+      <li><span class="tag t-done">OK</span><div>matches·results 결측 0 실측 (전처리 부담 없음) · 31-0(2001)은 역사적 사실 판정</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div><b>c2-2: 01·02장 보강</b> — 01 수집 절 제거→interim 로드·전처리 결정 절 / 02 Elo 전체 A매치 확장(2026 컷오프!)·FT-R7 재평가·리키지 assert 확장<div class="sub">00장 인계 과제 3건 반영 · 완료 후 조판 10절 실측 갱신</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>기획서 조판·PDF (~7/27 10:00, c2-2 완료 후) · 03~09장 모델링</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-progress">WATCH</span><div>2026 본선 경기가 Elo 입력에 섞이면 학습 시점 기준 미래 정보 — c2-2 리키지 assert가 1순위 게이트</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

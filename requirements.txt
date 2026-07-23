@@ -1,0 +1,14 @@
+# 분석 노트북 재현 환경 (노트북_서사 §5 — 버전 고정)
+# 실측 기준: 2026-07-23, Python 3.12.13 / Windows
+# 주의: fg-data-profiling은 pandas<3.0 요구로 채택 철회 (ITERATION-LOG c2)
+pandas==3.0.3
+numpy==1.26.4
+scipy==1.17.1
+matplotlib==3.10.9
+seaborn==0.13.2
+pyarrow==23.0.1
+missingno==0.5.2
+pandera==0.32.1
+jupytext==1.19.1
+nbconvert==7.10.0
+nbformat==5.10.4
