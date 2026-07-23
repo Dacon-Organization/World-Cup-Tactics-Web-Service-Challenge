@@ -33,6 +33,13 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
+# 학습층 데이터 — 실명 포함 원본·중간 산출물은 커밋 금지 (ML-R3·P7 경계)
+# 재현은 notebooks/01_eda.ipynb 수집 셀로 수행
+data/
+
+# 에이전트 세션 로컬
+.serena/
+
 # 배포
 .vercel
 
