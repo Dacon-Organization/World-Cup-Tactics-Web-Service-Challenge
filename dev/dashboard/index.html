@@ -39,8 +39,8 @@
   <div class="meta">
     🏁 기획서 마감 <b>2026-07-27 10:00 KST</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋 = 실격) · 최종 갱신 <b>2026-07-22</b>
   </div>
-  <div class="bar"><i style="width:40%"></i></div>
-  <div class="pct">전체 진척률 약 40% — 리서치 완료 · 골격 확정 · 상세 설계 v1.0 (기능 16종 개별 명세·EARS 예외·ADR 5건) 완료</div>
+  <div class="bar"><i style="width:45%"></i></div>
+  <div class="pct">전체 진척률 약 45% — 리서치·골격·기능/화면·데이터/아키텍처 설계 v1.0 완료, 게이트 0건 · 남은 설계: ML</div>
 
   <section>
     <h2>🗺️ 단계별 진척</h2>
@@ -49,7 +49,8 @@
       <li><span class="tag t-done">DONE</span><div>기획서 골격(절 구성) 확정 — 16절 · 심사 기준 역매핑<div class="sub">정본: docs/planning/기획서-골격.md</div></div></li>
       <li><span class="tag t-done">DONE</span><div>상세 설계 (기능 명세 F1~F16 · 화면 S1~S3 · 흐름 U1~U4)</div></li>
       <li><span class="tag t-done">DONE</span><div>문서 체계 재편 v1.0 — 버전 폴더·기능별 분리·EARS 예외·ADR 5건 (spec-kit/EARS/ADR/GWT 융합)</div></li>
-      <li><span class="tag t-todo">TODO</span><div>데이터 설계 (players/matches JSON 스키마 + 가공명 체계 — NEEDS CLARIFICATION 2건 해소 게이트)</div></li>
+      <li><span class="tag t-done">DONE</span><div>데이터·아키텍처 설계 v1.0 — ERD·JSON 스키마·가공명 체계·유스케이스·시퀀스 4종 (게이트 2건 전량 해소)</div></li>
+      <li><span class="tag t-todo">TODO</span><div>ML 설계 (학습 파이프라인·노트북 서사·ONNX 변환)</div></li>
       <li><span class="tag t-todo">TODO</span><div>기획서 절별 원고 작성 + 원장 상태 전이(회수됨→반영됨)</div></li>
       <li><span class="tag t-todo">TODO</span><div>기획서 조판·최종 검토(비하 금지·실명·FIFA IP 전수 검수)·PDF 제출 (~7/27)</div></li>
       <li><span class="tag t-todo">TODO</span><div>구현: 전술보드 D&amp;D + 온디바이스 예측 → 리플레이 → 공유 (~8/3)</div></li>
@@ -60,6 +61,7 @@
   <section>
     <h2>📂 작업 로그</h2>
     <ul>
+      <li><span class="tag t-done">07-22</span><div><a href="log/2026-07-22-data-architecture-design.html">데이터·아키텍처 설계 v1.0</a><div class="sub">ERD·JSON TS 스키마·가공명 체계(ADR-005) · 유스케이스·시퀀스 4종 · 게이트 0건</div></div></li>
       <li><span class="tag t-done">07-22</span><div><a href="log/2026-07-22-doc-system-restructure.html">문서 체계 재편 v1.0</a><div class="sub">버전 폴더 · F01~F16 개별 명세(EARS IF-THEN ≥3) · ADR 5건 · 방법론 융합(spec-kit ⭐123k 등)</div></div></li>
       <li><span class="tag t-done">07-22</span><div><a href="log/2026-07-22-detail-spec.html">상세 설계: 기능 명세·화면 흐름</a><div class="sub">기능 F1~F16 · 화면 S1~S3 · 흐름 U1~U4 · 지연 예산·폴백 설계</div></div></li>
       <li><span class="tag t-done">07-22</span><div><a href="log/2026-07-22-plan-skeleton.html">기획서 골격(절 구성) 설계</a><div class="sub">16절 정본 확정 · 심사 기준 역매핑 · PR #8 병합</div></div></li>
