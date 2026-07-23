@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기획서 절별 원고 v1.0 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>기획서 절별 원고 v1.0 — 16절 + 원장 전이</h1>
+  <div class="meta">
+    📅 <b>2026-07-23 (KST)</b> · 🌿 브랜치 <b>docs/worldcup/proposal-manuscript-v1</b> · 🔗 PR (병합 후 갱신) · ⏰ 조판·PDF 마감 <b>7/27 10:00</b>
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>proposal/version1.0 — 16절 원고 전량 + 인덱스<div class="sub">골격 절별 카드 전량 소화 · 필수 6항목(4·6·7·8·9·11절) 1:1 · 분량 합계 16p · mermaid 5종 + [조판:] 그래픽 지시 16건 · 서비스명 "만약의 감독" 확정([설계 결정], 후보 3안 비교)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>원장 P1~P12 전량 회수됨→반영됨 전이<div class="sub">반영 위치에 원고 절 링크 병기 · 개정 이력 기록 · W2(P13~P17)는 대기 유지 — 원고가 미확정 수치를 인용하지 않음</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>README 필수 6항목 체크 + 문서 체계 트리 갱신(proposal·ml 등재) · 마스터인덱스 원고 v1.0 행 추가</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>실명 전수 검색(한국·상대 선수 18명 명단 대조) — 0건. 멕시코전 실점은 "후반 초반" 서술로 회피</div></li>
+      <li><span class="tag t-done">OK</span><div>비하·단정 어휘 0건 (규정 인용·메타 문맥 제외) · arXiv 0.127 본문 0건</div></li>
+      <li><span class="tag t-done">OK</span><div>"월드컵" 서술 언급 3절 1회 + 비공식 고지(1·3절) — 다이어그램 라벨 2건 정리 완료</div></li>
+      <li><span class="tag t-done">OK</span><div>전 수치 (Pn)/[설계 결정]/[설계 목표]/[추정] 태그 · 16절 매핑 표 역수집 대조 · 2절 약속↔15절 로드맵 1:1</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>기획서 조판 → PDF — [조판:] 태그 16건 그래픽 제작 + 골격 최종 검토 체크리스트 PDF 재실행<div class="sub">우선순위: 1 — 마감 7/27 10:00. 원고는 완성, 조판이 임계 경로</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>research findings 타입별 재편 + 폴더 README 정비<div class="sub">우선순위: 2</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>F01~F16 v1.1 버전업 (변경노트 누적 5건)<div class="sub">우선순위: 3</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>구현 착수: P0 전술보드+예측 (~7/27 병행) → P1 리플레이 → P2 공유 (~8/3)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-progress">WATCH</span><div>조판 단계에서 그래픽 내 실명·FIFA IP 재검수 필수 — 원고 텍스트는 통과했으나 제작 그래픽(와이어프레임 토큰·전술 카드 목업)은 육안 검수 대상</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
