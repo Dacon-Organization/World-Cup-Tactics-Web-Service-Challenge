@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>노트북 피드백 반영 설계 · P18 도구 리서치 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>노트북 피드백 반영 설계 — P18 도구 리서치 · 반복 사이클 규약</h1>
+  <div class="meta">
+    📅 <b>2026-07-23 (KST)</b> · 🌿 브랜치 <b>feature/worldcup/notebook-feedback-p18</b> · 사용자 피드백 3건(수집 서사·탐색 상세화 / 반복 사이클 버전 관리 / 도구 커스터마이징) 반영 설계 — 노트북 c2 개정은 새 세션
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>P18 자체 리서치 — 분석 도구 생태계 4범위 (gh api 13레포 + PyPI + HF API 실측)<div class="sub"><b>채택</b>: fg-data-profiling(구 ydata-profiling — 2026-04 개명 확인)·pandera 0.32.1·missingno · <b>규약 채택</b>: cookiecutter-data-science(9.96k★) · <b>기각</b>: GE(과중)·papermill·nbdev·socceraction/kloppy(이벤트 데이터 전제)·D-Tale(LGPL) · findings/P18 + 원장 회수 전이</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>노트북 개정안 확정 — 00장(수집·탐색) 신설, 01~09 번호 불변<div class="sub">수집 서사(출처 선정 P2·P10 역추적·커밋 핀·체크섬) + 탐색 전수(스키마·키 무결성·결측 구조·프로파일 요약표) · <b>마스킹 셀 00장 이동</b>(프로파일 출력 실명 유출 차단) · docs/planning/_changes/노트북-개정안-2026-07-23.md</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>반복 사이클 규약 + ITERATION-LOG 원장 신설<div class="sub">사이클(c1, c2…) 정의 · 개정 이력 셀(요약)+중앙 원장(정본) 이중화 · pandera 전 장 진입 게이트(NB-R5 도구화) · NB-R7·R8 신설 예정 조항 명시 · c1(현행)·c2(계획) 소급 기록</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>vNEXT 변경노트 3행 누적 (노트북_서사 v1.1 재료) · RESEARCH-LOG 개정 이력 · 메모리 갱신</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>P18 수치 전부 API 실측값 (스타·라이선스·최근 푸시·PyPI 버전) — findings에 "로컬 자체 검증" 절 기록</div></li>
+      <li><span class="tag t-done">OK</span><div>레포 이동 4건 확인·기록 (ydata→fg-data-profiling, GE→fivetran, jupytext, nbdev→AnswerDotAI) — 옛 이름 설치 방지</div></li>
+      <li><span class="tag t-done">OK</span><div>채택 도구가 기존 방어선과 무충돌 — 프로파일링은 마스킹 후 실행(NB-R1), martj42는 results.csv에 선수명 없음(CC0)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div><b>미결 결정: martj42/international_results 채택 여부</b> (새 세션 초두)<div class="sub">CC0 남자 A매치 49,459+ — Elo 입력 확장 시 FT-R7 공백 감쇠 근본 완화. 채택 시 피처_정의서 §3·ML_설계 개정 + 02장 재작업 — 작업량 산정 후 결정</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>노트북 c2 개정 — 00_collect_explore 신설 → 01·02 보강 → 00~02 순차 실행 검증<div class="sub">착수 문서: 노트북-개정안-2026-07-23.md §7 (착수 순서 5단계)</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>기획서 조판·PDF (~7/27 10:00) · 03~09장 모델링 (기존 큐)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-progress">WATCH</span><div>7/27 조판 마감과 노트북 c2 개정의 우선순위 경합<div class="sub">c2 개정(00~02장)은 조판이 인용하는 실측 수치를 바꾸지 않음(기저율·Elo 로직 불변) → 조판 선행 가능. martj42 채택 시에만 Elo 수치 변동 → 채택 결정을 조판 전 확정 권고</div></div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
