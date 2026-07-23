@@ -8,10 +8,18 @@
 
 ## 원 데이터셋
 
-- **출처**: Fjelstul World Cup Database — [jfjelstul/worldcup](https://github.com/jfjelstul/worldcup) (GitHub) · Kaggle 동일 저작자 배포
+### 1차 — Fjelstul World Cup Database
+
+- **출처**: [jfjelstul/worldcup](https://github.com/jfjelstul/worldcup) (GitHub) · Kaggle 동일 저작자 배포
 - **저작자**: Joshua C. Fjelstul, Ph.D.
 - **라이선스**: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (저작자표시-동일조건변경허락 4.0 국제)
 - **사용 범위**: 모델 학습·통계 집계 파이프라인의 입력 (원본 CSV는 이 저장소에 **커밋하지 않음** — `data/`는 .gitignore)
+
+### 2차 — International football results (Elo 산출 입력, 2026-07-23 채택)
+
+- **출처**: [martj42/international_results](https://github.com/martj42/international_results) (GitHub)
+- **라이선스**: [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (퍼블릭 도메인 기증 — 고지 의무 없음이나 투명성을 위해 출처 명기)
+- **사용 범위**: `results.csv`(남자 A매치 경기 결과 — 선수명 컬럼 없음)만 Elo 레이팅 산출 입력으로 사용. **`goalscorers.csv`는 선수 실명을 포함하므로 다운로드·사용하지 않음** (실명 경계 — 기획서 13절). 원본 CSV 비커밋 규약 동일
 
 ## 이 고지의 적용 대상 (데이터셋 기반 산출물)
 
