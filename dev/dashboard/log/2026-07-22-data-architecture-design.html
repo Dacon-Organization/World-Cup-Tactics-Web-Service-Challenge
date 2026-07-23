@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터·아키텍처 설계 v1.0 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>데이터·아키텍처 설계 v1.0 (피드백 반영)</h1>
+  <div class="meta">
+    📅 <b>2026-07-22 (KST)</b> · 🌿 브랜치 <b>docs/worldcup/data-architecture-design</b> · 🔗 PR (병합 후 갱신)
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div>data/version1.0 — 데이터 설계 + 가공명 체계<div class="sub">ERD(mermaid, 8엔티티) · JSON 4파일 TS 스키마(실명 필드 스키마 차단) · 제작 절차(CC BY-SA 분리 고지) · 가공명 생성·검증 규칙(2010카합245 기반)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>architecture/version1.0 — 유스케이스 + 시퀀스 4종<div class="sub">액터 3종(방문자=심사자·수신자·카톡 스크래퍼) · 핵심 루프/로딩 폴백/공유/개입 시퀀스 — 전부 EARS ID 연결 + 풀어쓴 해설</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>미해소 게이트 2건 전량 해소<div class="sub">F01 토큰 표기(성 1음절+포지션 색상 링) · F08 기본 상대(체코) — 마스터인덱스 게이트 0건</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>ADR-005 (가공명 무작위 배정·프로파일 직접 산정) + 운영 규칙 2건 추가(README 정책·쉽고 상세하게)</div></li>
+      <li><span class="tag t-done">DONE</span><div>vNEXT 변경노트에 F v1.1 보강 4건 누적 (다이어그램 보강 등 사용자 피드백 반영 예약)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>ERD 엔티티 ↔ JSON 스키마 ↔ F 문서 8절 데이터 요구 상호 일치 (§4 대응표)</div></li>
+      <li><span class="tag t-done">OK</span><div>mermaid 3종(erDiagram·graph·sequenceDiagram) 문법 검토</div></li>
+      <li><span class="tag t-done">OK</span><div>[NEEDS CLARIFICATION] 잔존 0건 (구현 착수 게이트 통과 가능)</div></li>
+      <li><span class="tag t-done">OK</span><div>가공명 예시 미게재 원칙 준수 — 실명·연상 표기 0건</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>research findings 타입별 재편 + 폴더 README 정비 (피드백 1 예약분)<div class="sub">우선순위: 2 — 링크 전수 갱신 동반</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>ML 설계 (학습 파이프라인·노트북 서사·ONNX 변환 절차)<div class="sub">우선순위: 1 — 기획서 10절 원고의 마지막 재료</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>기획서 절별 원고 작성 + 원장 상태 전이 (마감 7/27 10:00)<div class="sub">우선순위: 1</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>F01~F16 v1.1 버전업 (변경노트 4건 일괄 반영)<div class="sub">우선순위: 3 — 마일스톤 단위</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-todo">없음</span><div>게이트 전량 해소 — 구현 착수 가능 상태. 기획서 마감(7/27)까지 5일: ML 설계→원고 순서가 임계 경로</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

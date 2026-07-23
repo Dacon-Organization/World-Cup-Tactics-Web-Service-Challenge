@@ -9,12 +9,14 @@
 > **문서 현황·버전·운영 규칙의 정본은 [마스터인덱스.md](마스터인덱스.md)** 입니다.
 
 ```
-마스터인덱스.md          ← 현황 대시보드 (여기서 시작)
-기획서-골격.md           ← 기획서 절 구성 정본
-features/version1.0/    ← 기능 명세 F01~F16 + 인덱스
-ui/version1.0/          ← 화면 흐름 (S1~S3, U1~U4)
-decisions/              ← 설계 결정 기록 (ADR)
-_changes/               ← 버전업 전 변경 누적
+마스터인덱스.md            ← 현황 대시보드 (여기서 시작)
+기획서-골격.md             ← 기획서 절 구성 정본
+features/version1.0/      ← 기능 명세 F01~F16 + 인덱스
+ui/version1.0/            ← 화면 흐름 (S1~S3, U1~U4)
+data/version1.0/          ← 데이터 설계 (ERD·JSON 스키마·가공명 체계)
+architecture/version1.0/  ← 유스케이스·시퀀스 다이어그램
+decisions/                ← 설계 결정 기록 (ADR-000~005)
+_changes/                 ← 버전업 전 변경 누적
 ```
 
 ---
