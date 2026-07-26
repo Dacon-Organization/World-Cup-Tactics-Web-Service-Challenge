@@ -4,59 +4,103 @@
 기획서 조판 빌드 — 원고 16절 md → 단일 PDF (pandoc + XeLaTeX + Pretendard).
 
 파이프라인:
-  1) 원고 01~16절 로드(원고_인덱스는 제외)
-  2) 전처리: 검수 메모 섹션·분량 blockquote 제거, 한글 인라인 코드 백틱 해제
-  3) mermaid 코드블록 → mmdc 렌더(PNG) → 이미지 참조로 치환
-  4) [조판:] 태그 처리 — Elo 궤적 그림은 실제 삽입, mermaid 지시는 제거,
-     순수 디자인 그래픽은 회색 '그래픽 자리' 안내로 변환
+  1) 원고 01~16절 로드 (인덱스·검수기록은 제외)
+  2) 한자 병기 제거·한글 인라인 코드 백틱 해제 (Pretendard tofu 방지)
+  3) mermaid 코드블록 → mmdc 렌더(PNG) → 흰 여백 트림 → 이미지 참조로 치환
+  4) 렌더 그림(dev/typeset/figures/*.png)을 빌드 폴더로 복사하고 경로 정규화
   5) 결합 → pandoc → PDF
 
 실행: 워크트리 루트에서  `python dev/typeset/build.py`
+      (그림이 없거나 갱신이 필요하면 `python dev/typeset/make_figures.py` 먼저)
 필요 도구: pandoc, xelatex(MiKTeX/TeX Live), mmdc(@mermaid-js/mermaid-cli), Pretendard 폰트
 """
-import os, re, sys, shutil, subprocess, glob
+import os
+import re
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]          # 워크트리 루트
-SRC  = ROOT / "docs/planning/proposal/version1.0"
-TS   = ROOT / "dev/typeset"
-BUILD = TS / "build"          # 중간 산출물(combined.md·mermaid png) — .gitignore(build/)
-FIGS  = BUILD / "figures"
-OUT   = TS / "pdf"            # 최종 PDF — 저장소 추적(제출물)
-ELO_TRAJ = ROOT / "notebooks/figures/02_elo_trajectories.png"
+SRC = ROOT / "docs/planning/proposal/version2.0"
+TS = ROOT / "dev/typeset"
+ASSETS = TS / "figures"       # make_figures.py 산출 — 저장소 추적
+BUILD = TS / "build"          # 중간 산출물 — .gitignore(build/)
+FIGS = BUILD / "figures"
+OUT = TS / "pdf"              # 최종 PDF — 저장소 추적(제출물)
+
+# 원고가 쓰는 저장소 상대 경로 (GitHub에서도 그림이 보이게 하기 위한 형태)
+ASSET_PREFIX = "../../../../dev/typeset/figures/"
 
 MMDC = shutil.which("mmdc") or "mmdc"
 PANDOC = shutil.which("pandoc") or "pandoc"
 
+
 def sh(cmd, **kw):
     return subprocess.run(cmd, check=True, **kw)
 
-def clean_body(md: str) -> str:
-    """검수 메모 이후 절단 + 분량 blockquote 제거 + 꼬리 구분선 정리."""
-    md = md.split("## 검수 메모")[0]
-    # 상단 '> 분량 목표: ...' blockquote 한 줄 제거
-    md = re.sub(r'^> *분량 목표:.*\n', '', md, flags=re.M)
-    # 절 상단의 첫 '---'(메타와 본문 사이 구분선) 및 꼬리 구분선 제거
-    md = re.sub(r'\n---\n', '\n\n', md)
-    return md.rstrip() + "\n"
 
 def strip_hanja_gloss(md: str) -> str:
-    """'한글(漢字)' 형태의 보조 한자 병기를 제거해 tofu 방지.
-    Pretendard는 상용 한자 일부만 포함하므로 병기 한자를 정리한다(의미는 한글로 충분)."""
+    """'한글(漢字)' 형태의 보조 한자 병기 제거 — Pretendard 미수록 한자의 tofu 방지."""
     return re.sub(r'([가-힣])\(([一-鿿]{1,6})\)', r'\1', md)
 
+
 def unwrap_korean_code(md: str) -> str:
-    """백틱 인라인 코드 중 한글을 포함한 것은 백틱을 벗겨 본문 폰트로 렌더(tofu 방지).
+    """한글이 든 인라인 코드는 백틱을 벗겨 본문 폰트로 렌더(tofu 방지).
     순수 영문 코드경로(`results.csv` 등)는 monofont 유지."""
     def repl(m):
         inner = m.group(1)
-        if re.search(r'[가-힣]', inner):
-            return inner            # 한글 태그: 백틱 제거
-        return m.group(0)           # 영문 코드: 유지
+        return inner if re.search(r'[가-힣]', inner) else m.group(0)
     return re.sub(r'`([^`\n]+)`', repl, md)
 
+
+def korean_quotes(md: str) -> str:
+    """짝지은 큰따옴표를 한국어 낫표(「 」)로 변환.
+
+    xeCJK는 “ ”를 CJK 구두점으로 분류해 인접 공백을 삼키므로, 서양식 따옴표를 그대로
+    쓰면 '…이다."그런데'처럼 붙어 버린다. 낫표는 자체 좌우 여백을 가진 CJK 구두점이라
+    공백 없이도 정상적으로 읽힌다(한국어 조판 관행에도 맞는다).
+    mermaid 코드블록이 이미지로 치환된 뒤에 호출해야 한다 — 노드 라벨의 따옴표를
+    건드리지 않기 위해서다.
+    """
+    out, opening = [], True
+    for ch in md:
+        if ch == '"':
+            out.append("「" if opening else "」")
+            opening = not opening
+        else:
+            out.append(ch)
+    if not opening:
+        print("경고: 짝이 맞지 않는 큰따옴표가 있습니다", file=sys.stderr)
+    return "".join(out)
+
+
+def trim_png(path: Path, pad: int = 12) -> None:
+    """흰 여백 트림 — mermaid journey는 실제 그림보다 캔버스를 크게 잡는다."""
+    try:
+        from PIL import Image, ImageChops
+    except ImportError:
+        return
+    im = Image.open(path).convert("RGB")
+    bg = Image.new("RGB", im.size, (255, 255, 255))
+    bbox = ImageChops.difference(im, bg).getbbox()
+    if not bbox:
+        return
+    l, t, r, b = bbox
+    box = (max(0, l - pad), max(0, t - pad),
+           min(im.width, r + pad), min(im.height, b + pad))
+    im.crop(box).save(path)
+
+
+def mermaid_width(code: str) -> str:
+    """다이어그램 종류별 조판 폭 — 가로형은 지면을 다 쓰고 정사각형은 줄인다."""
+    head = code.lstrip().split("\n", 1)[0]
+    if head.startswith("quadrantChart"):
+        return "64%"
+    return "100%"
+
+
 def render_mermaid(code: str, key: str) -> Path:
-    """mermaid 코드 → PNG. 반환: build 기준 상대경로 이미지."""
     FIGS.mkdir(parents=True, exist_ok=True)
     mmd = FIGS / f"{key}.mmd"
     png = FIGS / f"{key}.png"
@@ -65,56 +109,41 @@ def render_mermaid(code: str, key: str) -> Path:
         "-p", str(TS / "puppeteer-config.json"),
         "-c", str(TS / "mermaid-config.json"),
         "-b", "white", "-s", "3"])
+    trim_png(png)
     return png
 
+
 def sub_mermaid(md: str, section_key: str) -> str:
-    """```mermaid ...``` 블록을 렌더 이미지 참조로 치환."""
     counter = [0]
+
     def repl(m):
         counter[0] += 1
         code = m.group(1)
-        key = f"{section_key}_mmd{counter[0]}"
-        png = render_mermaid(code, key)
+        png = render_mermaid(code, f"{section_key}_mmd{counter[0]}")
         rel = os.path.relpath(png, BUILD).replace("\\", "/")
-        # 넓은 다이어그램은 본문 폭에 맞춤
-        return f'\n![](./{rel}){{width=98%}}\n'
+        return f'\n![](./{rel}){{width={mermaid_width(code)}}}\n'
+
     return re.sub(r'```mermaid\n(.*?)\n```', repl, md, flags=re.S)
 
-def sub_typeset_tags(md: str) -> str:
-    """`[조판: ...]` 인라인 태그 처리."""
-    def repl(m):
-        body = m.group(1)
-        low = body.replace("\n", " ")
-        # 10절 Elo 궤적 — 실제 그림 삽입
-        if "02_elo_trajectories" in low:
-            dst = FIGS / "02_elo_trajectories.png"
-            FIGS.mkdir(parents=True, exist_ok=True)
-            shutil.copy(ELO_TRAJ, dst)
-            cap = "전체 A매치로 산출한 자체 Elo — 감쇠 보정 없이 궤적이 연속. 체코(회색)만 1990년대 중반 1500에서 신설되어 승계 미연결 한계를 보여준다."
-            return f'\n![{cap}](./figures/02_elo_trajectories.png){{width=92%}}\n'
-        # mermaid를 가리키는 지시(이미 위에서 이미지 삽입됨) — 캡션만 남기고 지시 제거
-        if "mermaid 렌더" in low or "위 mermaid" in low:
-            cap = extract_caption(body)
-            return f'\n<div class="figcap">{cap}</div>\n' if cap else "\n"
-        summary = re.sub(r'^조판:\s*', '', body).strip()
-        summary = re.sub(r'\s+', ' ', summary)
-        # 그래픽 제작을 요구하는 태그만 자리표시로. 순수 조판 지시(표 배치·각주 변환 등)는 제거
-        GRAPHIC_KW = ('그래픽', '다이어그램', '목업', '개념도', '포지셔닝', '맵', '차트',
-                      '비주얼', '와이어프레임', '저니', '그리드', '아키텍처', '미니맵', '루프')
-        if any(k in summary for k in GRAPHIC_KW):
-            return ('\n> **[그래픽 자리]** ' + summary +
-                    ' *(디자인 자산 제작 예정 — 본 조판본은 내용·다이어그램 우선)*\n')
-        return '\n'   # 순수 조판 지시 → 제거
-    # `[조판: ...]` (인라인 코드로 감싸진 다중행 포함)
-    return re.sub(r'`\[조판:(.*?)\]`', repl, md, flags=re.S)
 
-def extract_caption(tag_body: str) -> str:
-    m = re.search(r'캡션\s*["“]([^"”]+)["”]', tag_body)
-    return m.group(1).strip() if m else ""
+def copy_assets() -> None:
+    """make_figures.py 산출물을 빌드 폴더로 복사."""
+    if not ASSETS.exists():
+        sys.exit("figures/ 가 없습니다 — 먼저 `python dev/typeset/make_figures.py` 를 실행하세요.")
+    FIGS.mkdir(parents=True, exist_ok=True)
+    for p in sorted(ASSETS.glob("*.png")):
+        shutil.copy(p, FIGS / p.name)
+
+
+def fix_asset_paths(md: str) -> str:
+    """원고의 저장소 상대 경로 → 빌드 폴더 기준 경로."""
+    return md.replace(ASSET_PREFIX, "./figures/")
+
 
 def main():
     BUILD.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
+    copy_assets()
 
     files = sorted(p for p in SRC.glob("[0-1][0-9]_*.md"))
     if len(files) != 16:
@@ -124,14 +153,13 @@ def main():
     for f in files:
         key = f.stem.split("_")[0]           # '01' ..
         md = f.read_text(encoding="utf-8")
-        md = clean_body(md)
         md = strip_hanja_gloss(md)
+        md = fix_asset_paths(md)
         md = sub_mermaid(md, key)
-        md = sub_typeset_tags(md)      # 백틱 있는 상태에서 조판 태그 먼저 처리
-        md = unwrap_korean_code(md)    # 남은 한글 인라인 코드 백틱 해제
+        md = korean_quotes(md)
+        md = unwrap_korean_code(md)
         parts.append(md.strip())
-        # 표지(01) 뒤에서 페이지 분리
-        if key == "01":
+        if key == "01":                      # 표지·목차 뒤에서 페이지 분리
             parts.append(r"\newpage")
 
     combined = "\n\n".join(parts) + "\n"
@@ -139,14 +167,14 @@ def main():
     combined_md.write_text(combined, encoding="utf-8")
     print(f"결합 md: {combined_md}  ({len(combined.splitlines())}행)")
 
-    out_pdf = OUT / "기획서_만약의감독_v1.0.pdf"
+    out_pdf = OUT / "기획서_REFORMATION_v2.0.pdf"
     cmd = [
         PANDOC, str(combined_md), "-o", str(out_pdf),
         "--pdf-engine=xelatex",
         "-H", str(TS / "preamble.tex"),
         "-V", "documentclass=article",
         "-V", "geometry:a4paper",
-        "-V", "geometry:margin=2.2cm",
+        "-V", "geometry:margin=2.1cm",
         "-V", "mainfont=Pretendard",
         "-V", "CJKmainfont=Pretendard",
         "-V", "monofont=Consolas",
@@ -157,8 +185,8 @@ def main():
     ]
     print("pandoc 실행 …")
     sh(cmd, cwd=str(BUILD))
-    size = out_pdf.stat().st_size
-    print(f"완료: {out_pdf}  ({size/1024:.0f} KB)")
+    print(f"완료: {out_pdf}  ({out_pdf.stat().st_size / 1024:.0f} KB)")
+
 
 if __name__ == "__main__":
     main()
