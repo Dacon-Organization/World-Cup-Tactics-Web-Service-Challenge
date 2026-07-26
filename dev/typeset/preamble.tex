@@ -1,0 +1,43 @@
+% 기획서 조판 프리앰블 (pandoc -H 로 주입) — XeLaTeX + Pretendard
+% pandoc default.latex 템플릿이 이미 로드하는 패키지(graphicx·longtable·booktabs·
+% hyperref·xeCJK 등)와 중복되지 않는 것만 추가한다.
+
+% 줄 간격 — 한글 가독성
+\usepackage{setspace}
+\setstretch{1.18}
+
+% 섹션 제목 간격·색
+\usepackage{titlesec}
+\usepackage{xcolor}
+\definecolor{ink}{HTML}{1A1D24}
+\definecolor{accent}{HTML}{1F4E79}
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.3em}{0.6em}
+\titleformat{\subsection}{\large\bfseries\color{ink}}{\thesubsection}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{0.9em}{0.4em}
+
+% 캡션(그림·표) — 작게, 라벨 볼드
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, labelsep=period, skip=5pt}
+
+% 그림이 본문 흐름에서 페이지를 넘기지 않도록
+\usepackage{float}
+
+% 긴 URL 줄바꿈
+\usepackage{xurl}
+
+% 표를 살짝 작은 폰트로(밀도 높은 근거 표 대비)
+\AtBeginEnvironment{longtable}{\small}
+\AtBeginEnvironment{tabular}{\small}
+\usepackage{etoolbox}
+
+% 인라인 코드(태그 표기)의 한글 폰트 — CJK 문자를 본문 폰트로 처리해 tofu 방지
+% (영문 코드경로는 monofont 유지, 한글 태그는 build.py에서 이미 백틱 해제)
+\setCJKmonofont{Pretendard}
+
+% 문단 사이 간격
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+% 각주 구분선 짧게
+\renewcommand{\footnoterule}{\kern-3pt\hrule width 0.4\columnwidth\kern 2.6pt}

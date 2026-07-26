@@ -1,0 +1,1 @@
+{ "theme": "neutral", "themeVariables": { "fontFamily": "Pretendard, Malgun Gothic, sans-serif", "fontSize": "16px" }, "flowchart": { "htmlLabels": true, "curve": "basis" } }
