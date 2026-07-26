@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원고 9·10절 c2 동기화 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>원고 9·10절 c2 동기화 (조판 블록 작업 2·3)</h1>
+  <div class="meta">
+    📅 <b>2026-07-23 (KST)</b> · 🌿 브랜치 <b>feature/worldcup/proposal-c2-sync</b> (PR #22 병합) · 조판 직전 필수 동기화 — c2-2 실측(PR #19) 원고 반영
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done) — 10절 ML 아키텍처</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b>Elo 입력 서술 c2 갱신</b> — 월드컵 964경기 → 전체 남자 A매치 49,520경기(martj42, CC0)<div class="sub">공백 중앙값 <b>1,456일→12일</b> · Elo↔승률 순위상관 <b>ρ 0.221→0.308</b>(p&lt;10⁻²¹) · 전부 ITERATION-LOG c2 실측(역추적 가능)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>파이프라인 다이어그램에 Elo 입력(전체 A매치 CC0)/학습 피처(월드컵 964) 분리 표기</div></li>
+      <li><span class="tag t-done">DONE</span><div><b>한계 고지 개정</b> — "본선 공백 팀 증거 약함"(c1) → "신생팀 초기값 1500·승계 미연결(체코슬로바키아↔체코)"(c2 신규 한계)</div></li>
+      <li><span class="tag t-done">DONE</span><div><b>Elo 궤적 그림 조판 태그 신설</b> — 02_elo_trajectories.png(c2 갱신본): 감쇠 없이 연속·체코(회색) 1990년대 중반 1500 신설이 승계 미연결 한계를 시각 증명</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>✅ 완료 (Done) — 9절 데이터 활용</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b>2차 출처 martj42/international_results(CC0 1.0) 추가</b> — Elo 산출 입력 전용<div class="sub">results.csv만(실명 없음) · goalscorers.csv 미사용 · 학습층 다이어그램 A2 노드·서술·라이선스 고지 반영</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>1차 출처 표기를 DATA-LICENSE.md와 동일한 <b>jfjelstul/worldcup</b>로 통일 · DATA-LICENSE.md 2차 출처 절과 정합 확인</div></li>
+      <li><span class="tag t-done">DONE</span><div>vNEXT 변경노트 2행 · 마스터인덱스 헤더 갱신</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>인용 수치 전부 c2 실측 역추적 가능 — 미검증 수치 0건 · arXiv 0.127 미인용 유지</div></li>
+      <li><span class="tag t-done">OK</span><div>보존 수치(기저율 52.2/25.5/22.3·d̂ 26.4%·개최국·방어선 RPS)는 불변 확인</div></li>
+      <li><span class="tag t-done">OK</span><div>mermaid 신규 노드(D1·D2·E·A2) 전부 따옴표 감쌈 — 특수문자 렌더 안전</div></li>
+      <li><span class="tag t-done">OK</span><div>PR #22 스쿼시 머지 → MERGED 확인 → 원격 브랜치 삭제</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div><b>조판 파이프라인 확정</b> — md→PDF 도구 결정(미확정) → 16절 원고 + 조판 태그 16건 처리 → mermaid 렌더·이미지 삽입 → PDF (~7/27 10:00)</div></li>
+      <li><span class="tag t-todo">TODO</span><div>PDF 최종 검수 — 비하·실명·FIFA IP·미검증 수치 전수(그래픽 포함)</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>
