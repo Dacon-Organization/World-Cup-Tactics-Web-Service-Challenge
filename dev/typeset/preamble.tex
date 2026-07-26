@@ -35,6 +35,16 @@
 % (영문 코드경로는 monofont 유지, 한글 태그는 build.py에서 이미 백틱 해제)
 \setCJKmonofont{Pretendard}
 
+% 줄표(— –) 앞뒤 공백 보존.
+% xeCJK는 이 문자들을 CJK 구두점으로 분류해 인접 공백을 삼킨다("…강도—로 조정").
+% 비CJK(Default) 클래스로 재분류하면 한글과의 사이에 정상 글루가 들어간다.
+% 따옴표는 대신 build.py가 한국어 낫표(「 」)로 바꾼다 — 낫표는 자체 여백을 가진다.
+\xeCJKDeclareCharClass{Default}{"2013, "2014}
+
+% 표는 왼쪽 정렬 — longtable 기본은 가운데 정렬이라 본문 좌측선과 어긋난다
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{\fill}
+
 % 문단 사이 간격
 \setlength{\parskip}{0.45em}
 \setlength{\parindent}{0pt}
