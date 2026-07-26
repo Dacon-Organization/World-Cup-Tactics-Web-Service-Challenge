@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기획서 조판·PDF 생성·최종 검수 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>기획서 조판·PDF 생성·최종 검수 (조판 블록 작업 4·5)</h1>
+  <div class="meta">
+    📅 <b>2026-07-26 (KST)</b> · 🌿 <b>feature/worldcup/typeset-pipeline</b> (PR #24 병합) · 도구 확정 → 파이프라인 구축 → 18p PDF → 전수 검수
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done) — 조판 파이프라인</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b>도구 확정</b>: Pandoc + XeLaTeX + Pretendard + mermaid-cli (사용자 결정)<div class="sub">환경 점검: pandoc·xelatex(MiKTeX)·node·Pretendard/NanumGothic/NotoSansKR 완비. mmdc 설치 + l3kernel/l3packages 업데이트(xeCJK 요구)로 도구체인 완성</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>build.py 파이프라인</b> — 재현 가능 CLI (dev/typeset/)<div class="sub">검수 메모·분량 blockquote 절단 · 한글(漢字) 병기 정리(tofu 방지) · mermaid 5종 mmdc 렌더·삽입 · [조판:] 태그 처리 · 한글 인라인 코드 백틱 해제 · preamble.tex 주입</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>18페이지 PDF 생성</b> — dev/typeset/pdf/기획서_만약의감독_v1.0.pdf (796KB, 저장소 추적)<div class="sub">mermaid 5(IA·상태전이·2계층·파이프라인·폴백) + Elo 궤적 그림 + 근거 표 전량 + 원형숫자·특수문자·각주 전부 정상 렌더</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>✅ 완료 (Done) — 최종 검수 (전수)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div><b>선수·감독 실명 0건</b> (한국·상대·감독 30여 이름 자동 스캔) — 완전 가공명 원칙 준수</div></li>
+      <li><span class="tag t-done">OK</span><div><b>arXiv RPS 0.127 0건</b> · 미검증 수치 인용 0건 (W2 회수 완료로 인용 게이트 해제된 상태)</div></li>
+      <li><span class="tag t-done">OK</span><div><b>비하 카피 0건</b> — '잘못·실수·패착' 등 어휘는 13절 <i>금지 규칙 서술</i>에만 등장(비하 자체 아님)</div></li>
+      <li><span class="tag t-done">OK</span><div><b>FIFA IP 브랜딩 편입 0건</b> — FIFA/월드컵/World Cup™ 언급은 전부 (a)무관 고지 (b)IP 배제 선언 (c)출처 표기 (d)데이터 범위 서술 (e)editorial descriptive use(P7 §7 A1)</div></li>
+      <li><span class="tag t-done">OK</span><div><b>대회 서술 언급 3절 1회 + 비공식 고지</b> 원칙 준수 (L88 "2026 북중미 월드컵※")</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 사용자 확인 권고 (Watch)</h2>
+    <ul>
+      <li><span class="tag t-progress">JUDGE</span><div>"World Cup™" 문자열이 지면에 2회 인쇄됨(둘 다 "쓰지 않는다"는 배제 규칙 설명) — editorial use로 허용 판단(P7 §7 A1)이나, 초보수적으로 가려면 해당 표기를 「'월드컵' 영문 워드마크」식으로 우회 가능</div></li>
+      <li><span class="tag t-progress">SCOPE</span><div>순수 디자인 그래픽 10건(표지 키비주얼·포지셔닝맵·와이어프레임·유저저니·간트 등)은 [그래픽 자리]로 위치·명세만 표시 — 디자인 자산 제작은 별도 작업(구현 블록 8/3 마감 내)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>(선택) 디자인 그래픽 10건 제작 — quadrantChart(포지셔닝)·gantt(로드맵)·journey(사용흐름)는 mermaid 확장으로 코드 생성 가능, 표지·와이어프레임은 디자인 자산</div></li>
+      <li><span class="tag t-todo">TODO</span><div>구현 착수 (~8/3): 전술보드 D&amp;D + 온디바이스 예측 → 리플레이 → 공유</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

@@ -39,8 +39,8 @@
   <div class="meta">
     🏁 기획서 마감 <b>2026-07-27 10:00 KST</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋 = 실격) · 최종 갱신 <b>2026-07-23</b>
   </div>
-  <div class="bar"><i style="width:69%"></i></div>
-  <div class="pct">전체 진척률 약 69% — W2 리서치 회수 + 원고 9·10절 c2 동기화 완료 · 임계 경로: 조판 파이프라인 확정 → 조판 → PDF 제출 (~7/27 10:00)</div>
+  <div class="bar"><i style="width:75%"></i></div>
+  <div class="pct">전체 진척률 약 75% — 기획서 조판·PDF(18p) 생성·전수 검수 완료 (Pandoc+XeLaTeX) · 임계 경로: 디자인 그래픽(선택) → 구현 착수 (~8/3)</div>
 
   <section>
     <h2>🗺️ 단계별 진척</h2>
@@ -56,7 +56,8 @@
       <li><span class="tag t-done">DONE</span><div>노트북 c2 사이클 완료 — 00장(수집·탐색) 신설 + 01·02 보강: Elo A매치 확장(공백 1,456→12일·감쇠 제거·ρ 0.308)·반복 사이클 규약 가동</div></li>
       <li><span class="tag t-done">DONE</span><div>W2 검증 리서치 5건 전량 회수 (P13~P17) — 원장 대기 0건<div class="sub">FIFA 공식 리포트 원문 대조: 남아공전 경고 각 1건 확정 · 체코전 킥오프 20:00 정정 · FIFA xG(PMSR) 실존 · 논문 3편 기법 각주 전용 · 카카오 캐시 1시간</div></div></li>
       <li><span class="tag t-done">DONE</span><div>원고 9·10절 c2 동기화 — 조판 직전 필수 반영<div class="sub">10절: Elo A매치 확장(49,520경기·1,456→12일·ρ 0.308)·궤적 그림 태그·한계 개정(신생팀 1500·승계 미연결) / 9절: martj42 CC0 2차 출처</div></div></li>
-      <li><span class="tag t-todo">TODO</span><div>기획서 조판·최종 검토(비하 금지·실명·FIFA IP 전수 검수)·PDF 제출 (~7/27)</div></li>
+      <li><span class="tag t-done">DONE</span><div>기획서 조판·PDF(18p) 생성·전수 검수 — Pandoc+XeLaTeX 파이프라인<div class="sub">실명 0·비하 0·arXiv 0.127 0·FIFA IP 브랜딩 0 검수 통과 · mermaid 5+Elo 궤적 삽입 · 순수 디자인 그래픽 10건은 [그래픽 자리]로 명세만 표시(디자인 자산 별도)</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>(선택) 디자인 그래픽 제작 + 최종 제출 PDF 확정 (~7/27)</div></li>
       <li><span class="tag t-todo">TODO</span><div>구현: 전술보드 D&amp;D + 온디바이스 예측 → 리플레이 → 공유 (~8/3)</div></li>
       <li><span class="tag t-todo">TODO</span><div>배포·모바일 실동작 검증·저장소 동결 (8/3 10:00 전)</div></li>
     </ul>
@@ -65,6 +66,7 @@
   <section>
     <h2>📂 작업 로그</h2>
     <ul>
+      <li><span class="tag t-done">07-26</span><div><a href="log/2026-07-26-typeset-pdf.html">기획서 조판·PDF·최종 검수 (조판 블록 작업 4·5)</a><div class="sub">Pandoc+XeLaTeX+Pretendard+mermaid-cli 파이프라인(dev/typeset/) · 18p PDF · mermaid 5+Elo 궤적 삽입 · 실명/비하/0.127/FIFA IP 전수 검수 통과 · 디자인 그래픽 10건 [그래픽 자리] · PR #24</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-proposal-c2-sync.html">원고 9·10절 c2 동기화 (조판 블록 작업 2·3)</a><div class="sub">10절 Elo A매치 확장 서술·다이어그램 입력 분리·한계 고지 개정(신생팀 1500·승계 미연결)·궤적 그림 조판 태그 / 9절 martj42 CC0 2차 출처·DATA-LICENSE 정합 · PR #22</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-research-w2-verification.html">W2 검증 리서치 P13~P17 전량 회수 (조판 블록 작업 1)</a><div class="sub">FIFA FullTimeMatchReport·PMSR 원문 파싱 — 남아공전 경고 각 1건(김민재 65'=교체 오기재 규명) · 체코전 20:00 정정 · FIFA xG 실존 · 논문 3편 인용 불가 확정 · 잔여 라이선스 5건 종결 · Lucide 축구공 부재→Tabler/Phosphor 병용 · 카카오 TTL 1시간 · PR #20</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-notebook-c2-elo-amatch.html">노트북 c2-2 — Elo A매치 확장·감쇠 제거 (c2 완료)</a><div class="sub">Elo 입력 964→49,520경기 · 공백 중앙값 1,456일→12일(FT-R7 제거 확정) · ρ 0.221→0.308 · 2026 본선 차단 재생 증명 · features_v1</div></div></li>
