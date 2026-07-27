@@ -126,20 +126,23 @@ npm run dev          # http://localhost:3000
 
 ## 배포
 
-**배포 URL**: *(첫 배포 후 기록)*
+### 🔗 <https://world-cup-tactics-web-service-chall.vercel.app>
 
 가입·설치·API 키 없이 브라우저로 바로 열립니다. 모든 예측은 사용자 브라우저 안에서
 계산되며, 모델 파일을 내려받은 뒤에는 외부 요청이 발생하지 않습니다.
 
-| 워크플로 | 트리거 | 하는 일 |
+**`main`에 머지하면 Vercel이 자동으로 배포합니다.** PR을 열면 프리뷰 배포가 따로 생겨
+머지 전에 화면을 볼 수 있습니다.
+
+| 파이프라인 | 트리거 | 하는 일 |
 |---|---|---|
+| Vercel GitHub 연동 | `main` 푸시 · PR | 프로덕션 배포 · PR 프리뷰 |
 | [`ci`](.github/workflows/ci.yml) | PR · `main` 푸시 | 타입 → 린트 → 테스트 → G2·G3 게이트 → 빌드 |
-| [`deploy`](.github/workflows/deploy.yml) | `main` 푸시(=PR 머지) · 수동 | 게이트·테스트 재확인 → Vercel 프로덕션 배포 |
+| [`deploy`](.github/workflows/deploy.yml) | 수동만 | Vercel 연동이 끊겼을 때의 폴백 |
 
-**main에 머지하면 자동으로 배포됩니다.** 배포 URL은 Actions 실행 요약(Step Summary)에
-표시됩니다. 실명 게이트 G1은 실명 목록을 CI에 올리지 않기 위해 **로컬 전용**으로 둡니다.
+실명 게이트 G1은 대조 목록(실명)을 CI에 올리지 않기 위해 **로컬 전용**으로 둡니다.
 
-셋업 절차·문제 해결·배포 후 체크리스트는 [docs/배포.md](docs/배포.md)를 보세요.
+배포 방식·프리뷰 보호 설정·문제 해결·배포 후 체크리스트는 [docs/배포.md](docs/배포.md)를 보세요.
 
 ## 주요 파일 구조
 

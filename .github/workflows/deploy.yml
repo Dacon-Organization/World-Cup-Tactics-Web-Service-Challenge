@@ -1,20 +1,23 @@
-# 배포 — main 머지 시 Vercel 프로덕션 자동 배포
+# 배포 — 수동 실행 전용 **폴백** 경로
 #
-# 요강 대응: "배포 URL 8/3~8/18 상시 접근"은 결격 조항입니다(docs/제출-게이트.md).
-# 마감 직전에 배포를 처음 시도하지 않기 위해 파이프라인을 미리 세워 둡니다.
+# ⚠️ 평소 배포는 이 워크플로가 하지 않습니다. **Vercel GitHub 연동**이 main 푸시를
+#    직접 받아 프로덕션에 배포합니다(vercel[bot]이 GitHub Deployments를 만듭니다).
+#    토큰도 Secrets도 필요 없는 그 경로가 정본입니다 — docs/배포.md §1.
 #
-# 빌드를 이 러너에서 수행하고(`--prebuilt`) 산출물만 올립니다. Vercel 빌드 환경과
-# CI 환경이 갈라지지 않고, 같은 Node 24를 씁니다.
+# 이 파일은 **Vercel 연동이 끊겼을 때를 위한 수동 폴백**입니다. 요강상 배포 URL은
+# 8/3~8/18 상시 접근 가능해야 하고(결격 조항), 그때 복구 수단이 문서 없이 남아 있지
+# 않으면 곤란하기 때문에 지웠다 다시 쓰지 않고 남겨 둡니다.
 #
-# 필요한 Secrets 3종 — 없으면 조용히 건너뛰지 않고 **실패**합니다:
+# `push` 트리거를 두지 않는 이유: Secrets가 없는 상태에서 main 푸시마다 빨간불이
+# 남고, Vercel 연동과 겹쳐 같은 커밋을 두 번 배포하게 됩니다.
+#
+# 쓰려면 먼저 Secrets 3종을 등록해야 합니다(없으면 첫 단계에서 실패합니다):
 #   VERCEL_TOKEN · VERCEL_ORG_ID · VERCEL_PROJECT_ID
-# 등록 방법은 docs/배포.md §1.
+# 등록 방법은 docs/배포.md §4.
 
-name: deploy
+name: deploy (수동 폴백)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 # 연속 머지 시 옛 배포가 새 배포를 덮어쓰지 않게 합니다.
@@ -46,7 +49,7 @@ jobs:
           if [ -z "$VERCEL_ORG_ID" ]; then missing="$missing VERCEL_ORG_ID"; fi
           if [ -z "$VERCEL_PROJECT_ID" ]; then missing="$missing VERCEL_PROJECT_ID"; fi
           if [ -n "$missing" ]; then
-            echo "::error::GitHub Secrets 누락:$missing — 등록 방법은 docs/배포.md §1"
+            echo "::error::GitHub Secrets 누락:$missing — 등록 방법은 docs/배포.md §4"
             exit 1
           fi
           echo "Secrets 3종 확인 완료."

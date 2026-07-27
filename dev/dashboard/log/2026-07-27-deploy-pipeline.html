@@ -41,7 +41,8 @@
   <h1>B5-0 — 배포 파이프라인 (B5 착수 전 선행)</h1>
   <div class="meta">
     📅 <b>2026-07-27 (KST)</b> · 🌿 <b>feature/worldcup/deploy-pipeline</b> ·
-    GitHub Actions → Vercel · <b>인프라·문서만 · 앱 코드 0줄 변경</b>
+    <a href="https://world-cup-tactics-web-service-chall.vercel.app">배포 URL 확보</a> ·
+    <b>인프라·문서만 · 앱 코드 0줄 변경</b>
   </div>
   <div class="bar"><i style="width:100%"></i></div>
 
@@ -57,8 +58,8 @@
     <h2>✅ 완료 (Done)</h2>
     <ul>
       <li><span class="tag t-done">DONE</span><div><b><code>.github/workflows/ci.yml</code></b> — PR·main 푸시 검증 6단계<div class="sub">타입 → 린트 → 테스트 → G2 → G3 → 빌드. Node <b>24 고정</b>(게이트가 <code>node scripts/gates/*.ts</code>로 TS를 직접 실행) · 브랜치별 concurrency로 연속 푸시 시 이전 실행 취소</div></div></li>
-      <li><span class="tag t-done">DONE</span><div><b><code>.github/workflows/deploy.yml</code></b> — main 머지 시 Vercel 프로덕션 자동 배포<div class="sub"><code>vercel pull → build --prod → deploy --prebuilt --prod</code>. <b>빌드를 러너에서 수행</b>해 CI와 배포가 같은 Node·같은 명령을 쓰게 함 · <code>deploy-production</code> 단일 concurrency로 연속 머지 시 옛 배포가 새 배포를 덮지 않음 · 배포 URL을 Step Summary에 기록</div></div></li>
-      <li><span class="tag t-done">DONE</span><div><b>Secrets 사전 확인 단계</b> — 누락 시 사람이 읽는 말로 실패<div class="sub">토큰 없이 CLI를 부르면 의미를 알기 어려운 오류가 난다. 3종 중 무엇이 없는지 이름으로 알려 주고 <code>docs/배포.md §1</code>로 보낸다. <b>조용히 건너뛰고 초록불을 보여 주지 않는다</b>(G1 설계와 같은 원칙)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>배포 가동</b> — <a href="https://world-cup-tactics-web-service-chall.vercel.app">world-cup-tactics-web-service-chall.vercel.app</a> (icn1 서울)<div class="sub">사용자가 Vercel GitHub 연동을 붙였고, <code>vercel[bot]</code>이 <code>4e4cff2</code>에 GitHub Deployment를 생성. <b>main 푸시 → Vercel이 직접 배포</b>하므로 Actions 배포도 토큰도 필요 없다. 실측: 프로덕션 별칭 <b>200</b>, SSR 확률 <code>48.9686%</code> 포함 = <code>defaults.precomputed</code> 그대로</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b><code>.github/workflows/deploy.yml</code>은 수동 폴백으로 강등</b><div class="sub"><code>vercel pull → build --prod → deploy --prebuilt --prod</code> 경로는 남기되 <code>push</code> 트리거 제거. Vercel 연동과 겹치면 같은 커밋을 두 번 배포하고, Secrets가 없는 상태에서 main 푸시마다 빨간불이 남는다. 연동이 끊겼을 때의 복구 수단이라 지우지는 않는다(요강: URL 8/3~8/18 상시)</div></div></li>
       <li><span class="tag t-done">DONE</span><div><b><code>docs/배포.md</code> 신설</b> — 셋업 3단계 · 워크플로 2종 · 게이트 경계 · 문제 해결 6종 · 배포 후 체크리스트 5항</div></li>
       <li><span class="tag t-done">DONE</span><div><b>README "배포" 절 · <code>docs/제출-게이트.md</code> 3곳 갱신</b><div class="sub">요강 README 필수 4항목 중 ①(서비스 소개·배포 URL)의 자리를 만들고, 게이트 실행 시점 표에 <b>CI 자동화 열</b>을 추가</div></div></li>
     </ul>
@@ -71,6 +72,9 @@
       <b>수정</b>: 4건을 예외 목록에 추가(사유 포함)하고, 게이트가 미설치 예외를 "정리 대상"이라고 부르던 문구를 <b>"다른 플랫폼용 기재"</b>로 분리했다 — 정리 대상이라고 부르면 지우게 되고, 지우면 반대 플랫폼에서 깨진다</div></div></li>
       <li><span class="tag t-blocked">발견·해소</span><div><b>Secrets 확인을 <code>[ -z ... ] &amp;&amp; missing=...</code>로 쓰면 정상일 때 실패한다</b><div class="sub">GitHub Actions는 <code>bash -e -o pipefail</code>로 실행한다. 값이 <b>있으면</b> <code>[ -z ]</code>가 거짓 → <code>&amp;&amp;</code> 연쇄가 비영 종료 → <code>set -e</code>가 스텝을 죽인다. 즉 <b>Secrets를 제대로 등록한 사람만 배포에 실패</b>하는 정반대 동작. <code>if</code> 블록으로 재작성하고 두 경우를 로컬 <code>bash -e -o pipefail</code>로 실측 확인</div></div></li>
       <li><span class="tag t-progress">기록</span><div><b>G1(실명 게이트)은 CI에 올릴 수 없다 — 설계 결정으로 못박음</b><div class="sub">대조 목록을 CI에서 쓰려면 실명을 Secrets에 올려야 하고, 그것은 게이트가 막으려던 위험(P7 실명 경계)을 <b>게이트 운영이 스스로 늘리는 일</b>이다. 대신 "CI가 G1을 검사하지 않는다"를 워크플로 주석·<code>docs/배포.md §3</code>·<code>제출-게이트</code> 실행 시점 표 <b>세 곳에 명시</b>했다. 실제 통과 시점은 B9 최종 커밋 직전 로컬 <code>npm run gate</code></div></div></li>
+      <li><span class="tag t-blocked">발견·해소</span><div><b>Actions 배포 워크플로가 애초에 필요 없었다</b> — 계획 수정<div class="sub">사용자가 Vercel을 붙인 뒤 확인하니 <code>vercel[bot]</code>이 이미 GitHub Deployment를 만들고 있었다(= <b>Vercel GitHub App이 설치돼 main 푸시를 직접 받는다</b>). 반면 저장소 Secrets는 <b>0개</b>. 이 상태로 <code>deploy.yml</code>을 그대로 두면 ① Secrets 없음으로 매 머지마다 실패하고 ② Secrets를 채우면 같은 커밋이 두 번 배포된다. <b>수동 폴백으로 강등</b>하고 정본 경로를 문서에 다시 씀</div></div></li>
+      <li><span class="tag t-progress">기록</span><div><b>프리뷰 배포는 Vercel SSO 뒤에 있다 — 프로덕션은 공개</b><div class="sub">배포별 URL은 <code>vercel.com/sso-api</code>로 <b>302</b>, 프로덕션 별칭은 <b>200</b>(실측). 요강 "심사자가 별도 키 없이 확인"은 프로덕션 기준이라 충족. 다만 <b>로그아웃 휴대폰으로 PR 프리뷰를 보려면</b> Deployment Protection을 꺼야 한다 — 디자인 확인 루프에 직접 영향</div></div></li>
+      <li><span class="tag t-progress">기록</span><div><b>CI는 Vercel 배포를 막지 못한다</b><div class="sub">Vercel은 자기 빌드가 성공하면 배포하고 Actions 결과를 기다리지 않는다. 게이트가 배포를 차단하는 유일한 지점은 <b>PR 머지</b> — main 직접 푸시를 하지 않는 한 게이트를 통과한 코드만 배포된다</div></div></li>
       <li><span class="tag t-progress">기록</span><div>Vercel을 골랐으므로 <b>F13(<code>/t/[state]</code>)·F14(<code>next/og</code>)를 계획서 원안대로</b> 유지한다<div class="sub">GitHub Pages(정적 export)였다면 동적 경로와 동적 OG를 강등해야 했다. <code>next.config.ts</code>는 손대지 않았다</div></div></li>
     </ul>
   </section>
@@ -90,10 +94,10 @@
   </section>
 
   <section>
-    <h2>⚠️ 이 블록에서 못 한 것 (사용자 작업 대기)</h2>
+    <h2>⚠️ 남은 것</h2>
     <ul>
-      <li><span class="tag t-blocked">사용자</span><div><b>Vercel 가입 · 토큰 발급 · GitHub Secrets 3종 등록</b><div class="sub">자격증명 입력은 에이전트가 대신하지 않는다. <code>docs/배포.md §1</code>의 3단계. <b>등록 전에 머지하면 deploy 워크플로가 한 번 빨간불로 실패</b>한다(설계된 동작) — 등록 후 Actions 탭에서 수동 재실행하면 배포된다</div></div></li>
-      <li><span class="tag t-todo">배포 후</span><div>배포 URL을 README "배포" 절에 기록 · 시크릿 창·모바일 회선 접속 확인 · 네트워크 탭 외부 요청 0건 육안 확인(G4)</div></li>
+      <li><span class="tag t-todo">사용자 판단</span><div><b>Deployment Protection을 끌 것인가</b><div class="sub">끄면 로그아웃 상태의 휴대폰으로 <b>PR 프리뷰</b>까지 볼 수 있다(디자인 확인 루프에 직접 이득). 프로덕션 공개 여부와는 별개 설정이며, 프로덕션은 지금도 공개다</div></div></li>
+      <li><span class="tag t-todo">배포 후</span><div>시크릿 창·모바일 회선 접속 확인 · 네트워크 탭 외부 요청 0건 육안 확인(G4)</div></li>
     </ul>
   </section>
 
