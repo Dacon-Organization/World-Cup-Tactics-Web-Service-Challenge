@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pitch } from '@/components/pitch/Pitch';
-import { ProbabilityBar } from '@/components/prediction/ProbabilityBar';
+import { PredictionPanel } from '@/components/prediction/PredictionPanel';
 import { FormationPicker } from '@/components/tactics/FormationPicker';
 import { SliderSheet } from '@/components/tactics/SliderSheet';
 import { formations, getFormation, koreaSquad } from '@/lib/data';
@@ -68,8 +68,6 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
   const setSlider = useTacticsStore((state) => state.setSlider);
   const selectToken = useTacticsStore((state) => state.selectToken);
 
-  const probabilities = usePredictionStore((state) => state.p);
-  const engine = usePredictionStore((state) => state.engine);
   const setContext = usePredictionStore((state) => state.setContext);
 
   const frameRef = useRef<HTMLDivElement | null>(null);
@@ -500,18 +498,9 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
       </div>
 
       <div className="flex min-w-0 flex-col gap-4 lg:basis-1/3">
-        <section
-          className="rounded-lg border border-line bg-surface p-4"
-          aria-label="예측 확률"
-        >
-          <h2 className="mb-3 text-[15px] font-semibold">
-            {opponentName}전 예측
-          </h2>
-          <ProbabilityBar
-            probabilities={probabilities}
-            source={engine === null ? 'precomputed' : engine === 'onnx' ? 'inferred' : 'fallback'}
-          />
-        </section>
+        {/* 엔진 배선은 패널 안으로 내려갔다 — 드래그 상태 변화가 예측 패널을
+            리렌더시키지 않게 하기 위해서다 (F05 impl §2) */}
+        <PredictionPanel opponentName={opponentName} />
 
         <section className="rounded-lg border border-line bg-surface p-4">
           <h2 className="mb-3 text-[15px] font-semibold">전술 슬라이더</h2>

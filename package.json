@@ -5,7 +5,10 @@
   "description": "RE:FORMATION — 온디바이스 전술 시뮬레이터 (2026 월드컵 팬 프로젝트)",
   "type": "module",
   "scripts": {
+    "copy:ort": "node scripts/copy-ort.ts",
+    "predev": "npm run copy:ort",
     "dev": "next dev",
+    "prebuild": "npm run copy:ort",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

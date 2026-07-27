@@ -32,9 +32,8 @@
 ```
 src/components/prediction/
 ├── PredictionPanel.tsx     (Client) — 패널 조립. TacticsBoard 인라인 <section>에서 승격
-├── ProbabilityBar.tsx      (훅 없음 — Server/Client 동형, B4 산출물 유지)
-├── EstimateBadge.tsx       (훅 없음) — engine==='fallback' 일 때만 렌더
-└── EngineStatusLine.tsx    (훅 없음) — "모델 준비 중" · 반복 횟수 · 강등 고지
+├── ProbabilityBar.tsx      (훅 없음 — Server/Client 동형, B4 산출물 유지 + 라벨만 교체)
+└── EstimateBadge.tsx       (훅 없음) — engine==='fallback' 일 때만 렌더
 src/components/ServiceWorkerRegistrar.tsx  (Client) — layout.tsx 에 1회
 src/hooks/usePredictionEngine.ts           (Client) — Worker 수명주기 + 스토어 배선
 ```
@@ -44,10 +43,19 @@ interface PredictionPanelProps {
   opponentName: string;
 }
 interface EstimateBadgeProps {
-  /** 배지를 띄우는 이유. 화면 문구가 아니라 title/aria 보조 설명에 쓴다 */
-  reason: 'wasm-unsupported' | 'load-failed' | 'worker-timeout';
+  /** 배지를 띄우는 이유. 화면 문구가 아니라 title 보조 설명에 쓴다 */
+  reason: EstimateReason | null;   // 'load-failed' | 'timeout' | 'unavailable' | 'infer-failed'
 }
 ```
+
+**구현하며 조정한 것** — 계획했던 `EngineStatusLine.tsx`(“모델 준비 중”·반복 횟수·강등 고지)는
+**별도 파일로 만들지 않았습니다.** 반복 횟수·강등 고지는 밴드와 같은 데이터를 읽으므로
+[F06 impl](F06_몬테카를로_시뮬레이션_impl.md)의 `WilsonBandRow`가 함께 표기하고, "모델 준비 중"은
+`PredictionPanel` 헤더의 한 줄입니다. 컴포넌트를 하나 더 만들면 같은 값을 두 곳에서 읽게 됩니다.
+
+`EstimateReason`도 계획안의 `'wasm-unsupported'`를 뺐습니다 — SIMD 미지원은 Worker에서
+`error(load)`로 나타나므로 클라이언트가 그것과 구분할 수 없습니다. 구분할 수 없는 값을
+유니온에 두면 절대 생성되지 않는 분기가 생깁니다.
 
 **패널을 `TacticsBoard`에서 떼어내는 이유** — B4에서는 확률이 정적이라 `<section>` 인라인으로
 충분했습니다. 이제 패널은 엔진 상태·밴드·배열·HOPs를 함께 들므로, 전술보드 조율자 안에 두면
@@ -198,10 +206,19 @@ ort.env.logLevel = 'error';
 다섯 번 만지면 다섯 번의 추론이 아니라 **마지막 상태 한 번**만 필요합니다. 중간 상태는 이미
 화면에 없습니다. `pendingContext`를 덮어쓰기 변수 하나로 두는 것이 그 정책의 전부입니다.
 
-**`ready` 직후 `infer`를 먼저 보내고 `simulate`를 뒤에 보내는 이유** — `infer`는 MC 없이 확률만
-돌려주므로 가장 빠른 정직한 숫자입니다. 기본 상태라면 그 값이 `defaults.precomputed`와 같아
-화면이 전혀 흔들리지 않습니다 — 이것이 **F08-R3 "모델 로드 완료 시 무단절 교체"의 교체하는 쪽**
-구현입니다. 밴드·프레임은 뒤이은 `simulate`가 채웁니다.
+**`infer`를 런타임 경로에서 쓰지 않습니다** `[설계 결정 — 구현 중 변경]`. 처음에는 `ready` 직후
+`infer`(확률만) → `simulate`(밴드·프레임) 2단으로 계획했지만, 계약의 `result` payload가
+`{ p, wilson, frames }` 하나뿐이라 `infer`가 응답하려면 **MC를 안 돌린 신뢰구간**을 만들어야
+합니다. 그것은 거짓 정보입니다. MC 비용이 수 밀리초라 2단으로 나눌 실익도 없으므로
+`ready` 직후 바로 `simulate`(빠른 모드)를 보냅니다. 기본 상태라면 결과가
+`defaults.precomputed`와 같아 화면이 전혀 흔들리지 않습니다 — 이것이 **F08-R3 "모델 로드 완료 시
+무단절 교체"의 교체하는 쪽** 구현이며, 밴드·프레임이 첫 결과부터 함께 옵니다.
+
+Worker는 `infer`를 받으면 빠른 모드와 같게 처리합니다 — 계약에 있는 메시지를 조용히 무시하지
+않기 위해서입니다.
+
+> **실측 확인**: 기본 상태에서 엔진 결과가 `승 49 · 무 30 · 패 21`로 사전 계산값과 일치했고,
+> 화면에 아무 변화가 없었습니다(F08-R3 충족).
 
 ### 4.4 무응답 판정 — 2단 타임아웃 `[설계 결정]`
 
@@ -333,5 +350,7 @@ F05 GWT의 "재방문(오프라인)에서 추론이 동작한다"는 자산만�
 | `[설계 결정]` | 폴백에서 템포가 움직이지 않는 것을 허용 | B8 카피 검수 — "간이 추정" 배지 문구가 한계를 충분히 고지하는가 |
 | `[추정 설계목표]` | 단일 추론 ≤50ms (F05 §8) | **B8 실측** — `performance.now()` 계측을 `infer` 처리에 심어 콘솔 보고 |
 | `[추정 설계목표]` | 초기 로딩 3초 | **B8 실측 · 지표 분리**: ① 첫 화면(SSR HTML) ② 엔진 준비 완료. wasm 3.43MB는 ②에만 실리고 ①을 막지 않는다 — 두 값을 따로 기록한다 |
-| 미검증 | Next.js 15.5 webpack에서 `{ type: 'module' }` Worker 청크 생성 | **B5 구현 중 즉시 확인**. 실패해도 종착점은 F05-R4 폴백이라 앱은 살아 있다 |
-| 미검증 | Vercel이 `.wasm`을 `application/wasm`으로 서빙하는가 | B5 배포 직후 확인. 아니면 스트리밍 컴파일 대신 버퍼 컴파일로 내려앉을 뿐 기능은 유지 |
+| **확인됨** | Next.js 15.5 webpack의 Worker 번들링 | webpack이 `type: 'module'`을 **벗겨 내고 고전 워커 청크**를 만든다(`new Worker(url, { type: void 0 })`). 워커 청크는 `importScripts`로 ORT 청크를 불러온다 — 모듈 워커 미지원 브라우저까지 커버되므로 결과적으로 더 넓다 |
+| **확인됨** | `.wasm` MIME 타입 | `next start` 기준 `application/wasm` + gzip. Vercel도 같은 정적 핸들링이지만 **배포 후 1회 재확인**(B8) |
+| **확인됨** | 외부 요청 0건 | 프로덕션 빌드에서 메인 스레드 `performance.getEntriesByType('resource')` 의 외부 오리진 **0건**. `/ort/` 요청은 `.wasm` 1건 |
+| **확인됨** | F05-R4 폴백 | `public/ort/` 제거 후 재적재 → "간이 추정" 배지 + 확률 유지 + 슬라이더 반응 유지. 템포만 안 움직이는 것도 §4.6 문서대로 |

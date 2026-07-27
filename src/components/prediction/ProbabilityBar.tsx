@@ -1,3 +1,4 @@
+import { allocate100 } from '@/lib/prediction/allocate';
 import { probabilityShares } from '@/lib/prediction/shares';
 import type { Probabilities } from '@/types/data';
 
@@ -27,6 +28,13 @@ const SEGMENTS = [
  * 확률 합은 계약상 1 ± 1e-6이지만, 어긋난 값이 들어와도 막대가 넘치거나 비지 않아야
  * 합니다. 화면이 데이터 오류를 증폭하지 않게 하는 최소 방어입니다.
  *
+ * ## 폭과 라벨의 근거가 다른 것은 의도입니다
+ *
+ * **폭**은 연속값(`shares`)입니다 — 1%p 미만의 차이가 막대에서 사라지면 안 됩니다.
+ * **라벨 숫자**는 `allocate100`입니다 — 10×10 배열(F07)과 같은 정수를 공유해야
+ * "배열은 100칸인데 퍼센트 합이 101"인 화면이 나오지 않습니다. `Math.round`를 따로
+ * 쓰면 실제로 그렇게 됩니다 (F07 impl §4.1에 실측 사례).
+ *
  * 색 단독으로 의미를 전달하지 않습니다 — 세그먼트마다 "승 49" 텍스트가 항상 붙습니다
  * (DESIGN.md §1.4 라벨 강제).
  */
@@ -41,34 +49,30 @@ export function ProbabilityBar({ probabilities, source }: ProbabilityBarProps) {
   }
 
   const shares = probabilityShares(probabilities);
+  const counts = allocate100(probabilities);
 
   return (
     <div>
       <div
         className="flex h-[30px] overflow-hidden rounded-md"
         role="img"
-        aria-label={SEGMENTS.map(
-          (segment) => `${segment.label} ${Math.round(shares[segment.key] * 100)}%`,
-        ).join(', ')}
+        aria-label={SEGMENTS.map((segment) => `${segment.label} ${counts[segment.key]}%`).join(', ')}
       >
-        {SEGMENTS.map((segment) => {
-          const share = shares[segment.key];
-          return (
-            <div
-              key={segment.key}
-              className="flex items-center justify-center overflow-hidden text-[18px] font-bold whitespace-nowrap text-text"
-              style={{
-                width: `${share * 100}%`,
-                backgroundColor: segment.color,
-                transition: 'width 220ms ease-out',
-              }}
-            >
-              <span aria-hidden="true">
-                {segment.label} {Math.round(share * 100)}
-              </span>
-            </div>
-          );
-        })}
+        {SEGMENTS.map((segment) => (
+          <div
+            key={segment.key}
+            className="flex items-center justify-center overflow-hidden text-[18px] font-bold whitespace-nowrap text-text"
+            style={{
+              width: `${shares[segment.key] * 100}%`,
+              backgroundColor: segment.color,
+              transition: 'width 220ms ease-out',
+            }}
+          >
+            <span aria-hidden="true">
+              {segment.label} {counts[segment.key]}
+            </span>
+          </div>
+        ))}
       </div>
       <p className="mt-2 text-[13px] text-text-3">
         {source === 'precomputed'

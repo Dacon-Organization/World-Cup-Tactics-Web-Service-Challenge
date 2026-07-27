@@ -33,21 +33,28 @@ src/lib/prediction/
 └── random.ts       — 시드 PRNG (mulberry32, 순수)
 src/lib/tactics/blend.ts   — `scoreGrid()` 추출 (§4.1) — B4 파일 수정
 src/components/prediction/
-├── SimulationControls.tsx  (Client) — 정밀 모드 실행·취소 버튼
-└── ProgressBar.tsx         (Client) — 진행률. 200ms 지연 마운트
+├── ProgressBar.tsx     (Client) — 진행률. 200ms 지연 마운트
+└── WilsonBandRow.tsx   (훅 없음) — 밴드 3행 + 반복 횟수 + 강등 고지
 ```
 
 ```typescript
-interface SimulationControlsProps {
-  status: PredictionState['status'];
-  progress: { done: number; total: number } | null;
-  onRunPrecise(): void;
-  onCancel(): void;
+interface WilsonBandRowProps {
+  counts: OutcomeCounts;
+  band: Band | null;          // null이면 행 전체를 숨긴다 (MC 미실행)
+  iterations: number | null;
+  degraded: boolean;
+  elapsedMs: number | null;   // 10초 초과 시 소요 시간 병기 (F06-R5)
 }
 ```
 
-정밀 모드는 F06 §3에 따라 **접힌 세부 설정 안**에 둡니다(`<details>`) — 첫 화면의 점진적 공개
-원칙(F08 §3)을 깨지 않기 위해서입니다.
+**구현하며 조정한 것** — 계획했던 `SimulationControls.tsx`는 별도 파일로 만들지 않고
+`PredictionPanel`의 `<details>` 안에 두 버튼으로 넣었습니다. 버튼 2개와 안내문 1줄이
+전부라 컴포넌트 경계를 만들 만한 상태가 없습니다. 정밀 모드가 **접힌 세부 설정 안**에
+있다는 F06 §3의 요구는 그대로 지킵니다 — 첫 화면의 점진적 공개 원칙(F08 §3)을 깨지
+않기 위해서입니다.
+
+반복 횟수·강등 고지는 밴드와 같은 데이터를 읽으므로 `WilsonBandRow`가 함께 표기합니다
+(F05 impl §2의 `EngineStatusLine`을 만들지 않은 이유와 같습니다).
 
 ## 3. 상태
 
