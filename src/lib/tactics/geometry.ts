@@ -9,13 +9,61 @@
  * 잡습니다 (구현규약 §7 — E2E 대신 순수 함수 커버리지).
  */
 
-import type { PositionRole, PositionSlot, Player, Position } from '@/types/data';
+import type { PositionCode, PositionRole, PositionSlot, Player, Position } from '@/types/data';
 
 /**
  * SVG `viewBox` — 세로형. DESIGN.md §3.2의 `가로 × 1.5` 종횡비를 그대로 옮긴 값이라
  * 컨테이너 `aspect-ratio`와 일치시키면 `preserveAspectRatio` 레터박싱이 생기지 않는다.
  */
 export const PITCH_VIEWBOX = { width: 100, height: 150 } as const;
+
+/**
+ * 피치 방향 — `vertical`(모바일 기준) · `horizontal`(데스크톱)
+ *
+ * ## 정규화 좌표는 방향과 무관하다
+ *
+ * `x`는 항상 **팀 기준 좌→우**, `y`는 항상 **자기 진영(0) → 상대 진영(1)** 입니다.
+ * 방향이 바꾸는 것은 *화면 매핑뿐*이라 스냅·드롭·조정 계층·예측 엔진은 방향을
+ * 알 필요가 없습니다. 이 분리를 깨고 방향별 좌표를 두면 두 벌을 영원히 맞춰야 합니다.
+ *
+ * ```
+ * vertical    left = x       top = 1 - y
+ * horizontal  left = y       top = x        (시계방향 90° — 자기 골대 왼쪽)
+ * ```
+ *
+ * 가로에서 팀의 왼쪽 측면(x 작음)이 화면 위로 가는 것은 축구 중계 화면의 관례와 같습니다.
+ */
+export type PitchOrientation = 'vertical' | 'horizontal';
+
+/**
+ * 가로 전환 임계 — **CSS `globals.css`의 미디어쿼리와 같은 값이어야 합니다.**
+ *
+ * 화면 매핑(프레임 종횡비·토큰 좌표·SVG 회전)은 전부 CSS가 합니다. 서버가 방향을 모르는
+ * 채로 내보낸 HTML이 데스크톱에서도 처음부터 가로로 그려지고, 하이드레이션 깜빡임이
+ * 없으며, JS가 죽어도 배치가 맞습니다 (F08-R5).
+ *
+ * JS가 방향을 알아야 하는 곳은 **조작 계산 세 군데뿐**입니다 — 포인터 역변환,
+ * 방향키 축, 정보 카드가 열리는 쪽. 셋 다 마운트 이후에만 실행되므로 `matchMedia`를
+ * 이펙트에서 읽어도 늦지 않습니다.
+ */
+export const PITCH_HORIZONTAL_MQ = '(min-width: 1024px)';
+
+/**
+ * 정규화 좌표 → 프레임 백분율
+ *
+ * **렌더에는 쓰지 않습니다** — 토큰·고스트의 좌표는 CSS 사용자 정의 속성(`--nx`/`--ny`)과
+ * 미디어쿼리가 계산합니다. 이 함수는 정보 카드가 프레임 밖으로 나가지 않게 여는 쪽을
+ * 고를 때처럼 **JS가 화면상 위치를 알아야 하는 경우**에만 씁니다.
+ */
+export function toFramePercent(
+  position: Position,
+  orientation: PitchOrientation,
+): { left: number; top: number } {
+  if (orientation === 'horizontal') {
+    return { left: position.y * 100, top: position.x * 100 };
+  }
+  return { left: position.x * 100, top: (1 - position.y) * 100 };
+}
 
 /** DESIGN.md §3.3 비율을 viewBox 단위로 환산한 값 */
 export const PITCH_GEOMETRY = {
@@ -63,18 +111,24 @@ export function isInsidePitch(position: Position): boolean {
 /**
  * 포인터 클라이언트 좌표 → 정규화 좌표 (클램프 없음)
  *
- * y가 뒤집히는 이유: 정규화 y는 **자기 진영(0) → 상대 진영(1)** 인데 화면은 위가 상대
- * 진영입니다 (데이터 설계 §2.2).
+ * 세로에서 y가 뒤집히는 이유: 정규화 y는 **자기 진영(0) → 상대 진영(1)** 인데 화면은
+ * 위가 상대 진영입니다 (데이터 설계 §2.2).
+ *
+ * 가로는 `toFramePercent`의 정확한 역변환입니다 — 둘이 어긋나면 잡은 곳과 다른 곳에
+ * 토큰이 놓입니다.
  */
 export function toNormalized(
   clientX: number,
   clientY: number,
   rect: { left: number; top: number; width: number; height: number },
+  orientation: PitchOrientation = 'vertical',
 ): Position {
-  return {
-    x: (clientX - rect.left) / rect.width,
-    y: 1 - (clientY - rect.top) / rect.height,
-  };
+  const fx = (clientX - rect.left) / rect.width;
+  const fy = (clientY - rect.top) / rect.height;
+  if (orientation === 'horizontal') {
+    return { x: fy, y: fx };
+  }
+  return { x: fx, y: 1 - fy };
 }
 
 /** 정규화 좌표 → SVG viewBox 좌표 */
@@ -166,8 +220,32 @@ export function resolveDrop(
  *
  * 지원하지 않는 키는 `null` — 호출부가 `preventDefault`를 걸지 말지 판단합니다.
  * 선택 모드가 아닐 때 스크롤을 가로채면 접근성 퇴행입니다.
+ *
+ * **방향키는 화면 기준입니다.** 가로 피치에서 `↑`가 여전히 `y+`(전진)이면 토큰이 오른쪽으로
+ * 가면서 위 화살표를 누르게 되어 조작이 즉시 무너집니다. 그래서 방향에 따라 축을 바꿉니다 —
+ * 값의 의미(`y`=전진)는 그대로고 어떤 키가 그 축을 미는지만 달라집니다.
  */
-export function applyKeyboardStep(position: Position, key: string): Position | null {
+export function applyKeyboardStep(
+  position: Position,
+  key: string,
+  orientation: PitchOrientation = 'vertical',
+): Position | null {
+  if (orientation === 'horizontal') {
+    switch (key) {
+      // 가로에서는 오른쪽이 상대 진영, 화면 위가 팀의 왼쪽 측면(x 감소)
+      case 'ArrowRight':
+        return clampPosition({ ...position, y: position.y + KEYBOARD_STEP });
+      case 'ArrowLeft':
+        return clampPosition({ ...position, y: position.y - KEYBOARD_STEP });
+      case 'ArrowUp':
+        return clampPosition({ ...position, x: position.x - KEYBOARD_STEP });
+      case 'ArrowDown':
+        return clampPosition({ ...position, x: position.x + KEYBOARD_STEP });
+      default:
+        return null;
+    }
+  }
+
   switch (key) {
     case 'ArrowUp':
       return clampPosition({ ...position, y: position.y + KEYBOARD_STEP });
@@ -214,15 +292,37 @@ export function assignSquad(
   });
 }
 
-/** 토큰 라벨 — 가공명 성 1음절 (가공명_체계 §5.1) */
-export function tokenLabel(displayName: string): string {
-  return [...displayName][0] ?? '?';
-}
-
 /** 스크린리더·툴팁용 포지션 한글 라벨 — 포지션이 색 단독으로만 전달되지 않게 (DESIGN.md §1.4) */
 export const ROLE_LABEL: Record<PositionRole, string> = {
   GK: '골키퍼',
   DF: '수비수',
   MF: '미드필더',
   FW: '공격수',
+};
+
+/**
+ * 세부 포지션 한글명 — 토큰의 약어를 소리 내어 읽는 값
+ *
+ * 약어만 두면 스크린리더가 "엘씨비"로 읽습니다. 축구 약어를 모르는 심사자에게도
+ * 정보 카드에서 이 한글명이 보입니다.
+ */
+export const POSITION_LABEL: Record<PositionCode, string> = {
+  GK: '골키퍼',
+  LB: '왼쪽 풀백',
+  LCB: '왼쪽 센터백',
+  CB: '센터백',
+  RCB: '오른쪽 센터백',
+  RB: '오른쪽 풀백',
+  LWB: '왼쪽 윙백',
+  RWB: '오른쪽 윙백',
+  DM: '수비형 미드필더',
+  LCM: '왼쪽 중앙 미드필더',
+  RCM: '오른쪽 중앙 미드필더',
+  LM: '왼쪽 미드필더',
+  RM: '오른쪽 미드필더',
+  LW: '왼쪽 윙어',
+  RW: '오른쪽 윙어',
+  LST: '왼쪽 스트라이커',
+  ST: '스트라이커',
+  RST: '오른쪽 스트라이커',
 };

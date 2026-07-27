@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-2a S1 가로 피치·포지션 약어 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 6px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  code { background: #0f1115; padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>D-2a S1 재설계 2차 — 가로 피치 · 포지션 약어 · 선수 정보 카드</h1>
+  <div class="meta">
+    📅 <b>2026-07-27 (KST)</b> · 🌿 브랜치 <b>claude/s2-screen-design-improvements-95fcfb</b> · 사용자 피드백 5건 중 <b>3건 반영</b> · 팔레트 값 변경 <b>0건</b>
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>🔎 진단 — 사용자 피드백을 실측으로 확인</h2>
+    <table>
+      <tr><th>항목</th><th>이전</th><th>이후</th></tr>
+      <tr><td>토큰 라벨</td><td>가공명 성 1음절 — <b>성이 겹치면 같은 글자 둘</b></td><td>세부 포지션 약어 — 포메이션당 <b>11개 전부 고유</b></td></tr>
+      <tr><td>피치 크기 (1280×720)</td><td>269 × 403px</td><td><b>518 × 346px</b> — 폭 <b>1.93배</b></td></tr>
+      <tr><td>좌우 열 높이비</td><td>왼쪽 435 : 오른쪽 <b>1360</b> = 1 : 3.1</td><td>2열 바 — 좌 821 × 336 · 우 380</td></tr>
+      <tr><td>왼쪽 열의 빈 여백</td><td>640px 중 <b>371px</b> (58%)</td><td>피치가 중앙 정렬로 폭을 사용</td></tr>
+      <tr><td>전술 섹션 높이</td><td>496px (슬라이더 4개 세로 스택)</td><td><b>336px</b> (데스크톱 2×2)</td></tr>
+      <tr><td>슬라이더 화면 진입</td><td>둘째 행 y=768 — <b>720 밖</b></td><td>4개 전부 y ≤ <b>710</b></td></tr>
+      <tr><td>가공명 노출 위치</td><td>토큰 안 (약어로 교체되며 사라질 뻔)</td><td>선택·호버 시 정보 카드 — <b>프로파일 4종 최초 노출</b></td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b>등번호 대신 포지션 약어 — ADR-005를 지키면서 사용자 요구를 충족</b>
+        <div class="sub">사용자 요청은 "동그라미 안에 등번호"였으나 <b>ADR-005 결정 3이 등번호를 금지</b>한다("등번호+포지션 조합은 특정 선수 연상 리스크", 근거 P7 · 2010카합245). 대안으로 <b>선수가 아니라 슬롯에 붙는</b> 세부 포지션 약어를 채택 — 같은 선수가 포메이션을 바꾸면 다른 약어를 단다. 좌우 접두사(FM의 <code>DCL/DCR</code> 방식)로 <code>CB·CB</code> 중복을 없애 4개 포메이션 <b>전부 11개 고유</b>. 표기 체계는 <a href="https://en.wikipedia.org/wiki/Association_football_positions">Wikipedia 축구 포지션</a>의 공용 약어 — 벤치마킹으로 EA FC(<code>CAM/CDM</code>)·eFootball(<code>-MF</code>) 표기를 실물 확인한 뒤, <b>게임사 종속 인상을 피하려</b> 중립 표준을 골랐다</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>데스크톱 가로 피치 — 오른쪽 쏠림의 원인은 "좁은 폭"이 아니라 세로 피치였다</b>
+        <div class="sub">실측: 오른쪽 열이 <b>320px 폭에 1360px</b>(뷰포트 높이의 1.9배)을 쌓는데 왼쪽 640px에는 <b>269px 피치</b>만. 원인은 <code>max-width: calc(56dvh * 2/3)</code> — <b>세로 피치의 폭이 가용 높이에 묶여</b> 가로를 더 줘도 커지지 않았다. 눕히니 같은 높이 예산(48dvh)에서 폭이 <b>1.93배</b>. 컨트롤은 하단 2열 바(좌 전술 · 우 예측)로 내려 D-1의 "조작 중 확률이 보인다"를 세로에서 가로로 옮겼다</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>방향 전환을 전부 CSS로 — 서버가 뷰포트를 몰라도 된다</b>
+        <div class="sub">정규화 좌표(<code>x</code> 좌→우 · <code>y</code> 자기진영→상대진영)는 <b>불변</b>. 토큰은 <code>--nx/--ny</code> 사용자 정의 속성 + <code>calc()</code>, SVG는 viewBox를 세로형으로 둔 채 <b>상자를 눕혀 <code>rotate(90deg)</code></b>. 방향을 React 상태로 들면 데스크톱 첫 페인트가 세로로 나왔다가 튀고 JS가 죽으면 영영 세로다(F08-R5 퇴행). 부수 효과: <code>pitchDistance</code>·<code>nearestSlot</code>·<code>resolveDrop</code>·조정 계층·예측 엔진 <b>한 줄도 안 바뀜</b>. JS가 방향을 아는 곳은 포인터 역변환·방향키 축·카드 개폐 방향 <b>세 군데뿐</b></div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>선수 정보 카드 — 모달이면 조작이 죽는다</b>
+        <div class="sub">토큰 안이 약어로 차면서 가공명이 화면에서 사라지므로 선택·호버 팝오버를 신설(가공명 + 포지션 한글명 + 프로파일 4종). <b>모달로 만들 수 없는 이유</b>: 토큰 탭은 F03 클릭-클릭 이동의 "선수 선택"이고 다음 탭이 "목적지"라, 포커스 트랩·배경 차단이 들어가면 이동 경로가 통째로 죽는다. <code>pointer-events: none</code>으로 카드 위 탭이 그대로 피치에 닿게 했다. 여는 방향은 프레임 백분율로 계산해 <b>항상 안쪽</b>으로 — 임계값 35/65는 가장 좁은 프레임(249px)에서 카드 176px가 잘리지 않는 값. 호버는 420ms 지연 + <code>@media (hover: hover)</code>로 터치 기기 제외</div></div></li>
+      <li><span class="tag t-done">DONE</span><div>방향키 축 전환 · Zod 유일성 검증 · README 확장 방안 절
+        <div class="sub">가로에서 <code>→</code>=전진(<code>y+</code>), <code>↑</code>=팀의 왼쪽(<code>x-</code>) — 그대로 두면 토큰이 오른쪽으로 가면서 위 화살표를 누르게 된다. 포메이션 로드 시점에 약어 유일성을 <code>refine</code>으로 강제. React Native는 <b>보류</b>하고 README에 이식 계획만 기재(요강상 심사는 배포 URL 기준 · 설치 0회가 조건)</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 검증 (Verify)</h2>
+    <ul>
+      <li><span class="tag t-done">OK</span><div>typecheck · 테스트 <b>115건</b>(신규 12건) · lint 0 · 프로덕션 빌드 정적 4/4 통과</div></li>
+      <li><span class="tag t-done">OK</span><div>신규 테스트 — 약어 유일성 · 3글자 이하 · 한글명 존재 · <b>좌우 접두사와 x좌표 일치</b> · DM이 미드 라인 최후방 · <b>포인터 역변환이 화면 매핑의 정확한 역</b>(두 방향 × 11슬롯) · 가로 방향키 축</div></li>
+      <li><span class="tag t-done">OK</span><div>1280×720 실측 — 피치 <b>518×346</b> 중앙(x=373) · GK 왼쪽 끝(32,173) · ST 오른쪽(414,173) · LB 위(125,56) · RB 아래(125,290) = <b>중계 화면 관례와 일치</b></div></li>
+      <li><span class="tag t-done">OK</span><div>1280×720 첫 화면 — 슬라이더 4개 y=630·710 · 확률 요약 y=482로 <b>조작과 피드백 동시 관찰</b> · 포메이션 y=545</div></li>
+      <li><span class="tag t-done">OK</span><div>375×812 실측 — 세로 피치 <b>303×455</b> 유지 · GK 하단 중앙(152,427) · ST 상단 중앙(152,92) · 토큰 44px · <b>가로 스크롤 0</b> · 도크 <code>sticky</code> 유지</div></li>
+      <li><span class="tag t-done">OK</span><div>정보 카드 — 내용 정확(가공명 · <code>LW · 왼쪽 윙어</code> · 공격 75 / 수비 46 / 체력 80 / 속도 77) · <b>프레임 안에 완전히 포함</b> · <code>pointer-events: none</code> · 선택 시 <code>opacity: 1</code></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚠️ 차단/리스크 (Blocker)</h2>
+    <ul>
+      <li><span class="tag t-blocked">BLOCK</span><div><b>G1 <code>gate:names</code> 여전히 실행 불가 — 8/2 최종 커밋 전 복구 필수</b>
+        <div class="sub">D-1에서 적재한 항목이 그대로 남아 있다. 대조 목록 <code>data/gate/real-names.txt</code> 부재. 이번 변경분은 <b>포지션 약어(영문)와 한글 포지션명뿐</b>이라 인명이 추가되지 않았음을 확인</div></div></li>
+      <li><span class="tag t-progress">RISK</span><div><b>남은 6일에 F09~F16이 0% — 신규 통계 기능 4종은 그 다음</b>
+        <div class="sub">사용자가 통계 기능 4종(전술 진단 · 시뮬레이션 통계 · 경기 대시보드 · 전술 비교)을 전부 선택했으나, 기획서가 약속한 <b>리플레이 4종·공유 4종이 아직 페이지조차 없다</b>. 일관성 20점은 "약속한 것 미완성"이 가장 비싸다. B5를 이틀 앞당겨 끝낸 여유가 사용 가능한 전부</div></div></li>
+      <li><span class="tag t-progress">RISK</span><div>다크 기본 대비 미달 17건 — D-1에서 적재, 변동 없음 (B8 결정 항목)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>D-2b — S2a 리플레이 경기 선택 화면 설계·구현 (F09)<div class="sub">우선순위: 높음 · 3경기 카드 · 전술보드 골격 재사용 여부 결정</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>D-2c — S2b 리플레이 재생·개입 (F10~F12) · S3 공유 수신 랜딩 (F13)<div class="sub">우선순위: 높음 · S2b는 이번에 확정한 가로 피치·포지션 약어를 그대로 재사용</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>통계 기능 — 비용 낮은 순으로 편입(전술 진단 → 시뮬레이션 통계)<div class="sub">우선순위: 중간 · F09~F16을 밀어내지 않는 범위에서만</div></div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

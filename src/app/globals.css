@@ -197,6 +197,63 @@
     border: 1px solid var(--color-line);
     border-radius: 8px;
     overflow: hidden;
+
+    /* 토큰 크기를 프레임이 정한다 — 래퍼의 `%`가 프레임 폭을 기준으로 풀린다 */
+    --token-size: clamp(44px, 12%, 56px);
+  }
+
+  /* 세로 SVG가 프레임을 정확히 채운다 */
+  .pitch-frame > svg {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ---------------------------------------------------------------------------
+   * 가로 피치 (데스크톱 ≥1024px)
+   *
+   * **임계값은 `geometry.ts`의 `PITCH_HORIZONTAL_MQ`와 같아야 합니다.**
+   *
+   * 세로 피치의 폭은 가용 **높이**에 묶여 있었습니다 — `max-width: calc(56dvh * 2/3)`이라
+   * 1280×720에서 269px까지 눌렸고, 남는 가로를 오른쪽 패널이 혼자 써서 화면이 오른쪽으로
+   * 쏠렸습니다. 눕히면 같은 높이 예산에서 폭이 그대로 늘어납니다.
+   *
+   * 방향 전환을 **전부 CSS로** 두는 이유: 서버는 뷰포트를 모릅니다. 방향을 JS 상태로 들면
+   * 데스크톱 첫 페인트가 세로로 나왔다가 하이드레이션에서 가로로 튀고, JS가 죽으면 영영
+   * 세로입니다 (F08-R5 퇴행).
+   * ------------------------------------------------------------------------- */
+  @media (min-width: 1024px) {
+    .pitch-frame {
+      aspect-ratio: 150 / 100;
+      /*
+        높이 예산 48dvh — 세로일 때의 56dvh에서 내렸습니다. 눕히면서 슬라이더가 피치
+        **아래**로 왔기 때문에, 피치 높이가 곧 슬라이더의 화면 진입 여부입니다.
+        56dvh(403px)에서는 두 번째 슬라이더 행이 y=768로 720 밖이었습니다.
+
+        720px 뷰포트 실측: 346×518px. 그전 세로 피치가 403×269px이었으므로 **폭이 1.93배**
+        입니다 — 높이를 깎고도 피치가 커지는 것이 눕히기의 이득입니다.
+      */
+      max-width: calc(48dvh * 1.5);
+      /* 12%는 폭 600px대에서 72px이 됩니다 — 상한에 걸리긴 하나 가로에서는 8%가 제 비례 */
+      --token-size: clamp(44px, 8%, 56px);
+    }
+
+    /*
+      viewBox(100×150)는 그대로 두고 **상자를 눕힙니다.**
+
+      프레임이 3:2이므로 프레임 높이 = 폭 × 2/3입니다. SVG 상자를 `폭 66.667% × 높이 150%`
+      로 두면 실제 크기가 `프레임높이 × 프레임폭`(= 2:3, viewBox와 일치)이 되고, 중심에서
+      90° 돌리면 프레임을 정확히 덮습니다. 레터박스가 생기지 않으므로 마킹이 늘어나지
+      않습니다.
+    */
+    .pitch-frame > svg {
+      inset: auto;
+      left: 50%;
+      top: 50%;
+      width: calc(100% * 2 / 3);
+      height: 150%;
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
   }
 
   /* ---------------------------------------------------------------------------
@@ -208,16 +265,37 @@
    * 정적 선언이어야 합니다 — 제스처가 시작된 뒤 JS로 바꾸면 현재 제스처에 아무 영향이
    * 없습니다 (MDN).
    * ------------------------------------------------------------------------- */
-  .player-token {
+  /* 좌표를 갖는 래퍼 — 토큰과 정보 카드가 이 지점을 공유한다.
+     토큰이 직접 `absolute`이면 카드를 형제로 둘 자리가 없다. */
+  .token-slot {
     position: absolute;
     translate: -50% -50%;
+    /* 터치 타겟 ≥44px (P5 1cm · DESIGN.md §6) — `%`는 프레임 폭 기준으로 풀린다 */
+    width: var(--token-size);
+    aspect-ratio: 1;
+    z-index: 10;
+    /* 정규화 좌표(--nx 좌→우, --ny 자기진영→상대진영)를 화면 축에 배정하는 곳.
+       세로에서는 화면 위가 상대 진영이라 y가 뒤집힌다 (데이터 설계 §2.2). */
+    left: calc(var(--nx) * 100%);
+    top: calc((1 - var(--ny)) * 100%);
+  }
+
+  .token-slot[data-state='selected'] {
+    z-index: 20;
+  }
+
+  /* 드래그 중인 토큰은 항상 맨 위 — 다른 토큰 밑으로 들어가면 "들고 있음"이 깨진다 */
+  .token-slot[data-state='dragging'] {
+    z-index: 30;
+  }
+
+  .player-token {
     display: flex;
     align-items: center;
     justify-content: center;
 
-    /* 터치 타겟 ≥44px (P5 1cm · DESIGN.md §6) */
-    width: clamp(44px, 12%, 56px);
-    aspect-ratio: 1;
+    width: 100%;
+    height: 100%;
     border-radius: 9999px;
     border-width: 3px;
     border-style: solid;
@@ -228,8 +306,11 @@
        "토큰이 거기 있다"만 별도 채널로 보장하는 것입니다 (WCAG 1.4.11). */
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text) 22%, transparent);
 
-    font-size: 15px;
+    /* 라벨이 최대 3글자(LCB·RCM·LWB·RST)라 한 글자 기준 15px에서 내렸습니다.
+       44px 원 - 테두리 6px = 안쪽 38px, `RCM` 13px/700 ≈ 30px로 들어갑니다. */
+    font-size: 13px;
     font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--color-text);
 
     touch-action: none;
@@ -252,12 +333,154 @@
   .token-ghost {
     position: absolute;
     translate: -50% -50%;
-    width: clamp(44px, 12%, 56px);
+    width: var(--token-size);
     aspect-ratio: 1;
+    left: calc(var(--nx) * 100%);
+    top: calc((1 - var(--ny)) * 100%);
     border-radius: 9999px;
     border: 2px dashed var(--color-text-3);
     opacity: 0.5;
     pointer-events: none;
+  }
+
+  /*
+    가로 피치의 좌표 배정 — 시계방향 90°. 자기 골대가 왼쪽, 팀의 왼쪽 측면이 화면 위
+    (중계 화면 관례).
+
+    선택자에 `.pitch-frame`을 붙인 것은 특이도로 이기기 위해서입니다. 같은 특이도로 두면
+    `.token-slot` 기본 규칙과의 승부가 소스 순서에만 달리는데, 이 파일은 Tailwind가
+    레이어로 재조립하므로 순서를 눈으로 보장하기 어렵습니다.
+  */
+  @media (min-width: 1024px) {
+    .pitch-frame .token-slot,
+    .pitch-frame .token-ghost {
+      left: calc(var(--ny) * 100%);
+      top: calc(var(--nx) * 100%);
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+   * 선수 정보 카드 — 가공명 노출부
+   *
+   * `pointer-events: none`이 이 카드의 핵심 계약입니다. 토큰 탭은 F03의 클릭-클릭 이동에서
+   * "선수 선택"이고 그다음 탭이 "목적지"인데, 카드가 포인터를 먹으면 목적지 탭이 카드에
+   * 막혀 이동 경로가 죽습니다.
+   *
+   * `visibility`가 아니라 `opacity`로만 숨기는 이유: 토큰이 `aria-describedby`로 이 카드를
+   * 참조하므로 접근성 트리에 남아 있어야 능력치가 읽힙니다.
+   * ------------------------------------------------------------------------- */
+  .player-info-card {
+    position: absolute;
+    width: max-content;
+    max-width: 176px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--color-line);
+    background-color: var(--color-surface);
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms var(--ease-snap);
+  }
+
+  .player-info-card[data-placement='below'] {
+    top: calc(100% + 8px);
+  }
+
+  .player-info-card[data-placement='above'] {
+    bottom: calc(100% + 8px);
+  }
+
+  .player-info-card[data-align='center'] {
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  .player-info-card[data-align='start'] {
+    left: 0;
+  }
+
+  .player-info-card[data-align='end'] {
+    right: 0;
+  }
+
+  .player-info-card__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .player-info-card__pos {
+    margin-top: 1px;
+    font-size: 12px;
+    color: var(--color-text-2);
+  }
+
+  .player-info-card__stats {
+    display: grid;
+    gap: 3px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .player-info-card__stat {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-text-2);
+  }
+
+  .player-info-card__stat dd {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .player-info-card__stat b {
+    min-width: 20px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+  }
+
+  .player-info-card__bar {
+    display: block;
+    flex: 1;
+    height: 4px;
+    border-radius: 9999px;
+    background-color: var(--color-line);
+    overflow: hidden;
+  }
+
+  .player-info-card__bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 9999px;
+    background-color: var(--color-text-3);
+  }
+
+  /* 선택·키보드 포커스는 즉시 — 명시적 의도이므로 기다리게 할 이유가 없다 */
+  .token-slot[data-state='selected'] .player-info-card,
+  .token-slot:focus-within .player-info-card {
+    opacity: 1;
+  }
+
+  /* 호버는 지연 후 — 피치를 가로지르는 마우스마다 카드가 번쩍이면 산만하다.
+     터치 기기에서 hover가 "고착"되는 것을 막으려고 포인터가 있는 기기로 한정한다. */
+  @media (hover: hover) {
+    .token-slot:hover .player-info-card {
+      opacity: 1;
+      transition: opacity 160ms var(--ease-snap) 420ms;
+    }
+  }
+
+  /* 드래그 중에는 숨긴다 — 손가락을 따라다니는 카드가 목적지를 가린다 */
+  .token-slot[data-state='dragging'] .player-info-card {
+    opacity: 0;
+    transition: none;
   }
 
   /* ---------------------------------------------------------------------------

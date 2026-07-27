@@ -1,6 +1,6 @@
 'use client';
 
-import { PITCH_VIEWBOX } from '@/lib/tactics/geometry';
+import { PITCH_VIEWBOX, type PitchOrientation } from '@/lib/tactics/geometry';
 import type { PreviewGeometry, PreviewTier } from '@/lib/tactics/preview';
 import type { Player, Position, PositionSlot } from '@/types/data';
 import { PitchMarkings } from './PitchMarkings';
@@ -12,6 +12,8 @@ interface PitchProps {
   positions: Position[];
   slots: PositionSlot[];
   squad: Player[];
+  /** 모바일 세로 · 데스크톱 가로 — 정규화 좌표는 둘이 같다 */
+  orientation: PitchOrientation;
   preview: PreviewGeometry;
   previewTier: PreviewTier;
   /** 드래그 중인 토큰 (없으면 null) */
@@ -53,6 +55,7 @@ export function Pitch({
   positions,
   slots,
   squad,
+  orientation,
   preview,
   previewTier,
   draggingIndex,
@@ -78,10 +81,18 @@ export function Pitch({
       role="application"
       aria-label="전술보드 피치 — 선수 토큰을 끌거나 선택해 배치를 바꿉니다"
     >
+      {/*
+        viewBox는 **항상 세로형**입니다. 가로 전환은 CSS가 이 `<svg>` 상자를 눕혀서
+        처리하므로(globals.css `.pitch-frame > svg`), 마킹·프리뷰·스냅 표시를 방향별로
+        두 벌 그리지 않습니다. 페널티 박스를 고치면 양쪽에 그대로 반영됩니다.
+
+        서버가 방향을 몰라도 되는 것이 이 구조의 요점입니다 — 방향을 JS 상태로 들면
+        데스크톱 첫 페인트가 세로로 나왔다가 튑니다.
+      */}
       <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
+        className="pointer-events-none absolute"
         viewBox={`0 0 ${PITCH_VIEWBOX.width} ${PITCH_VIEWBOX.height}`}
-        // 프레임과 종횡비가 같으므로 레터박스가 생기지 않는다
+        // 상자와 종횡비가 같으므로 레터박스가 생기지 않는다
         preserveAspectRatio="xMidYMid meet"
         aria-hidden="true"
         focusable="false"
@@ -103,11 +114,11 @@ export function Pitch({
         )}
       </svg>
 
-      {/* 드래그 원위치 잔상 (F02-R1 고스트) */}
+      {/* 드래그 원위치 잔상 (F02-R1 고스트) — 좌표는 CSS가 방향에 맞춰 푼다 */}
       {ghost && (
         <span
           className="token-ghost"
-          style={{ left: `${ghost.x * 100}%`, top: `${(1 - ghost.y) * 100}%` }}
+          style={{ '--nx': ghost.x, '--ny': ghost.y } as React.CSSProperties}
           aria-hidden="true"
         />
       )}
@@ -124,7 +135,9 @@ export function Pitch({
             index={index}
             player={player}
             slotRole={slot.role}
+            slotCode={slot.code}
             position={position}
+            orientation={orientation}
             state={state}
             disabled={disabled}
             snapping={draggingIndex === index && snapTargetIndex !== null}
