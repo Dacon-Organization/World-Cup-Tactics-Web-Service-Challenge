@@ -1,0 +1,201 @@
+{
+  "_주석": "B3 기준선 산출물. 06장 GBDT 업그레이드는 이 파일과 outcome.onnx를 같은 스키마로 덮어쓴다.",
+  "version": "1.0.0-baseline",
+  "generatedAt": "2026-07-27T11:26:10+09:00",
+  "model": {
+    "file": "outcome.onnx",
+    "inputName": "features",
+    "outputName": "probabilities",
+    "featureOrder": [
+      "elo_diff",
+      "self_form_pts",
+      "self_form_gd",
+      "self_exp_apps",
+      "self_host",
+      "opp_form_pts",
+      "opp_form_gd",
+      "opp_exp_apps",
+      "opp_host",
+      "stage_ko"
+    ],
+    "classOrder": [
+      "win",
+      "draw",
+      "lose"
+    ],
+    "kind": "logistic-baseline"
+  },
+  "score": {
+    "coefNames": [
+      "intercept",
+      "elo_diff",
+      "stage_ko",
+      "self_form_pts",
+      "self_form_gd",
+      "self_exp_apps",
+      "self_host",
+      "opp_form_pts",
+      "opp_form_gd",
+      "opp_exp_apps",
+      "opp_host"
+    ],
+    "coef": [
+      0.40888571,
+      0.23531251,
+      0.10898594,
+      -0.00283557,
+      0.09757225,
+      -0.07402122,
+      0.05919732,
+      -0.04639741,
+      -0.05962143,
+      -0.11895618,
+      -0.06534707
+    ],
+    "mean": [
+      0.0,
+      41.39462661,
+      0.25598086,
+      1.54339533,
+      0.29240431,
+      5.28110048,
+      0.09569378,
+      1.29143802,
+      -0.15580144,
+      4.11722488,
+      0.03110048
+    ],
+    "scale": [
+      1.0,
+      131.09061144,
+      0.43641111,
+      0.7183898,
+      1.16373626,
+      4.40651722,
+      0.29417084,
+      0.74542404,
+      1.29477512,
+      3.83738098,
+      0.17358928
+    ],
+    "rho": -0.01270296,
+    "gamma": 0.155761,
+    "gridMax": 6,
+    "lambdaCap": 4.5
+  },
+  "fallback": {
+    "dHat": 0.2807
+  },
+  "adjust": {
+    "c": 1.0,
+    "rhoPenalty": 0.06,
+    "deltaLine": 0.37523724,
+    "deltaLineRisk": 0.18761862,
+    "kappaLine": 0.12507908,
+    "deltaPress": 0.15923128,
+    "deltaPressAtt": 0.07643102,
+    "kappaPress": 0.06369251,
+    "deltaWidth": 0.33062281,
+    "kappaWidth": 0.15869895,
+    "deltaTempo": 0.26236426,
+    "posLineSpan": 0.2,
+    "posWidthSpan": 0.1,
+    "capRatio": 0.3,
+    "positionChain": {
+      "GK": 0,
+      "DF": 1,
+      "MF": 2,
+      "FW": 3
+    },
+    "drawShiftClamp": [
+      0.02,
+      0.6
+    ]
+  },
+  "contexts": {
+    "cze": {
+      "features": {
+        "elo_diff": 54.3,
+        "self_form_pts": 1.4,
+        "self_form_gd": -0.2,
+        "self_exp_apps": 11.0,
+        "self_host": 0.0,
+        "opp_form_pts": 1.0,
+        "opp_form_gd": -0.3333,
+        "opp_exp_apps": 1.0,
+        "opp_host": 0.0,
+        "stage_ko": 0.0
+      },
+      "lambda0": [
+        1.414441,
+        0.96962
+      ],
+      "baseline": {
+        "win": 0.489686,
+        "draw": 0.299343,
+        "lose": 0.210971
+      }
+    },
+    "mex": {
+      "features": {
+        "elo_diff": -73.4,
+        "self_form_pts": 1.4,
+        "self_form_gd": -0.2,
+        "self_exp_apps": 11.0,
+        "self_host": 0.0,
+        "opp_form_pts": 0.8,
+        "opp_form_gd": -1.2,
+        "opp_exp_apps": 17.0,
+        "opp_host": 1.0,
+        "stage_ko": 0.0
+      },
+      "lambda0": [
+        0.495311,
+        1.060734
+      ],
+      "baseline": {
+        "win": 0.090103,
+        "draw": 0.345429,
+        "lose": 0.564468
+      }
+    },
+    "rsa": {
+      "features": {
+        "elo_diff": 194.0,
+        "self_form_pts": 1.4,
+        "self_form_gd": -0.2,
+        "self_exp_apps": 11.0,
+        "self_host": 0.0,
+        "opp_form_pts": 1.4,
+        "opp_form_gd": -0.4,
+        "opp_exp_apps": 3.0,
+        "opp_host": 0.0,
+        "stage_ko": 0.0
+      },
+      "lambda0": [
+        1.671426,
+        0.724419
+      ],
+      "baseline": {
+        "win": 0.628355,
+        "draw": 0.255669,
+        "lose": 0.115976
+      }
+    }
+  },
+  "metrics": {
+    "split": {
+      "train": "≤2014",
+      "valid": "2018",
+      "test": "2022 (06장 예약 — 미개봉)"
+    },
+    "validRps": 0.197512,
+    "validAccuracy": 0.484375,
+    "eloOnlyBaselineRps": 0.2241,
+    "calibrationMaxDev": 0.2166,
+    "calibrationDecision": "temperature-diagnosed-not-applied",
+    "calibrationTemperature": 1.053672,
+    "twoModelTv": 0.04398,
+    "onnxMaxAbsErrorPython": 9.91e-08
+  }
+}

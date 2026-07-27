@@ -1,6 +1,15 @@
 {
   "formationId": "f433",
-  "sliders": { "lineHeight": 50, "pressing": 50, "width": 50, "tempo": 50 },
+  "sliders": {
+    "lineHeight": 50,
+    "pressing": 50,
+    "width": 50,
+    "tempo": 50
+  },
   "opponentMatchId": "cze",
-  "precomputed": null
+  "precomputed": {
+    "win": 0.489686,
+    "draw": 0.299343,
+    "lose": 0.210971
+  }
 }
