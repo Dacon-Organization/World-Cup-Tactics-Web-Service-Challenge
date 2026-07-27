@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B1 디자인 시스템 · 제출 게이트 명세 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>B1 — 디자인 시스템 · 제출 게이트 명세 (구현 블록 1/9)</h1>
+  <div class="meta">
+    📅 <b>2026-07-27 (KST)</b> · 🌿 <b>feature/worldcup/design-system-gates</b> · 기획서 PDF <b>제출 완료 → 동결</b> · 구현 착수 첫 블록 (문서만, 코드 0줄)
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done) — 산출물 3종</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b>DESIGN.md v1.0</b> — 디자인 시스템 (루트)<div class="sub">창작이 아니라 <b>역추출</b>: <code>make_figures.py</code>의 실제 상수를 읽어 토큰화 (배경 #10161F · 브랜드 #1F4E79/#7FB3E0 · 텍스트 4계단 · 결과 3색). 피치 기하(<code>draw_pitch</code> 비율)·4-3-3 슬롯 좌표 원본 이식. 컴포넌트 12종 인벤토리 · 모션은 지연 예산표와 1:1 · WCAG 2.5.7 접근성표</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>구현 규약 v1.0</b> — docs/planning/impl/version1.0/ 신설<div class="sub">features v1.0("무엇을")을 <b>수정하지 않는</b> 별도 도메인 폴더("어떻게"). 디렉터리 구조 · Server/Client 경계 · Zustand 2슬라이스 분할(F05-R2를 구조로 보장) · Worker 계약 무변형 이식 · 조정 계층 7단계 순서 · 기능별 impl 명세 7섹션 템플릿(실패 경로 섹션 의무)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>제출-게이트.md</b> — 실격·심사제외 차단 체계<div class="sub">요강 조항을 위험도 8순위로 정렬 → 자동 게이트 <b>G1~G4</b>(실명·참조무결성·라이선스·외부요청 0건, 빌드 차단) + 수동 <b>M1~M3</b>(비하 카피·에셋 출처·제출물 3종) + 8/3 동결 절차. 설계로 이미 충족된 5개 조항은 "코드가 존재하지 않음"으로 별도 정리</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>마스터인덱스 갱신</b> — 디자인 시스템·구현 규약·제출 게이트 3행 추가, 구현 일정·범위 명시</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 이 블록에서 발견한 것</h2>
+    <ul>
+      <li><span class="tag t-blocked">RISK</span><div><b>포지션 4색이 결과 3색과 값이 완전히 동일</b><div class="sub"><code>POS_COLORS = [AMBER] + [ACCENT]*4 + [GREEN]*3 + [RED]*3</code> — MF=승 #2E7D5B · GK=무 #C98A21 · FW=패 #B0413E. 제출된 PDF 그림(f13·f10)이 이 상태이므로 <b>색을 바꾸면 기획/구현 일관성(20점)이 깨짐</b>. → 색은 그대로 두고 <b>형태로 분리</b>: 선수 토큰=원 / 확률 10×10 배열=모난 사각 / 확률 바=가로 막대 + 결과색에는 텍스트 라벨 강제</div></div></li>
+      <li><span class="tag t-blocked">RISK</span><div><b>features_v1.parquet이 디스크에 없음</b><div class="sub"><code>data/</code>가 gitignore이고 워크트리 간 이동하지 않음 — 남은 것은 features_v0(c1, 7/23)뿐. <b>B3는 02_fe.py 재실행으로 features_v1 재생성부터 시작</b>. 원본 입력(martj42 results.csv 등)은 전부 존재하므로 재생성 가능</div></div></li>
+      <li><span class="tag t-progress">GAP</span><div><b>포지션은 색 단독 부호화 — 색맹 사용자에게 전달되지 않음</b><div class="sub">토큰 내부 텍스트는 포지션이 아니라 가공명 성 1음절(가공명_체계 §5.1). 링에 글리프 추가는 44px 안에서 성과 경합해 기각. 보완: 포커스·탭 툴팁에 포지션 명시 + 슬롯 y좌표가 역할 암시. <b>한계로 문서에 명시함</b></div></div></li>
+      <li><span class="tag t-progress">GAP</span><div><b><code>--text-4</code>(#55636F on #10161F ≈ 3.9:1) 명도 대비 미달</b><div class="sub">"가공명 표기 · 비공식 팬 프로젝트" 고지문 전용. 법적 고지 목적이므로 <b>B8 실측 후 --text-3 승격 결정</b> — 미달 상태로 확정하지 않음</div></div></li>
+      <li><span class="tag t-progress">WATCH</span><div><b>PR 스쿼시 머지도 새 커밋을 만든다</b><div class="sub">8/3 10:00 이후 <b>머지도 실격</b>. 8/2에 열린 PR 전량 종료 필요 — 제출-게이트 §3에 "오해하기 쉬운 지점"으로 명시</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧭 설계 결정 (이 블록에서 확정)</h2>
+    <ul>
+      <li><span class="tag t-done">DECIDE</span><div><b>다크 단일 커밋</b> — 라이트 모드 미구현. 공유 카드가 다크이고 7일 내 QA 비용 대비 이득 없음</div></li>
+      <li><span class="tag t-done">DECIDE</span><div><b>Pretendard 자체 호스팅</b>(서브셋 woff2) — CDN 금지. 외부 요청 0건 원칙(C1)과 "심사자 키 없이 확인" 정합. 한자 글리프 부재 → UI 문자열에 한자 미사용</div></li>
+      <li><span class="tag t-done">DECIDE</span><div><b>ORT-Web wasm 자체 호스팅</b>(<code>public/ort/</code>) — 기본값은 CDN을 받으므로 <code>wasmPaths</code> 고정. G4가 이를 검사</div></li>
+      <li><span class="tag t-done">DECIDE</span><div><b>예측 패널 고정 높이 132px</b> — 확률 갱신 시 피치가 흔들려 드래그 좌표가 어긋나는 것을 방지 (CLS 0)</div></li>
+      <li><span class="tag t-done">DECIDE</span><div><b>E2E 자동화 미도입</b> — 7일 일정에서 Playwright 유지비 &gt; 실기기 수동 검증. 대신 순수 함수(조정 계층·Wilson·인코딩) 단위 테스트로 회귀 방어</div></li>
+      <li><span class="tag t-done">DECIDE</span><div><b>게이트 대조 목록 부재 시 "실패"</b> — 실명 대조 목록이 없을 때 조용히 통과시키면 침묵 실패가 됨. 통과시키지 않음</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔜 다음 할 일 (Next) — B2 스캐폴드 + 데이터층</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>Next.js 15 스캐폴드 (App Router · TS strict · Tailwind · shadcn/ui · Zustand · Zod)</div></li>
+      <li><span class="tag t-todo">TODO</span><div><code>src/types/data.ts</code> — 데이터 설계 §2 TS 시그니처 이식</div></li>
+      <li><span class="tag t-todo">TODO</span><div><code>src/data/*.json</code> 4종 — formations(4프리셋×11슬롯) · players(가공명, 생성은 비커밋 로컬) · matches(P11/P13 확정 이벤트) · defaults</div></li>
+      <li><span class="tag t-todo">TODO</span><div><code>scripts/gates/</code> G1~G3 구현 + <code>npm run gate</code> 배선</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📮 리서치 발주</h2>
+    <ul>
+      <li><span class="tag t-done">없음</span><div><b>📭 발주 없음</b> — 이 블록의 산출물은 전부 기존 확정 사항(제출된 PDF 그림의 실상수 · 요강 원문 · features v1.0 계약)의 재조직이며, T1~T5 트리거 해당 없음</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

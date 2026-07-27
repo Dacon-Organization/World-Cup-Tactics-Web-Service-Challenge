@@ -37,10 +37,10 @@
 <div class="wrap">
   <h1>월드컵 전술 웹서비스 챌린지</h1>
   <div class="meta">
-    🏁 기획서 마감 <b>2026-07-27 10:00 KST</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋 = 실격) · 최종 갱신 <b>2026-07-23</b>
+    🏁 기획서 <b>제출 완료(7/27) → 동결</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋·<b>머지</b> = 실격) · 최종 갱신 <b>2026-07-27</b>
   </div>
-  <div class="bar"><i style="width:80%"></i></div>
-  <div class="pct">전체 진척률 약 80% — 기획서 v2.0 전면 개작·조판 완료 (21p · 서비스명 RE:FORMATION · 시각자료 23종 · 그래픽 자리 0건) · 임계 경로: 구현 착수 (~8/3)</div>
+  <div class="bar"><i style="width:82%"></i></div>
+  <div class="pct">전체 진척률 약 82% — 기획 완료·동결. <b>구현 착수 B1/9 완료</b>(디자인 시스템·구현 규약·제출 게이트) · 임계 경로: B2 스캐폴드 → B3 모델 계약 동결 → P0 배포 (~8/3)</div>
 
   <section>
     <h2>🗺️ 단계별 진척</h2>
@@ -58,14 +58,17 @@
       <li><span class="tag t-done">DONE</span><div>원고 9·10절 c2 동기화 — 조판 직전 필수 반영<div class="sub">10절: Elo A매치 확장(49,520경기·1,456→12일·ρ 0.308)·궤적 그림 태그·한계 개정(신생팀 1500·승계 미연결) / 9절: martj42 CC0 2차 출처</div></div></li>
       <li><span class="tag t-done">DONE</span><div>기획서 조판·PDF(18p) 생성·전수 검수 — Pandoc+XeLaTeX 파이프라인<div class="sub">실명 0·비하 0·arXiv 0.127 0·FIFA IP 브랜딩 0 검수 통과 · mermaid 5+Elo 궤적 삽입 · 순수 디자인 그래픽 10건은 [그래픽 자리]로 명세만 표시(디자인 자산 별도)</div></div></li>
       <li><span class="tag t-done">DONE</span><div>기획서 v2.0 전면 개작 — 서비스명 RE:FORMATION · 서술형 문체 · 시각자료 23종<div class="sub">분석 실측 그림 7종 신설(Elo 확장·캘리브레이션·득점 분포·RPS 방어선 등) · 디자인 자산 5종 제작으로 [그래픽 자리] 10건 → 0건 · mermaid 확장 3종(quadrant·gantt·journey) · 대회 영문 워드마크 지면 표기 0건</div></div></li>
-      <li><span class="tag t-todo">TODO</span><div>구현: 전술보드 D&amp;D + 온디바이스 예측 → 리플레이 → 공유 (~8/3)</div></li>
-      <li><span class="tag t-todo">TODO</span><div>배포·모바일 실동작 검증·저장소 동결 (8/3 10:00 전)</div></li>
+      <li><span class="tag t-done">DONE</span><div>구현 B1 — 디자인 시스템 v1.0 · 구현 규약 v1.0 · 제출 게이트 체계<div class="sub">디자인 토큰은 <code>make_figures.py</code> 실상수 역추출(제출 PDF와 어긋나지 않는 것이 일관성 20점) · 실격 방어를 자동 게이트 G1~G4(빌드 차단)+수동 M1~M3로 분리 · 발견: 포지션 4색=결과 3색 동일값 → 형태 분리로 해결, features_v1 재생성 필요</div></div></li>
+      <li><span class="tag t-progress">NOW</span><div>구현 B2~B5 — 스캐폴드·데이터층 → 모델 계약 동결(기준선) → 전술보드 → 예측 엔진 → <b>P0 1차 배포</b></div></li>
+      <li><span class="tag t-todo">TODO</span><div>구현 B6~B7 — GBDT 업그레이드 + 리플레이(F09~F12) → 공유(F13~F16)</div></li>
+      <li><span class="tag t-todo">TODO</span><div>B8 QA·실기기·시연영상·문서 v1.1 일괄 버전업 → B9 저장소 동결 (8/2 밤 목표)</div></li>
     </ul>
   </section>
 
   <section>
     <h2>📂 작업 로그</h2>
     <ul>
+      <li><span class="tag t-done">07-27</span><div><a href="log/2026-07-27-design-system-gates.html">B1 디자인 시스템 · 제출 게이트 명세 (구현 1/9)</a><div class="sub">DESIGN.md v1.0(토큰 역추출·피치 기하·4-3-3 좌표·컴포넌트 12종·WCAG 2.5.7) · 구현 규약 v1.0(impl/ 신설 — features 무수정·Zustand 2슬라이스·조정 계층 7단계) · 제출-게이트(G1~G4 빌드 차단 + M1~M3 + 8/3 동결 절차) · 발견 5건: 포지션↔결과 색 동일값, features_v1 부재, 포지션 색맹 미전달, --text-4 대비 미달, <b>스쿼시 머지도 커밋</b></div></div></li>
       <li><span class="tag t-done">07-26</span><div><a href="log/2026-07-26-proposal-v2-rewrite.html">기획서 v2.0 전면 개작 — 서비스명·문체·시각자료</a><div class="sub">사용자 피드백 4건 전량 반영 · 「만약의 감독」→ <b>RE:FORMATION</b> · 16절 서술형 재작성(메타 구조 제거) · make_figures.py 신설로 렌더 그림 14종(분석 실측 7·산식 2·디자인 자산 5) · mermaid 9종 · xeCJK 공백 삼킴·표 열 폭 조판 이슈 해소 · 21p PDF</div></div></li>
       <li><span class="tag t-done">07-26</span><div><a href="log/2026-07-26-typeset-pdf.html">기획서 조판·PDF·최종 검수 (조판 블록 작업 4·5)</a><div class="sub">Pandoc+XeLaTeX+Pretendard+mermaid-cli 파이프라인(dev/typeset/) · 18p PDF · mermaid 5+Elo 궤적 삽입 · 실명/비하/0.127/FIFA IP 전수 검수 통과 · 디자인 그래픽 10건 [그래픽 자리] · PR #24</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-proposal-c2-sync.html">원고 9·10절 c2 동기화 (조판 블록 작업 2·3)</a><div class="sub">10절 Elo A매치 확장 서술·다이어그램 입력 분리·한계 고지 개정(신생팀 1500·승계 미연결)·궤적 그림 조판 태그 / 9절 martj42 CC0 2차 출처·DATA-LICENSE 정합 · PR #22</div></div></li>
@@ -86,8 +89,9 @@
   <section>
     <h2>⚠️ 리스크 워치</h2>
     <ul>
-      <li><span class="tag t-progress">WATCH</span><div>실격 직결 규칙 3종 상시 관리<div class="sub">① 8/3 10:00 이후 커밋 금지 ② 라이선스(가공명·FIFA IP·CC BY-SA 분리 고지) ③ 비하 금지 카피 단위 검수</div></div></li>
-      <li><span class="tag t-todo">HOLD</span><div>W2 검증 리서치 5건(P13~P17) 비블로킹 대기<div class="sub">원고·구현 착수 시 자체 리서치로 묶음 발주</div></div></li>
+      <li><span class="tag t-progress">WATCH</span><div>실격 직결 규칙 — 절차화 완료 (<a href="../../docs/제출-게이트.md">제출-게이트.md</a>)<div class="sub">① 8/3 10:00 이후 커밋 <b>및 PR 머지</b> 금지 — 스쿼시 머지도 새 커밋이므로 8/2에 열린 PR 전량 종료 ② 라이선스 G3 자동 검사 ③ 비하 금지 M1 — 고위험 3표면(경기 카드 카피·개입 비교·공유 카드 제목) 개별 검수</div></div></li>
+      <li><span class="tag t-progress">WATCH</span><div>일정 — 7일에 F01~F16 전량 + 노트북 03~09 + QA + 시연영상<div class="sub">강등 트리거 4개 배치: 7/29 P0 배포 미달→GBDT 포기 · 7/31→F11 축소 · 8/1→OG 정적 고정 · 8/2 정오→신규 기능 중단. <b>P0(F01~F08) 수용 기준은 어떤 트리거에서도 불가침</b></div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>B3 선결 — features_v1.parquet 재생성 (<code>02_fe.py</code> 재실행)<div class="sub"><code>data/</code>가 gitignore·워크트리 미이동으로 디스크에 없음. 원본 입력은 전부 존재</div></div></li>
     </ul>
   </section>
 
