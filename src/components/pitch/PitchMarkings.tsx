@@ -20,9 +20,19 @@ export function PitchMarkings() {
   return (
     <g
       fill="none"
-      stroke="#FFFFFF"
-      strokeOpacity={lineOpacity}
       strokeWidth={lineWidth}
+      /**
+       * 라인 색·불투명도가 토큰인 이유 — 다크와 라이트가 **둘 다 동결 그림에 있다**
+       *
+       * 다크: f00 표지·f13 공유 카드의 `draw_pitch` 기본값 (흰 라인 alpha 0.55)
+       * 라이트: f10 와이어프레임의 `draw_board` (바탕 `#F7FAF8` + `GREEN` 라인 alpha 0.8)
+       *
+       * `lineOpacity`는 다크값이자 토큰이 없을 때의 폴백입니다.
+       */
+      style={{
+        stroke: 'var(--color-pitch-line)',
+        strokeOpacity: `var(--pitch-line-opacity, ${lineOpacity})`,
+      }}
       // 마킹은 장식이다 — 정보는 토큰·라벨이 전달하므로 보조기술에서 숨긴다
       aria-hidden="true"
     >

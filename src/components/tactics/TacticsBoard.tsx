@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pitch } from '@/components/pitch/Pitch';
-import { PredictionPanel } from '@/components/prediction/PredictionPanel';
+import { PredictionDetails, PredictionDock } from '@/components/prediction/PredictionPanel';
 import { FormationPicker } from '@/components/tactics/FormationPicker';
 import { SliderSheet } from '@/components/tactics/SliderSheet';
 import { formations, getFormation, koreaSquad } from '@/lib/data';
@@ -461,8 +461,8 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
   const selectedPlayer = selectedTokenIndex === null ? null : squad[selectedTokenIndex];
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
-      <div className="flex min-w-0 flex-col items-center gap-2 lg:basis-2/3">
+    <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+      <div className="flex min-w-0 flex-col items-center gap-3 lg:basis-2/3">
         <Pitch
           frameRef={frameRef}
           positions={renderPositions}
@@ -497,29 +497,34 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
         </p>
       </div>
 
-      <div className="flex min-w-0 flex-col gap-4 lg:basis-1/3">
-        {/* 엔진 배선은 패널 안으로 내려갔다 — 드래그 상태 변화가 예측 패널을
-            리렌더시키지 않게 하기 위해서다 (F05 impl §2) */}
-        <PredictionPanel opponentName={opponentName} />
+      {/*
+        오른쪽(모바일에서는 피치 아래) — 조작 → 예측 상세 → 요약 도크 순.
 
-        <section className="rounded-lg border border-line bg-surface p-4">
-          <h2 className="mb-3 text-[15px] font-semibold">전술 슬라이더</h2>
-          <SliderSheet sliders={sliders} onChange={handleSliderChange} />
+        카드 래퍼(`rounded-lg border bg-surface p-4`)를 걷어냈습니다. 같은 규격의 카드를
+        세 번 반복하면 셋 다 같은 무게가 되어 위계가 사라집니다. 대신 `.control-group`이
+        구분선과 간격만으로 묶습니다.
+
+        도크가 **이 열의 마지막**인 것이 중요합니다 — `sticky bottom-0`은 부모가 화면에
+        걸쳐 있는 동안만 붙어 있으므로, 슬라이더·상세를 스크롤하는 내내 확률이 남습니다.
+      */}
+      <div className="flex min-w-0 flex-col lg:basis-1/3">
+        <section className="control-group">
+          <h2 className="mb-3 text-[15px] font-semibold">전술</h2>
+          <FormationPicker
+            formations={formations}
+            value={formationId}
+            onChange={handleFormationChange}
+          />
+          <div className="mt-4">
+            <SliderSheet sliders={sliders} onChange={handleSliderChange} />
+          </div>
         </section>
 
-        {/* 점진적 공개 — 첫 화면은 피치·슬라이더·예측 패널로 제한 (F08 §3) */}
-        <details className="rounded-lg border border-line bg-surface p-4">
-          <summary className="min-h-11 cursor-pointer text-[15px] font-semibold">
-            포메이션 프리셋
-          </summary>
-          <div className="mt-3">
-            <FormationPicker
-              formations={formations}
-              value={formationId}
-              onChange={handleFormationChange}
-            />
-          </div>
-        </details>
+        <div className="control-group">
+          <PredictionDetails />
+        </div>
+
+        <PredictionDock opponentName={opponentName} />
       </div>
     </div>
   );

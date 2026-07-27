@@ -19,6 +19,10 @@ function vy(y: number): number {
  *
  * `tier === 'lines'`는 저성능 강등 상태(F04-R5)입니다. 음영·화살표를 끄고 선만 남기되
  * **슬라이더 값 자체는 전혀 건드리지 않습니다** — "효과 축소, 값은 보존".
+ *
+ * 오버레이 색이 `--color-brand-lit`이 아니라 `--color-pitch-accent`인 이유: 라이트 모드의
+ * 피치는 f10 와이어프레임대로 밝은 바탕(`#F7FAF8`)이라, 그 위에 `#7FB3E0`을 0.5~0.75
+ * 불투명도로 얹으면 거의 보이지 않습니다. 피치 위 강조는 바탕 밝기를 따라가야 합니다.
  */
 export function TacticsPreview({ geometry, tier }: TacticsPreviewProps) {
   const { lineY, pressBand, widthGuides, arrowCount } = geometry;
@@ -35,7 +39,7 @@ export function TacticsPreview({ geometry, tier }: TacticsPreviewProps) {
           y={bandTop}
           width={PITCH_VIEWBOX.width}
           height={bandHeight}
-          fill="var(--color-brand-lit)"
+          fill="var(--color-pitch-accent)"
           opacity={pressBand.opacity}
         />
       )}
@@ -46,7 +50,7 @@ export function TacticsPreview({ geometry, tier }: TacticsPreviewProps) {
         y1={vy(lineY)}
         x2={PITCH_VIEWBOX.width - 2}
         y2={vy(lineY)}
-        stroke="var(--color-brand-lit)"
+        stroke="var(--color-pitch-accent)"
         strokeWidth={1}
         strokeDasharray="4 3"
         opacity={0.75}
@@ -60,7 +64,7 @@ export function TacticsPreview({ geometry, tier }: TacticsPreviewProps) {
           y1={vy(lineY)}
           x2={x * PITCH_VIEWBOX.width}
           y2={vy(0.95)}
-          stroke="var(--color-brand-lit)"
+          stroke="var(--color-pitch-accent)"
           strokeWidth={0.8}
           strokeDasharray="3 4"
           opacity={0.5}
@@ -76,7 +80,7 @@ export function TacticsPreview({ geometry, tier }: TacticsPreviewProps) {
             <path
               key={index}
               d={`M ${x} ${base} l 0 -7 m -2.4 2.4 l 2.4 -2.4 l 2.4 2.4`}
-              stroke="var(--color-brand-lit)"
+              stroke="var(--color-pitch-accent)"
               strokeWidth={0.9}
               fill="none"
               opacity={0.55}

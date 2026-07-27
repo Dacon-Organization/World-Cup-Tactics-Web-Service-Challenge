@@ -70,7 +70,7 @@ export function HopsPlayer({ frames }: HopsPlayerProps) {
     <section className="mt-4 border-t border-line pt-3" aria-label="개별 시뮬레이션 보기">
       <div className="flex items-center justify-between gap-3">
         <p className="text-[13px] text-text-3">
-          개별 시뮬레이션 결과를 하나씩 보여 줍니다. 확률 요약은 위 표에 있습니다.
+          개별 시뮬레이션 결과를 하나씩 보여 줍니다. 확률 요약은 예측 막대에 있습니다.
         </p>
       </div>
 
@@ -100,7 +100,9 @@ export function HopsPlayer({ frames }: HopsPlayerProps) {
           </button>
         )}
 
-        <span className="text-[13px] text-text-4 tabular-nums">
+        {/* `--text-4`는 고지문 전용 계단입니다 (DESIGN.md §1.1) — 프레임 번호는 읽어야
+            하는 정보라 메타 계단으로 올립니다 */}
+        <span className="text-[13px] text-text-3 tabular-nums">
           {(index % frames.length) + 1} / {frames.length}
         </span>
       </div>

@@ -37,9 +37,16 @@
  *
  * 이 값들은 창작물이 아니라 제출된 기획서 그림(f13·f10)에서 역추출한 것이다.
  * 값을 바꾸려면 DESIGN.md가 아니라 dev/typeset/make_figures.py 원본을 먼저 본다.
+ *
+ * ## 다크가 기본값인 이유 (B6 디자인 재설계)
+ *
+ * 기획서 PDF는 **본문이 라이트, 브랜드 그림 2종(f00 표지·f13 공유 카드)이 다크**입니다.
+ * 서비스의 첫 화면이 대조되는 대상은 후자이므로 기본값을 다크로 둡니다. 라이트는
+ * `:root[data-theme='light']` 오버라이드로만 존재하며, **이 블록의 어떤 값도
+ * 라이트에서 재정의되지 않는 것**(결과 3색·포지션 4색·브랜드 2색)이 동결 팔레트입니다.
  * ------------------------------------------------------------------------- */
 @theme {
-  /* 서피스·텍스트 (다크 단일 — 라이트 모드 없음, DESIGN.md §7) */
+  /* 서피스·텍스트 — 다크 기본값 (라이트는 아래 오버라이드 블록) */
   --color-bg: #10161f;
   --color-surface: #1a2028;
   --color-surface-raised: #232b35;
@@ -61,8 +68,9 @@
   --color-draw: #c98a21;
   --color-lose: #b0413e;
 
-  /* 포지션 4색 — 결과 3색과 값이 같다. 오류가 아니라 제출된 상태이며,
-     색이 아니라 형태(원 vs 모난 사각)로 분리한다 (DESIGN.md §1.4) */
+  /* 포지션 4색 — 결과 3색과 값이 같다. 오류가 아니라 제출된 상태다 (DESIGN.md §1.4).
+     확률 배열이 f12 원본 부호화(1색 + 중립)로 돌아가면서 **한 화면에 결과색이 하나만
+     존재**하게 됐으므로, 이제 색이 겹쳐도 두 의미가 같은 자리에서 만나지 않는다. */
   --color-pos-gk: #c98a21;
   --color-pos-df: #1f4e79;
   --color-pos-mf: #2e7d5b;
@@ -73,15 +81,79 @@
   --color-warn: #c98a21;
   --color-disabled: #55636f;
 
+  /* ---------------------------------------------------------------------------
+   * 모드 의존 파생색 — "밝은 배경 위에서도 읽히는가"가 갈리는 것들만 따로 뽑았다.
+   *
+   * `--color-brand-lit`(#7FB3E0)은 흰 배경에서 대비 2.23:1이라 라이트에서 텍스트·
+   * 포커스 링·진행률 채움으로 쓸 수 없다. 그래서 "강조"라는 **역할**에 이름을 주고
+   * 모드마다 두 동결 브랜드색 중 맞는 쪽을 물린다 — 값을 새로 만들지 않는다.
+   * ------------------------------------------------------------------------- */
+  --color-accent: #7fb3e0;
+
+  /* 피치 — 다크는 f00·f13(어두운 바탕 + 흰 라인),
+     라이트는 f10 와이어프레임 보드(`facecolor="#F7FAF8"` + GREEN 라인)를 그대로 쓴다.
+     두 상태가 전부 동결 그림 안에 있으므로 라이트 피치도 창작이 아니라 역추출이다. */
+  --color-pitch: #14202a;
+  --color-pitch-line: #ffffff;
+  --pitch-line-opacity: 0.55;
+  --color-pitch-accent: #7fb3e0;
+  --color-token-bg: #232b35;
+
+  /* 확률 배열의 "일어나지 않은 100 - n번" — f12의 `GRID` 자리 */
+  --color-neutral: #2a3442;
+
   --font-sans: 'RF Sans', -apple-system, 'Malgun Gothic', sans-serif;
 
   /* 모션 — DESIGN.md §5 지연 예산표와 1:1 */
   --ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* ---------------------------------------------------------------------------
+ * 라이트 모드 오버라이드
+ *
+ * 출처: `make_figures.py:38~48`의 라이트 상수(`INK`·`SOFT`·`GRID`) — f01~f12 열두 그림이
+ * 이 위에 그려져 있다. 다만 `GREY #98A2B3`는 흰 배경 대비 **2.58:1**로 본문 기준(4.5:1)에
+ * 미달해 그대로 쓰지 않는다. 원 그림에서 주석선·화살표용이지 본문색이 아니기 때문이다.
+ *
+ * 텍스트 4계단은 다크 램프의 색상(파란빛 회색)을 유지한 채 **4단 전부 4.5:1을 넘도록
+ * 계산해서** 잡았다 — bg #EEF1F5 기준 6.60 / 5.42 / 4.60, surface #FFFFFF 기준
+ * 7.47 / 6.14 / 5.21 (`text`는 14.89 / 16.87).
+ *
+ * 결과 3색·포지션 4색·브랜드 2색은 **여기서 재정의하지 않는다** — 동결 팔레트다.
+ * ------------------------------------------------------------------------- */
+:root[data-theme='light'] {
+  --color-bg: #eef1f5;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-track: #d8dee7;
+  --color-line: #d8dee7;
+
+  --color-text: #1a1d24;
+  --color-text-2: #4b5663;
+  --color-text-3: #57636f;
+  --color-text-4: #616e7c;
+
+  --color-focus: #1f4e79;
+  --color-disabled: #7b8796;
+
+  --color-accent: #1f4e79;
+
+  --color-pitch: #f7faf8;
+  --color-pitch-line: #2e7d5b;
+  --pitch-line-opacity: 0.8;
+  --color-pitch-accent: #1f4e79;
+  --color-token-bg: #ffffff;
+
+  --color-neutral: #d8dee7;
+}
+
 @layer base {
   html {
     color-scheme: dark;
+  }
+
+  html[data-theme='light'] {
+    color-scheme: light;
   }
 
   body {
@@ -121,7 +193,7 @@
     width: 100%;
     max-width: calc(56dvh * 2 / 3);
     aspect-ratio: 100 / 150;
-    background-color: #14202a;
+    background-color: var(--color-pitch);
     border: 1px solid var(--color-line);
     border-radius: 8px;
     overflow: hidden;
@@ -149,7 +221,12 @@
     border-radius: 9999px;
     border-width: 3px;
     border-style: solid;
-    background-color: var(--color-surface-raised);
+    background-color: var(--color-token-bg);
+    /* 라이트 피치(#F7FAF8) 위에서는 흰 토큰과 바탕의 대비가 1.03:1이라 **원 자체가
+       사라집니다.** 포지션 링 색만으로는 GK 앰버가 2.9:1이라 형태를 보장하지 못하므로,
+       색상과 무관하게 토큰 경계를 만드는 그림자를 겁니다 — 포지션 색은 그대로 두고
+       "토큰이 거기 있다"만 별도 채널로 보장하는 것입니다 (WCAG 1.4.11). */
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text) 22%, transparent);
 
     font-size: 15px;
     font-weight: 700;
@@ -197,10 +274,16 @@
     cursor: pointer;
   }
 
+  /* WebKit·Blink에는 `::-moz-range-progress`에 해당하는 의사요소가 없어서, 지금까지
+     **크롬·사파리에서는 채움이 아예 그려지지 않았습니다** (DESIGN.md §4는 "채움 --brand"를
+     규정합니다). 컴포넌트가 현재 값을 `--fill`로 내려 주면 그라디언트로 같은 그림을 만듭니다.
+     값이 없을 때도 트랙은 정상이므로 SSR·JS 실패에 안전합니다. */
   .tactic-slider::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 3px;
-    background: var(--color-track);
+    background:
+      linear-gradient(var(--color-brand), var(--color-brand)) 0 / var(--fill, 0%) 100% no-repeat,
+      var(--color-track);
   }
 
   .tactic-slider::-moz-range-track {
@@ -215,6 +298,8 @@
     background: var(--color-brand);
   }
 
+  /* 노브 테두리는 서피스색입니다 — 라이트에서 노브(`--color-accent` = #1F4E79)와 채움
+     (`--color-brand` = 같은 값)이 겹쳐 노브가 채움에 녹아 사라지는 것을 막습니다. */
   .tactic-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -222,7 +307,8 @@
     height: 14px;
     margin-top: -4px;
     border-radius: 9999px;
-    background: var(--color-brand-lit);
+    background: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-surface);
   }
 
   .tactic-slider::-moz-range-thumb {
@@ -230,7 +316,97 @@
     height: 14px;
     border: none;
     border-radius: 9999px;
-    background: var(--color-brand-lit);
+    background: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-surface);
+  }
+
+  /* ---------------------------------------------------------------------------
+   * 확률 도크 — "예측 패널 (하단 고정)"의 구현체
+   *
+   * 화면흐름 v1.0의 S1 모바일 골격과 f10 와이어프레임이 예측 패널을 **하단 고정**으로
+   * 정해 뒀는데 구현이 세로로 쌓기만 해서, 슬라이더를 만지는 동안 확률이 화면 밖으로
+   * 나가 있었습니다(실측: 첫 슬라이더 top 1505px, 확률 바 638px). 조작과 피드백이 같은
+   * 화면에 없으면 "실시간 반응"은 지각되지 않습니다 — U4 심사 시나리오 2단계의 전제입니다.
+   *
+   * 높이를 고정하지 않고 내용으로 두되 **값이 바뀌어도 줄 수가 변하지 않는 구성**
+   * (한 줄 요약 + 고정 높이 막대)이라 CLS가 생기지 않습니다 (DESIGN.md §3.2).
+   *
+   * `lg`에서는 2열 레이아웃이라 고정이 필요 없어 해제합니다.
+   * ------------------------------------------------------------------------- */
+  .prob-dock {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    margin-top: 24px;
+    /* 페이지 좌우 여백(16px)을 상쇄해 화면 폭을 꽉 채운다 — 안쪽 여백으로 되돌려
+       내용은 다른 영역과 같은 세로선에 맞춘다 */
+    margin-inline: -16px;
+    padding: 12px 16px 0;
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-line);
+    /* 홈 인디케이터가 있는 기기에서 막대가 가려지지 않게 한다 */
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  @media (width >= 64rem) {
+    .prob-dock {
+      position: static;
+      margin-inline: 0;
+      padding: 24px 0 0;
+      background-color: transparent;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+   * 세그먼트 컨트롤 — 포메이션 프리셋
+   *
+   * `<details>` 아코디언을 대체합니다. 프리셋은 4개뿐이고 서로 배타적이라, 펼침 상태를
+   * 기억해야 하는 아코디언보다 **한 줄에 전부 보이는 세그먼트**가 조작 수를 줄입니다.
+   * ------------------------------------------------------------------------- */
+  .segmented {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 8px;
+    background-color: var(--color-track);
+  }
+
+  /* 활성 표시를 `[data-active]`로 받는 이유 — 이 컨트롤은 자리에 따라 `<label>`(라디오
+     그룹)이기도 하고 `<button>`이기도 합니다. 상태 속성을 하나로 두면 두 마크업이 같은
+     스타일을 공유합니다. 실제 선택 상태는 각각 `:checked`와 `aria-pressed`가 들고 있고,
+     이 속성은 **표현 전용**입니다. */
+  .segment {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-2);
+    cursor: pointer;
+  }
+
+  .segment[data-active='true'] {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+  }
+
+  /* 라디오는 `sr-only`라 포커스 링이 자기 자신에게 걸립니다 — 보이는 것은 label이므로
+     label로 옮깁니다. 그러지 않으면 키보드 사용자에게 포커스가 보이지 않습니다. */
+  .segment:has(:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* 조작 그룹 — 카드 크롬(배경·테두리·반지름) 없이 구분선만으로 묶는다.
+     같은 규격의 카드를 세 번 반복하면 위계가 0이 되는 것이 재설계의 출발점이었다. */
+  .control-group + .control-group {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-line);
   }
 }
 
