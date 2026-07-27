@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B4 P0 전술보드 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  code { background: rgba(255,255,255,.06); padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 8px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>B4 — P0 전술보드 (구현 블록 4/9)</h1>
+  <div class="meta">
+    📅 <b>2026-07-27 (KST)</b> · 🌿 <b>claude/b4-tactics-board-impl-e55111</b> ·
+    F01·F02·F03·F04·F08 · <b>게이트 3종 + ONNX 정합 + 테스트 82건 + 타입 + 빌드 전부 통과</b>
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b>구현 명세 5건</b> — <code>impl/version1.0/F0{1,2,3,4,8}_*_impl.md</code><div class="sub">구현규약 §0의 7섹션 템플릿. <b>섹션 5(실패 경로)</b>에 features의 IF-THEN을 1:1로 대응시켜, 정상 경로만 만들고 넘어가는 것을 문서 구조로 막음. features v1.0은 수정하지 않음(작업 중 버전업 금지)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b><code>src/lib/tactics/adjust.ts</code></b> — B3 파이썬 참조 구현 이식 (7단계 순서 보존)<div class="sub">972건 대조 <b>최대 오차 4.98e-11 ≤ 1e-9</b>. 기본 상태 항등(FT-R3)은 <b>비트 단위로 정확</b>. 무승부 몫 채널(<code>blend.ts</code>)까지 포함 — 템포가 확률에 도달하는 유일한 경로</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>F01 자체 SVG 피치 + 프리셋 4종</b><div class="sub">DESIGN.md §3.3 비율을 viewBox 100×150으로 환산 · 외부 피치 에셋 0개 · 토큰 = 가공명 성 1음절 + 포지션 색상 링. 토큰은 <b>SVG가 아니라 HTML</b>이라 SVG가 실패해도 배치가 남고(F01-R5), 44px 터치 타겟이 뷰포트와 무관하게 보장됨</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>F02 Pointer Events 드래그</b> — P19 체크리스트 8항 전량 반영<div class="sub"><code>touch-action:none</code>은 <b>토큰에만</b>(실측: frame·body 모두 <code>auto</code> 유지 → 확대 살아 있음) · CSS 정적 선언 · <code>setPointerCapture</code> try/catch · 드롭존 <b>좌표 근접 판정</b>(캡처 중 pointerenter 미발화) · <code>isPrimary</code> 멀티터치 차단 · <code>pointercancel</code> = R6 구현체 · long-press 미도입 · 마우스 핸들러 병용 없음</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>F03 클릭-클릭 + 키보드</b> (Tab→Space→방향키 2%→Enter/Esc)<div class="sub">F02와 <b>같은 <code>resolveDrop</code></b>으로 수렴시켜 "두 경로의 결과 상태 동일"을 함수 공유로 보장. 토큰이 <code>&lt;button&gt;</code>이라 Tab 순회·<code>aria-pressed</code>가 표준으로 따라옴. <b>WCAG 2.5.7은 AA이고 F02 단독은 미달</b>(P19 Q4)이므로 같은 블록에서 완결</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>F04 슬라이더 4종</b> — 감독 용어 + 질적 라벨 병기, 즉시 프리뷰 + 160ms debounce<div class="sub">네이티브 <code>&lt;input type=range&gt;</code>(키보드·스크린리더·트랙 이탈 확정이 공짜) · 히트 44px / 시각 트랙 6px 분리 · 프리뷰는 <b>모델이 실제로 보는 결합 z</b>(슬라이더 ½ + 배치 ½)를 그림 · <code>generation</code> 카운터로 구식 결과 폐기 배선(F04-R4)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>F08 SSR 기본 상태</b> — 첫 페인트에 이미 확률<div class="sub"><b>빌드 산출 HTML에서 실측 확인</b>: 세그먼트 폭 <code>48.9686% / 29.9343% / 21.0971%</code> = <code>defaults.precomputed</code>. 스켈레톤 코드 0줄 — "로딩 중"이 존재하지 않는 것이 구현. <code>&lt;noscript&gt;</code> 안내 + 헤더·푸터는 Server Component라 클라이언트 예외가 지울 수 없음</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>테스트 82건</b> (기존 20 → 82) · 순수 함수 커버리지 중심<div class="sub">조정 계층 정합·불변식 15 · 기하/스냅/키보드/프리뷰/스케줄러 38 · F08 기본 상태 9 · 기존 데이터·스토어 20</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 이 블록에서 발견한 것</h2>
+    <ul>
+      <li><span class="tag t-blocked">발견·해소</span><div><b>B3 산출물이 서로 어긋나 있었다 — 조정 계수 정밀도</b><div class="sub">03장이 <code>K_ADJ</code>를 <b>전체 정밀도</b>로 들고 픽스처·민감도를 돌면서 <code>score-params.json</code>에는 <code>round(v, 8)</code>로 실었다. 배포된 앱은 JSON 값밖에 못 쓰므로 <b>1e-9 재현이 원천 불가능</b>했다(최대 오차 Δ_eff <b>1.88e-6</b>).<br>
+      <b>원인 확정 증거</b>: 템포는 λ 비율을 안 바꾸는데 양쪽 λ가 <b>정확히 같은 비율 −4.467491e-9</b>로 어긋났고, 이는 <code>deltaTempo = ln(1.3) = 0.2623642644674911</code>을 <code>0.26236426</code>으로 실은 차이와 <b>소수점까지 일치</b>한다.<br>
+      <b>수정</b>: ① 노트북에서 <code>K_ADJ</code>를 정의 시점에 8자리로 굳혀 06장 재실행 시 재발 차단 ② <code>scripts/verify/adjust-fixture.py</code>로 픽스처를 <b>배포 상수 기준</b> 재생성. → 최대 오차 <b>4.98e-11</b>(픽스처 10자리 저장 한계)</div></div></li>
+      <li><span class="tag t-blocked">발견·해소</span><div><b>키보드 이동이 스냅 자석에 갇혀 아무 일도 안 일어났다</b> — 브라우저 실측<div class="sub">방향키 1회는 <b>2%</b>인데 스냅 반경은 <b>8%</b>(피치 높이 단위)라, 홈 슬롯이 후보로 남으면 3번까지 누른 이동이 전부 제자리로 끌려왔다(실측: 2칸=4% → Enter → 원위치, 6칸=12%부터 커밋). F03 GWT "Enter <b>Then 이동이 완료되고</b>"가 짧은 이동에서 성립하지 않아 <b>WCAG 2.5.7 대안 경로가 형식적으로만 존재</b>하게 된다.<br>
+      <b>수정</b>: 키보드 경로만 자기 홈 슬롯을 스냅 후보에서 제외. 드래그는 손가락이 크게 움직여 "잘못 건드린 드래그를 되돌리는" 이득이 크므로 그대로 둠</div></div></li>
+      <li><span class="tag t-progress">기록</span><div><b>구현규약 §5의 <code>AdjustInput</code>으로는 참조 구현을 재현할 수 없다</b><div class="sub">문서의 <code>roles</code> 하나로는 부족 — 적합도 페널티는 <b>슬롯 역할과 선수 포지션의 차이</b>를, 배치 파생 지표는 <b>프리셋 기준 배치</b>를 원점으로 쓴다. <code>slotRoles</code>+<code>playerRoles</code>+<code>presetSlots</code> 3입력으로 확장(변경노트 적재)</div></div></li>
+      <li><span class="tag t-progress">기록</span><div><b>vitest가 <code>.tsx</code>를 파싱하지 못한다</b> (<code>jsx: preserve</code>)<div class="sub">순수 함수를 컴포넌트 파일에 두면 테스트할 수 없다 → <code>lib/prediction/shares.ts</code>로 분리. 결과적으로 §1 디렉터리 구조와도 더 맞음</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📊 검증 실측</h2>
+    <table>
+      <tr><th>항목</th><th>값</th><th>기준</th><th>판정</th></tr>
+      <tr><td>조정 계층 JS ↔ Python (972건)</td><td>4.98e-11</td><td>≤ 1e-9</td><td>충족</td></tr>
+      <tr><td>기본 상태 항등 (FT-R3)</td><td>비트 단위 일치</td><td>오차 0</td><td>충족</td></tr>
+      <tr><td>ONNX 정합 (ORT-Web)</td><td>9.016e-8</td><td>≤ 1e-4</td><td>충족</td></tr>
+      <tr><td>제출 게이트 G1·G2·G3</td><td>3/3</td><td>전부</td><td>충족</td></tr>
+      <tr><td>테스트</td><td>82건 통과</td><td>전부</td><td>충족</td></tr>
+      <tr><td><code>tsc --noEmit</code> · <code>next build</code></td><td>오류 0 · 경고 0</td><td>—</td><td>충족</td></tr>
+      <tr><td>SSR HTML 확률 (F08-R1)</td><td>48.9686 / 29.9343 / 21.0971 %</td><td>= precomputed</td><td>충족</td></tr>
+      <tr><td>토큰 터치 타겟</td><td>44px (375·280 양쪽)</td><td>≥ 44px</td><td>충족</td></tr>
+      <tr><td>피치 종횡비 (레터박스)</td><td>0.6667</td><td>= 100/150</td><td>충족</td></tr>
+      <tr><td><code>touch-action</code> 범위</td><td>토큰 none · frame/body auto</td><td>토큰 한정</td><td>충족</td></tr>
+      <tr><td>가로 스크롤 (375 / 280px)</td><td>없음 / 없음</td><td>0</td><td>충족</td></tr>
+      <tr><td>콘솔 에러</td><td>0건</td><td>0</td><td>충족</td></tr>
+      <tr><td>First Load JS</td><td>132 kB</td><td>—</td><td>참고</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>⚠️ 이 블록에서 못 한 것 (의도적 · 다음 블록 인계)</h2>
+    <ul>
+      <li><span class="tag t-todo">B5</span><div><b>F04 GWT "4종 각각 조작 시 확률이 변한다"는 B4에서 미충족</b><div class="sub">확률을 갱신할 Worker(F05·F06)가 B5 범위라, B4의 확률은 <code>defaults.precomputed</code>에 고정된다. B4는 대신 <b>조정 계층 단위 테스트</b>로 4종 각각이 Δ_eff 또는 λ 합을 움직인다는 것까지 보장했다. 인계 지점은 <code>predictionStore.context</code></div></div></li>
+      <li><span class="tag t-todo">B5</span><div>F08-R3(모델 로드 완료 시 무단절 교체) — 교체하는 쪽<div class="sub">교체당하는 쪽(SSR 사전 계산값)은 완료. 값이 같아 화면 변화가 0인 구조까지 만들어 둠</div></div></li>
+      <li><span class="tag t-todo">B7</span><div>F08-R6(공유 URL 상태 우선) — F13 범위. <code>page.tsx</code>가 아직 <code>searchParams</code>를 읽지 않는다</div></li>
+      <li><span class="tag t-todo">B8</span><div><b>프리뷰 ≤100ms 실측 미완</b><div class="sub">브라우저 창이 숨겨진 상태라 타이머가 ~1s로 스로틀되어 <b>지연을 측정할 수 없었다</b>. "4종 전부 프리뷰가 바뀐다"는 확인했으나 <b>예산 충족 여부는 미확인</b> — B8 실기기 항목</div></div></li>
+      <li><span class="tag t-todo">B8</span><div>iOS Safari 실기기 — <code>pointercancel</code> 발화 타이밍(회전·전화 수신·앱 전환) · 토큰 위 드래그와 피치 여백 핀치 확대 공존 (P19 <code>[미확인 유지]</code>)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>▶️ 다음 (B5 — 예측 엔진)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>F05·F06·F07 구현 명세 작성 → 구현<div class="sub">Worker 계약(구현규약 §4)을 ML 설계 §6.1에서 변형 없이 이식. <code>Frame</code>·<code>Band</code> 타입은 이때 확정</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div><code>predictionStore.context</code>를 소비하는 Worker 배선 — <code>generation</code>으로 구식 결과 폐기</div></li>
+      <li><span class="tag t-todo">TODO</span><div><code>public/ort/</code> wasm 자체 호스팅 (외부 요청 0건 원칙)</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

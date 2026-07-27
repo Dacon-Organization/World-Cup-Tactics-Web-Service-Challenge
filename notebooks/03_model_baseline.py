@@ -918,7 +918,11 @@ for key in BISECT_KEYS:
     gains[key] = 0.5 * (lo + hi)
     assert gains[key] < BISECT_HI * 0.99, f"{key} 이득이 탐색 상한에 붙음 — 밴드 도달 불가, 설계 재검 필요"
 
-K_ADJ = constants(gains)
+# **배포 정밀도로 먼저 굳힌다** — §10이 score-params.json 에 8자리로 실으므로, 여기서
+# 반올림해 두지 않으면 민감도 분석·대조 픽스처는 전체 정밀도로 돌고 **배포된 앱만 8자리**를
+# 쓰게 됩니다. B4가 그 불일치를 실측했습니다 (JS 대조 최대 오차 Δ_eff 1.9e-6 · λ 상대 1.9e-8,
+# 허용 1e-9). 사유·증거는 scripts/verify/adjust-fixture.py 헤더.
+K_ADJ = {k: round(float(v), 8) for k, v in constants(gains).items()}
 K_ADJ["rhoPenalty"] = 0.06   # 포지션 이탈 1칸당 λ 6% — GK에 필드 플레이어(dist=3) 시 약 20%  [설계 결정]
 print("이득 g_k:", {k: round(v, 5) for k, v in gains.items()})
 print("확정 상수:")
