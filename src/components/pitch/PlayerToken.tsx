@@ -79,7 +79,8 @@ export function PlayerToken({
         ROLE_RING[slotRole],
         dragging ? 'z-30 scale-110 shadow-lg shadow-black/50' : 'z-10',
         selected ? 'z-20 scale-110 ring-2 ring-focus ring-offset-2 ring-offset-bg' : '',
-        snapping ? 'outline-2 outline-offset-2 outline-brand-lit' : '',
+        // 피치 위에 그려지므로 브랜드색이 아니라 피치 강조색을 쓴다 (라이트 피치는 밝다)
+        snapping ? 'outline-2 outline-offset-2 outline-[var(--color-pitch-accent)]' : '',
       ]
         .filter(Boolean)
         .join(' ')}

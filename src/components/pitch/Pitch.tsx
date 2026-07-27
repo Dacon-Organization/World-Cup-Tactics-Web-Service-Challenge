@@ -96,7 +96,7 @@ export function Pitch({
             cy={(1 - snapSlot.y) * PITCH_VIEWBOX.height}
             r={6}
             fill="none"
-            stroke="var(--color-brand-lit)"
+            stroke="var(--color-pitch-accent)"
             strokeWidth={1.4}
             strokeDasharray="3 2"
           />

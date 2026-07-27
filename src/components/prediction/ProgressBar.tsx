@@ -37,15 +37,17 @@ export function ProgressBar({ progress }: ProgressBarProps) {
   return (
     <div className="mt-2">
       <div
-        className="h-1.5 overflow-hidden rounded-full bg-surface-raised"
+        className="h-1.5 overflow-hidden rounded-full bg-track"
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={progress.total}
         aria-valuenow={progress.done}
         aria-label="시뮬레이션 진행률"
       >
+        {/* 채움은 `--color-accent`다 — 라이트에서 `brand-lit`(#7FB3E0)은 흰 배경 대비
+            2.23:1이라 진행률 그래픽 기준 3:1을 못 넘긴다 (WCAG 1.4.11) */}
         <div
-          className="h-full bg-brand-lit"
+          className="h-full bg-accent"
           style={{ width: `${ratio * 100}%`, transition: 'width 120ms linear' }}
         />
       </div>

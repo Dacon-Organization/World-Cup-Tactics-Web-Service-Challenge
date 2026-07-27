@@ -22,9 +22,13 @@ const DETAIL: Record<EstimateReason, string> = {
 export function EstimateBadge({ reason }: EstimateBadgeProps) {
   return (
     <span
-      className="inline-flex items-center rounded-full border border-warn/60 px-2 py-0.5 text-[12px] font-semibold text-warn"
+      className="inline-flex items-center gap-1.5 rounded-full border border-warn/60 px-2 py-0.5 text-[12px] font-semibold text-text"
       title={reason ? DETAIL[reason] : undefined}
     >
+      {/* 글자를 `--warn`으로 칠하지 않는 이유: #C98A21은 흰 배경 대비 2.94:1이라 라이트에서
+          본문 기준(4.5:1)에 못 미칩니다. 색은 점과 테두리가 들고, 글자는 본문색을 씁니다 —
+          어차피 이 배지는 텍스트를 항상 동반하므로 의미 전달이 색에 걸려 있지 않습니다. */}
+      <span aria-hidden="true" className="size-1.5 rounded-full bg-warn" />
       간이 추정
     </span>
   );
