@@ -1,0 +1,45 @@
+[
+  {
+    "id": "cze",
+    "opponentId": "cze",
+    "round": 1,
+    "venue": "Estadio Akron",
+    "dateLocal": "2026-06-11",
+    "dateKst": "2026-06-12",
+    "scoreline": "2-1",
+    "events": [
+      { "minute": 59, "type": "goal", "team": "opp", "playerId": "cze-01" },
+      { "minute": 67, "type": "goal", "team": "kor", "playerId": "kor-18" },
+      { "minute": 80, "type": "goal", "team": "kor", "playerId": "kor-24" }
+    ],
+    "winProbTimeline": []
+  },
+  {
+    "id": "mex",
+    "opponentId": "mex",
+    "round": 2,
+    "venue": "Estadio Akron",
+    "dateLocal": "2026-06-18",
+    "dateKst": "2026-06-19",
+    "scoreline": "0-1",
+    "xg": { "kor": 0.69, "opp": 0.48, "source": "Opta" },
+    "events": [{ "minute": 50, "type": "goal", "team": "opp", "playerId": "mex-01" }],
+    "winProbTimeline": []
+  },
+  {
+    "id": "rsa",
+    "opponentId": "rsa",
+    "round": 3,
+    "venue": "Estadio BBVA",
+    "dateLocal": "2026-06-24",
+    "dateKst": "2026-06-25",
+    "scoreline": "0-1",
+    "xg": { "kor": 0.9, "opp": 1.16, "source": "Opta" },
+    "events": [
+      { "minute": 63, "type": "goal", "team": "opp", "playerId": "rsa-01" },
+      { "minute": 65, "type": "sub", "team": "kor", "playerId": "kor-10" },
+      { "minute": 65, "type": "sub", "team": "kor", "playerId": "kor-08" }
+    ],
+    "winProbTimeline": []
+  }
+]

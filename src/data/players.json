@@ -1,0 +1,374 @@
+{
+  "teams": [
+    {
+      "id": "kor",
+      "nameKo": "대한민국",
+      "flagCode": "kr"
+    },
+    {
+      "id": "cze",
+      "nameKo": "체코",
+      "flagCode": "cz"
+    },
+    {
+      "id": "mex",
+      "nameKo": "멕시코",
+      "flagCode": "mx"
+    },
+    {
+      "id": "rsa",
+      "nameKo": "남아프리카공화국",
+      "flagCode": "za"
+    }
+  ],
+  "players": [
+    {
+      "id": "kor-01",
+      "teamId": "kor",
+      "displayName": "홍태훈",
+      "position": "GK",
+      "profile": {
+        "attack": 13,
+        "defense": 77,
+        "stamina": 69,
+        "speed": 68
+      }
+    },
+    {
+      "id": "kor-02",
+      "teamId": "kor",
+      "displayName": "오동현",
+      "position": "GK",
+      "profile": {
+        "attack": 8,
+        "defense": 73,
+        "stamina": 62,
+        "speed": 57
+      }
+    },
+    {
+      "id": "kor-03",
+      "teamId": "kor",
+      "displayName": "심성환",
+      "position": "GK",
+      "profile": {
+        "attack": 16,
+        "defense": 80,
+        "stamina": 68,
+        "speed": 57
+      }
+    },
+    {
+      "id": "kor-04",
+      "teamId": "kor",
+      "displayName": "박훈정",
+      "position": "DF",
+      "profile": {
+        "attack": 49,
+        "defense": 75,
+        "stamina": 80,
+        "speed": 63
+      }
+    },
+    {
+      "id": "kor-05",
+      "teamId": "kor",
+      "displayName": "강효범",
+      "position": "DF",
+      "profile": {
+        "attack": 33,
+        "defense": 70,
+        "stamina": 68,
+        "speed": 76
+      }
+    },
+    {
+      "id": "kor-06",
+      "teamId": "kor",
+      "displayName": "나건호",
+      "position": "DF",
+      "profile": {
+        "attack": 34,
+        "defense": 82,
+        "stamina": 84,
+        "speed": 70
+      }
+    },
+    {
+      "id": "kor-07",
+      "teamId": "kor",
+      "displayName": "천건환",
+      "position": "DF",
+      "profile": {
+        "attack": 46,
+        "defense": 82,
+        "stamina": 74,
+        "speed": 82
+      }
+    },
+    {
+      "id": "kor-08",
+      "teamId": "kor",
+      "displayName": "현석범",
+      "position": "DF",
+      "profile": {
+        "attack": 41,
+        "defense": 82,
+        "stamina": 82,
+        "speed": 65
+      }
+    },
+    {
+      "id": "kor-09",
+      "teamId": "kor",
+      "displayName": "육태철",
+      "position": "DF",
+      "profile": {
+        "attack": 45,
+        "defense": 80,
+        "stamina": 68,
+        "speed": 63
+      }
+    },
+    {
+      "id": "kor-10",
+      "teamId": "kor",
+      "displayName": "전종석",
+      "position": "DF",
+      "profile": {
+        "attack": 51,
+        "defense": 75,
+        "stamina": 81,
+        "speed": 63
+      }
+    },
+    {
+      "id": "kor-11",
+      "teamId": "kor",
+      "displayName": "허태호",
+      "position": "DF",
+      "profile": {
+        "attack": 48,
+        "defense": 82,
+        "stamina": 82,
+        "speed": 79
+      }
+    },
+    {
+      "id": "kor-12",
+      "teamId": "kor",
+      "displayName": "백창혁",
+      "position": "DF",
+      "profile": {
+        "attack": 36,
+        "defense": 86,
+        "stamina": 70,
+        "speed": 79
+      }
+    },
+    {
+      "id": "kor-13",
+      "teamId": "kor",
+      "displayName": "서형연",
+      "position": "MF",
+      "profile": {
+        "attack": 70,
+        "defense": 73,
+        "stamina": 88,
+        "speed": 81
+      }
+    },
+    {
+      "id": "kor-14",
+      "teamId": "kor",
+      "displayName": "양민수",
+      "position": "MF",
+      "profile": {
+        "attack": 55,
+        "defense": 69,
+        "stamina": 85,
+        "speed": 67
+      }
+    },
+    {
+      "id": "kor-15",
+      "teamId": "kor",
+      "displayName": "송혁범",
+      "position": "MF",
+      "profile": {
+        "attack": 71,
+        "defense": 74,
+        "stamina": 90,
+        "speed": 74
+      }
+    },
+    {
+      "id": "kor-16",
+      "teamId": "kor",
+      "displayName": "한종민",
+      "position": "MF",
+      "profile": {
+        "attack": 55,
+        "defense": 52,
+        "stamina": 81,
+        "speed": 70
+      }
+    },
+    {
+      "id": "kor-17",
+      "teamId": "kor",
+      "displayName": "주원기",
+      "position": "MF",
+      "profile": {
+        "attack": 62,
+        "defense": 72,
+        "stamina": 89,
+        "speed": 71
+      }
+    },
+    {
+      "id": "kor-18",
+      "teamId": "kor",
+      "displayName": "선호석",
+      "position": "MF",
+      "profile": {
+        "attack": 66,
+        "defense": 70,
+        "stamina": 85,
+        "speed": 65
+      }
+    },
+    {
+      "id": "kor-19",
+      "teamId": "kor",
+      "displayName": "류석훈",
+      "position": "MF",
+      "profile": {
+        "attack": 63,
+        "defense": 56,
+        "stamina": 90,
+        "speed": 77
+      }
+    },
+    {
+      "id": "kor-20",
+      "teamId": "kor",
+      "displayName": "강희혁",
+      "position": "MF",
+      "profile": {
+        "attack": 62,
+        "defense": 59,
+        "stamina": 85,
+        "speed": 66
+      }
+    },
+    {
+      "id": "kor-21",
+      "teamId": "kor",
+      "displayName": "염용훈",
+      "position": "MF",
+      "profile": {
+        "attack": 59,
+        "defense": 58,
+        "stamina": 89,
+        "speed": 80
+      }
+    },
+    {
+      "id": "kor-22",
+      "teamId": "kor",
+      "displayName": "차경선",
+      "position": "FW",
+      "profile": {
+        "attack": 75,
+        "defense": 46,
+        "stamina": 80,
+        "speed": 77
+      }
+    },
+    {
+      "id": "kor-23",
+      "teamId": "kor",
+      "displayName": "강서빈",
+      "position": "FW",
+      "profile": {
+        "attack": 90,
+        "defense": 27,
+        "stamina": 66,
+        "speed": 81
+      }
+    },
+    {
+      "id": "kor-24",
+      "teamId": "kor",
+      "displayName": "명규혁",
+      "position": "FW",
+      "profile": {
+        "attack": 82,
+        "defense": 34,
+        "stamina": 79,
+        "speed": 89
+      }
+    },
+    {
+      "id": "kor-25",
+      "teamId": "kor",
+      "displayName": "진호현",
+      "position": "FW",
+      "profile": {
+        "attack": 74,
+        "defense": 24,
+        "stamina": 68,
+        "speed": 90
+      }
+    },
+    {
+      "id": "kor-26",
+      "teamId": "kor",
+      "displayName": "정범환",
+      "position": "FW",
+      "profile": {
+        "attack": 85,
+        "defense": 42,
+        "stamina": 83,
+        "speed": 74
+      }
+    },
+    {
+      "id": "cze-01",
+      "teamId": "cze",
+      "displayName": "Vananek",
+      "position": "MF",
+      "profile": {
+        "attack": 78,
+        "defense": 59,
+        "stamina": 78,
+        "speed": 67
+      }
+    },
+    {
+      "id": "mex-01",
+      "teamId": "mex",
+      "displayName": "Olmonte",
+      "position": "MF",
+      "profile": {
+        "attack": 71,
+        "defense": 69,
+        "stamina": 72,
+        "speed": 72
+      }
+    },
+    {
+      "id": "rsa-01",
+      "teamId": "rsa",
+      "displayName": "Sibukwana",
+      "position": "FW",
+      "profile": {
+        "attack": 82,
+        "defense": 27,
+        "stamina": 73,
+        "speed": 84
+      }
+    }
+  ]
+}

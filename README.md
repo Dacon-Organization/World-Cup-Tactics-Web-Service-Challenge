@@ -91,11 +91,61 @@
 
 ## 기술 스택
 
-- **프론트엔드**: Next.js 15 (App Router) · TypeScript (strict) · Tailwind CSS · shadcn/ui · Zustand
-- **인터랙션**: dnd-kit
-- **ML 추론**: ONNX Runtime Web (WASM)
-- **ML 학습**: Python · LightGBM · PyTorch → ONNX export
+- **프론트엔드**: Next.js 15 (App Router) · TypeScript (strict, `any` 금지) · Tailwind CSS v4 · shadcn/ui · Zustand
+- **검증**: Zod (외부 경계 파싱) · Vitest (순수 함수 단위 테스트)
+- **인터랙션**: Pointer Events 직접 구현 — 터치·마우스를 한 경로로 다루고,
+  드래그 없이도 같은 결과를 내는 클릭·키보드 대안을 함께 제공하기 위함 (WCAG 2.5.7 AA)
+- **서체**: Pretendard(SIL OFL 1.1) 서브셋 **자체 호스팅** — 폰트 CDN을 쓰지 않습니다
+- **ML 추론**: ONNX Runtime Web (WASM, 자체 호스팅)
+- **ML 학습**: Python · scikit-learn · LightGBM/XGBoost/CatBoost → ONNX export
 - **배포**: Vercel
+
+---
+
+## 실행 방법
+
+Node.js 20 이상이 필요합니다 (개발 환경 실측: Node 24.14 / npm 11.9).
+
+```bash
+npm install
+npm run dev          # http://localhost:3000
+```
+
+| 명령 | 하는 일 |
+|---|---|
+| `npm run dev` | 개발 서버 |
+| `npm run build` | 프로덕션 빌드 |
+| `npm test` | Vitest 단위 테스트 |
+| `npm run typecheck` | TypeScript strict 검사 |
+| `npm run gate` | **제출 게이트**(실명·참조 무결성·라이선스) — 실패하면 커밋하지 않습니다 |
+
+`npm run gate`의 실명 검사(G1)는 **커밋되지 않는 로컬 대조 목록**
+(`data/gate/real-names.txt`)을 읽습니다. 이 파일이 없으면 게이트는 통과가 아니라
+**실패**합니다 — 조용히 통과시키면 아무것도 검사하지 않으면서 초록으로 보이기
+때문입니다. 자세한 내용은 [docs/제출-게이트.md](docs/제출-게이트.md).
+
+## 주요 파일 구조
+
+```
+src/
+├── app/          Next.js App Router — 페이지 셸은 전부 Server Component
+├── components/   피치 · 전술 · 예측 · 리플레이 · 공유 컴포넌트
+├── lib/          데이터 로드/검증 · 조정 계층 · 예측 엔진
+├── store/        Zustand 슬라이스 (전술 / 예측 분리)
+├── types/        데이터·Worker 계약 타입
+└── data/         정적 JSON 4종 (formations · players · matches · defaults)
+public/
+├── fonts/        Pretendard 서브셋 woff2 + OFL 사본·파생 고지
+├── model/        학습된 ONNX 모델 · 스코어 파라미터
+└── ort/          ONNX Runtime Web wasm (자체 호스팅)
+scripts/gates/    제출 게이트 (G1 실명 · G2 참조 무결성 · G3 라이선스)
+notebooks/        ML 학습 파이프라인 (수집 → EDA → FE → 모델 → 평가 → 보고)
+docs/             대회요강 · 기획 문서 · 리서치 원장
+```
+
+설계 정본은 [DESIGN.md](DESIGN.md)(디자인 시스템)와
+[docs/planning/impl/version1.0/구현규약_v1_0.md](docs/planning/impl/version1.0/구현규약_v1_0.md)
+(코드 구조·상태 경계·계약)입니다.
 
 ---
 

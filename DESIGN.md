@@ -119,6 +119,11 @@
 **서체: Pretendard (SIL OFL 1.1)** — 조판 파이프라인(`preamble.tex`)과 동일 서체를 쓰는
 것이 핵심입니다. 기획서 PDF와 배포 화면의 글자 모양이 같아야 일관성이 성립합니다.
 
+> **B2 구현 시 확정 — CSS 패밀리명은 `RF Sans`입니다.** OFL 1.1 §3과 공식 OFL FAQ 2.6이
+> *"웹폰트 서브셋은 수정본이며 예약 폰트 이름을 쓸 수 없다"*고 정하므로, 서브셋 산출물의
+> 패밀리명·파일명에서 `Pretendard`를 뺐습니다. **아웃라인은 원본과 동일**하므로 이 절의
+> 크기·굵기 표는 그대로 유효합니다. 근거·검증: [public/fonts/NOTICE.md](public/fonts/NOTICE.md)
+
 - 서브셋 `woff2` **자체 호스팅** (`public/fonts/`). CDN 금지 — 외부 요청 0건 원칙(C1)과
   "심사자 키 없이 확인"(요강) 정합. 서브셋 = KS X 1001 한글 + Latin + 숫자·기호
 - `font-display: swap`, 폴백 `-apple-system, "Malgun Gothic", sans-serif`
