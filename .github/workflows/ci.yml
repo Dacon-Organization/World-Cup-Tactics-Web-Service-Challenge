@@ -1,0 +1,63 @@
+# CI — 검증 파이프라인
+#
+# PR과 main 푸시에서 타입·린트·테스트·게이트·빌드를 돌립니다.
+# 이 워크플로가 빨간불이면 배포하지 않습니다 (deploy.yml이 main 푸시에서만 돌기 때문에
+# 순서상 CI가 먼저 실패해도 배포는 별개로 뜹니다 — 자세한 경계는 docs/배포.md §3).
+#
+# Node 24 고정 이유: 게이트가 `node scripts/gates/*.ts`로 TypeScript를 직접 실행합니다.
+# 로컬 개발 환경 실측(Node 24.14.0)과 같은 메이저를 씁니다.
+
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# 같은 브랜치에 연속 푸시하면 이전 실행을 취소합니다 (Actions 분 절약).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 타입 검사 (strict)
+        run: npm run typecheck
+
+      - name: 린트
+        run: npm run lint
+
+      - name: 단위 테스트
+        run: npm test
+
+      # --- 제출 게이트 -------------------------------------------------------
+      # G1(gate:names)은 여기서 돌리지 않습니다. 대조 목록 data/gate/real-names.txt가
+      # 실명을 담고 있어 커밋 금지이고, 게이트는 목록이 없으면 통과가 아니라 **실패**하도록
+      # 설계돼 있습니다(scripts/gates/names.ts 참조 — "없을 때 통과시키면 아무것도 검사하지
+      # 않으면서 초록으로 보입니다"). Secrets에 실명 목록을 넣는 것은 실명 유출 경로를
+      # 하나 더 만드는 일이므로 하지 않습니다.
+      #
+      # → G1은 **로컬 전용 수동 게이트**입니다. B9 최종 커밋 직전 로컬 `npm run gate`
+      #   전량 실행이 G1의 실제 통과 시점입니다 (docs/제출-게이트.md).
+      - name: G2 참조 무결성 게이트
+        run: npm run gate:refs
+
+      - name: G3 라이선스 게이트
+        run: npm run gate:license
+
+      - name: 프로덕션 빌드
+        run: npm run build
