@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B3 모델 계약 동결 · 기준선 산출물 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  code { background: rgba(255,255,255,.06); padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 8px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>B3 — 모델 계약 동결 · 기준선 산출물 (구현 블록 3/9)</h1>
+  <div class="meta">
+    📅 <b>2026-07-27 (KST)</b> · 🌿 <b>claude/b3-model-contract-baseline-c01e76</b> · <b>프론트엔드가 실제 모델로 개발 가능</b> · 게이트 3종 + ONNX 정합 통과
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b><code>features_v1</code> 재생성</b> — 00→01→02 순차 재실행<div class="sub">c2가 기록한 수치가 <b>전부 재현</b>됨: 964행×26열 · 팀명 미매핑 0건 · 공백 중앙값 12일 · Spearman ρ=0.308(p=1.2e-22) · 체코 최종 Elo 1729.5. 재현성 주장이 말이 아니라 <b>실행으로 확인된 첫 사례</b></div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b><code>notebooks/03_model_baseline.ipynb</code></b> — 기준선 모델 + 배포 계약 (53셀 · 에러 0 · 실명 0)<div class="sub">로지스틱 기준선 · 포아송 λ 쌍 + Dixon-Coles τ 결합 MLE · <code>d̂</code> 폴백 상수 · 두 모델 정합 · 조정 계층 캘리브레이션 · ONNX 변환·검증까지 한 장에서 닫음</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>모델 계약 동결</b> — <code>public/model/outcome.onnx</code> + <code>score-params.json</code><div class="sub">입력 <b>10원소 float32 고정 벡터</b>(<code>elo_diff</code>+자기 4+상대 4+<code>stage_ko</code>) · 출력 <code>probabilities [N,3] = [승,무,패]</code> · <code>zipmap=False</code>. 06장 GBDT는 <b>같은 시그니처로 파일만 덮어쓴다</b> — 프론트엔드 무변경</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>ONNX 정합 검증 하니스</b> — <code>npm run verify:onnx</code> (ML-R5)<div class="sub">파이썬 ORT가 아니라 <b>브라우저가 실제로 쓸 <code>onnxruntime-web</code> wasm 백엔드</b>로 대조 — B5 Worker와 같은 커널 경로. 1,000 케이스 최대 절대오차 <b>9.0e-8 ≤ 1e-4</b> · 확률 합 이탈 8.9e-8 ≤ 1e-6</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>조정 계층 상수 확정 + 참조 구현</b> (δ·κ·ρ·c)<div class="sub">이분법 캘리브레이션으로 4종 전부 목표 밴드 <b>양 끝 모두 3~8%p</b> · FT-R3 항등(오차 &lt;1e-9) · 양날 원칙(전 슬라이더 100이 +3.08%p에 그침) · 클램프 조기 포화 0건</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>B4·B5 인계 픽스처</b> — <code>tests/fixtures/{onnx,adjust}-cases.json</code><div class="sub">adjust 972건(슬라이더 0/50/100<sup>4</sup> × 프리셋 4 × 상대 3) — B4의 <code>adjust.ts</code>가 1e-9 이내로 재현해야 하는 파이썬 참조값</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b><code>defaults.json.precomputed</code> 채움</b> — 승 .4897 / 무 .2993 / 패 .2110<div class="sub">기본 상태에서 조정 계층이 항등이므로 이 값은 <b>순수 모델 출력</b>이다. F08 첫 페인트에 이미 확률이 있다</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 이 블록에서 발견한 것</h2>
+    <ul>
+      <li><span class="tag t-blocked">발견</span><div><b>학습 데이터의 <code>home</code> 지정을 서비스가 상속하면 한국이 근거 없는 이점을 얻는다</b><div class="sub">실측: Elo 동률에서 승 <b>0.5011</b> vs 패 <b>0.2165</b> — 격차 <b>28.5%p</b>. 월드컵은 대부분 중립 개최지이므로 이 격차는 경기장 이점이 아니라 조 편성 관행(선명 팀)의 흔적. → <b>미러 증강 학습</b>으로 <code>p_승(x) = p_패(mirror x)</code>를 구조로 강제(대칭 오차 3.0e-14). <b>비용이 아니라 이득이었다</b> — valid RPS 0.2096 → <b>0.1975</b></div></div></li>
+      <li><span class="tag t-blocked">발견</span><div><b>템포 슬라이더가 확률을 전혀 못 움직인다</b> — 명세의 구조적 공백<div class="sub">피처_정의서 §4.2는 템포를 "양 팀 λ에 같은 배수"로 정의했는데 §4.1의 전달 경로는 λ <b>비율</b>의 Elo 등가 번역 하나뿐 → 비율이 그대로면 확률도 그대로. F04 수용 기준("4종 각각 확률 변화")과 §4.2 자신의 서술("열린 경기는 강팀 상대 시 불리")이 둘 다 깨진다. → <b>무승부 몫 채널</b> 신설(격자에서 무승부 변화만 취하고 승/패 비율은 Δ_eff가 계속 전담 — 이중 계상 없음)</div></div></li>
+      <li><span class="tag t-blocked">발견</span><div><b>두 모델 정합 임계 초과</b> (valid TV 0.0594 &gt; 0.05) — ML-R8 발동<div class="sub">성분 분해 결과 괴리의 대부분이 <b>무승부 성분</b>. 독립 포아송이 무승부를 과소 예측하는데 DC τ는 저점수 4칸만 손댄다. → 대각 보정 γ 추가. <b>γ를 우도로 적합하면 안 된다</b>(γ&lt;0이 나와 TV가 악화) — 정합 목적함수로, train 구획에서만 적합. γ=+0.1558 → TV <b>0.0440</b></div></div></li>
+      <li><span class="tag t-blocked">발견</span><div><b>캘리브레이션 임계(EV-R4)가 빈의 얇음을 고려하지 않는다</b><div class="sub">valid 64경기×3범주=192쌍을 10빈으로 나누면 빈당 십수 개 — 무편향에서도 0.10을 넘는다. 처방(온도 스케일링)을 <b>진단으로 먼저 돌린 결과</b> T=1.0537(사실상 항등)이고 적용 시 편차가 0.2166 → <b>0.2390으로 악화</b>. → 잡음에 모델을 맞추지 않고 <b>미적용 + divergence 적재</b></div></div></li>
+      <li><span class="tag t-done">해소</span><div><b>02장이 남긴 "신생팀 초기값 1500" 재검 과제</b><div class="sub">2026 개막 직전 A매치 누적 kor 1007 · cze 360 · mex 1003 · rsa 480경기 — 초기값 흔적이 남지 않는다. 남는 것은 <code>exp_apps</code>(체코 1회)뿐이고 이는 정의대로의 사실</div></div></li>
+      <li><span class="tag t-progress">기록</span><div><b>멕시코전 승리 확률 9.0%</b> — 화면에 나갈 숫자라 분해해서 남김<div class="sub">개최국 효과 제거 시 20.5% · 경험 차까지 제거 시 26.2%. 멕시코는 2026 공동 개최국이고 P11 확정 경기장이 과달라하라 Estadio Akron이므로 <code>host=1</code>은 표기가 아니라 <b>사실</b>. 개최국 우위 +26.7%p는 01장 실측값</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📊 측정값 (valid = 2018 · test=2022는 미개봉)</h2>
+    <table>
+      <tr><th>지표</th><th>값</th><th>방어선·임계</th><th>판정</th></tr>
+      <tr><td>RPS (배포 모델)</td><td>0.1975</td><td>0.19 ~ 0.22</td><td>충족</td></tr>
+      <tr><td>정확도</td><td>0.4844</td><td>0.50 ~ 0.55</td><td><b>미달 — divergence 적재</b></td></tr>
+      <tr><td>RPS (Elo 단독 기준선, 비교용)</td><td>0.2241</td><td>—</td><td>참고</td></tr>
+      <tr><td>두 모델 정합 TV</td><td>0.0440</td><td>≤ 0.05</td><td>충족 (γ 보정 후)</td></tr>
+      <tr><td>캘리브레이션 최대 편차</td><td>0.2166</td><td>≤ 0.10</td><td><b>미달 — 표본 잡음으로 판정, 06장 재검</b></td></tr>
+      <tr><td>ONNX 정합 (Python ↔ ORT-Web)</td><td>9.0e-8</td><td>≤ 1e-4</td><td>충족</td></tr>
+      <tr><td>슬라이더 민감도 4종</td><td>3.08 ~ 6.00 %p</td><td>3 ~ 8 %p (양 끝)</td><td>충족</td></tr>
+      <tr><td>모델 자산 크기</td><td>0.8 KB + 4.3 KB</td><td>onnx ≤1MB · params ≤10KB</td><td>충족</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>▶️ 다음 (B4 — P0 전술보드)</h2>
+    <ul>
+      <li><span class="tag t-todo">TODO</span><div>F01·F02·F03·F04·F08 구현 명세 작성 → 구현<div class="sub">착수 직전에 <code>impl/version1.0/</code>에 기능별 명세를 먼저 쓴다 (구현규약 §0)</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div><code>src/lib/tactics/adjust.ts</code> — 이 블록의 파이썬 참조 구현을 JS로 이식<div class="sub">대조 기준은 <code>tests/fixtures/adjust-cases.json</code> 972건 · 허용 오차 1e-9</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>SSR 기본 상태 — <code>defaults.json.precomputed</code>로 첫 페인트에 확률 표시 (F08-R1)</div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

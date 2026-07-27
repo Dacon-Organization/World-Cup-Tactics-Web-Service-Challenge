@@ -10,5 +10,13 @@ pyarrow==23.0.1
 missingno==0.5.2
 pandera==0.32.1
 jupytext==1.19.1
-nbconvert==7.10.0
+nbconvert==7.17.0
 nbformat==5.10.4
+
+# 03장(기준선 모델·ONNX 계약) 추가 — 실측 기준 2026-07-27
+# 06장의 GBDT 3종·Optuna·SHAP은 그 블록에서 실제로 설치한 버전을 추가한다.
+# 쓰지 않는 패키지를 미리 적으면 "고정된 재현 환경"이 거짓말이 되기 때문이다.
+scikit-learn==1.9.0
+skl2onnx==1.20.0
+onnx==1.22.0
+onnxruntime==1.20.1

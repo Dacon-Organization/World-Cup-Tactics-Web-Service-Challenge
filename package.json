@@ -15,13 +15,15 @@
     "gate": "node scripts/gates/index.ts",
     "gate:names": "node scripts/gates/names.ts",
     "gate:refs": "node scripts/gates/refs.ts",
-    "gate:license": "node scripts/gates/license.ts"
+    "gate:license": "node scripts/gates/license.ts",
+    "verify:onnx": "node scripts/verify/onnx-parity.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.27.0",
     "next": "15.5.22",
+    "onnxruntime-web": "^1.27.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwind-merge": "^3.3.1",

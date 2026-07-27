@@ -39,8 +39,8 @@
   <div class="meta">
     🏁 기획서 <b>제출 완료(7/27) → 동결</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋·<b>머지</b> = 실격) · 최종 갱신 <b>2026-07-27</b>
   </div>
-  <div class="bar"><i style="width:85%"></i></div>
-  <div class="pct">전체 진척률 약 85% — 기획 완료·동결. <b>구현 B2/9 완료</b>(스캐폴드·데이터층·제출 게이트 구현 — 빌드·게이트·테스트 전부 통과) · 임계 경로: B3 모델 계약 동결 → B4 전술보드 → P0 배포 (~8/3)</div>
+  <div class="bar"><i style="width:88%"></i></div>
+  <div class="pct">전체 진척률 약 88% — 기획 완료·동결. <b>구현 B3/9 완료</b>(모델 계약 동결 — 기준선 valid RPS 0.1975 · ONNX 정합 9.0e-8 · 프론트엔드가 실제 모델로 개발 가능) · 임계 경로: B4 전술보드 → B5 예측 엔진 → P0 배포 (~8/3)</div>
 
   <section>
     <h2>🗺️ 단계별 진척</h2>
@@ -60,7 +60,8 @@
       <li><span class="tag t-done">DONE</span><div>기획서 v2.0 전면 개작 — 서비스명 RE:FORMATION · 서술형 문체 · 시각자료 23종<div class="sub">분석 실측 그림 7종 신설(Elo 확장·캘리브레이션·득점 분포·RPS 방어선 등) · 디자인 자산 5종 제작으로 [그래픽 자리] 10건 → 0건 · mermaid 확장 3종(quadrant·gantt·journey) · 대회 영문 워드마크 지면 표기 0건</div></div></li>
       <li><span class="tag t-done">DONE</span><div>구현 B1 — 디자인 시스템 v1.0 · 구현 규약 v1.0 · 제출 게이트 체계<div class="sub">디자인 토큰은 <code>make_figures.py</code> 실상수 역추출(제출 PDF와 어긋나지 않는 것이 일관성 20점) · 실격 방어를 자동 게이트 G1~G4(빌드 차단)+수동 M1~M3로 분리 · 발견: 포지션 4색=결과 3색 동일값 → 형태 분리로 해결, features_v1 재생성 필요</div></div></li>
       <li><span class="tag t-done">DONE</span><div>구현 B2 — 스캐폴드 · 데이터층 · 제출 게이트 구현<div class="sub">Next.js 15/TS strict/Tailwind v4/Zustand/Zod/Vitest 배선 + Pretendard 서브셋 자체 호스팅 · JSON 4종(가공명 26+3·프리셋 4×11·확정 이벤트) · <code>npm run gate</code> G1~G3 가동 · 발견: <b>OFL 서브셋은 예약 폰트 이름 사용 불가</b>(→ RF Sans), 커밋된 기획 문서·대시보드에 실명 3건 잔존(→ 치환), 가공명 자동 생성이 은퇴 선수와 완전 일치(→ 대조 목록 57명 보강)</div></div></li>
-      <li><span class="tag t-progress">NOW</span><div>구현 B3~B5 — 모델 계약 동결(기준선) → 전술보드 → 예측 엔진 → <b>P0 1차 배포</b></div></li>
+      <li><span class="tag t-done">DONE</span><div>구현 B3 — 모델 계약 동결 · 기준선 산출물<div class="sub">features_v1 재생성으로 <b>c2 수치 전량 재현</b>(재현성 실증) · 입력 10원소 고정 벡터로 계약 동결(06장은 파일만 덮어쓴다) · valid RPS 0.1975(방어선 충족)·정확도 0.4844(미달 — divergence 적재) · ONNX 정합은 브라우저와 같은 <code>onnxruntime-web</code> wasm으로 9.0e-8 · 발견: <b>home 지정 상속 시 한국에 28.5%p 무상 이점</b>(→미러 증강), <b>템포가 확률을 못 움직이는 명세 공백</b>(→무승부 몫 채널), 정합 TV·캘리브레이션 임계 초과 2건</div></div></li>
+      <li><span class="tag t-progress">NOW</span><div>구현 B4~B5 — 전술보드(F01~F04·F08) → 예측 엔진(F05~F07) → <b>P0 1차 배포</b></div></li>
       <li><span class="tag t-todo">TODO</span><div>구현 B6~B7 — GBDT 업그레이드 + 리플레이(F09~F12) → 공유(F13~F16)</div></li>
       <li><span class="tag t-todo">TODO</span><div>B8 QA·실기기·시연영상·문서 v1.1 일괄 버전업 → B9 저장소 동결 (8/2 밤 목표)</div></li>
     </ul>
@@ -69,6 +70,7 @@
   <section>
     <h2>📂 작업 로그</h2>
     <ul>
+      <li><span class="tag t-done">07-27</span><div><a href="log/2026-07-27-model-contract-baseline.html">B3 모델 계약 동결 · 기준선 산출물 (구현 3/9)</a><div class="sub">features_v1 재생성으로 c2 수치 전량 재현 · <code>outcome.onnx</code>(10원소 입력 → [승,무,패]) + <code>score-params.json</code> 계약 동결 · λ 쌍 + Dixon-Coles τ 결합 MLE · 조정 계층 δ·κ·ρ·c 이분법 캘리브레이션(4종 양 끝 3~8%p) · <code>npm run verify:onnx</code> 신설(ORT-Web wasm 대조 9.0e-8) · 발견 4건: <b>home 지정 상속 = 28.5%p 무상 이점</b>(→미러 증강, RPS도 개선), <b>템포가 확률에 닿는 경로 부재</b>(→무승부 몫 채널), 정합 TV 초과(→대각 보정 γ, 우도 아닌 정합 목적함수로 적합), 캘리브레이션 임계가 빈 얇음 미고려(→진단 후 미적용·divergence)</div></div></li>
       <li><span class="tag t-done">07-27</span><div><a href="log/2026-07-27-scaffold-data-layer.html">B2 스캐폴드 · 데이터층 · 제출 게이트 구현 (구현 2/9)</a><div class="sub">코드 0줄 → 빌드되는 앱(103 kB First Load, 정적 4/4) · 게이트 3종·테스트 20건·typecheck·lint 전부 통과 · Pretendard 서브셋 KS X 1001 2,350자(166 KB×3) 자체 호스팅 · 가공명은 무작위 96후보 → 수동 26선별 절차로 구현 · 발견 3건: <b>OFL FAQ 2.6 — 서브셋은 수정본이라 RFN 사용 불가</b>(→ RF Sans로 개명), 커밋된 문서·대시보드 실명 3건(→ 치환), 자동 생성명이 은퇴 선수와 완전 일치(→ 수동 검수의 필요성 실증)</div></div></li>
       <li><span class="tag t-done">07-27</span><div><a href="log/2026-07-27-design-system-gates.html">B1 디자인 시스템 · 제출 게이트 명세 (구현 1/9)</a><div class="sub">DESIGN.md v1.0(토큰 역추출·피치 기하·4-3-3 좌표·컴포넌트 12종·WCAG 2.5.7) · 구현 규약 v1.0(impl/ 신설 — features 무수정·Zustand 2슬라이스·조정 계층 7단계) · 제출-게이트(G1~G4 빌드 차단 + M1~M3 + 8/3 동결 절차) · 발견 5건: 포지션↔결과 색 동일값, features_v1 부재, 포지션 색맹 미전달, --text-4 대비 미달, <b>스쿼시 머지도 커밋</b></div></div></li>
       <li><span class="tag t-done">07-26</span><div><a href="log/2026-07-26-proposal-v2-rewrite.html">기획서 v2.0 전면 개작 — 서비스명·문체·시각자료</a><div class="sub">사용자 피드백 4건 전량 반영 · 「만약의 감독」→ <b>RE:FORMATION</b> · 16절 서술형 재작성(메타 구조 제거) · make_figures.py 신설로 렌더 그림 14종(분석 실측 7·산식 2·디자인 자산 5) · mermaid 9종 · xeCJK 공백 삼킴·표 열 폭 조판 이슈 해소 · 21p PDF</div></div></li>
@@ -93,7 +95,9 @@
     <ul>
       <li><span class="tag t-progress">WATCH</span><div>실격 직결 규칙 — 절차화 완료 (<a href="../../docs/제출-게이트.md">제출-게이트.md</a>)<div class="sub">① 8/3 10:00 이후 커밋 <b>및 PR 머지</b> 금지 — 스쿼시 머지도 새 커밋이므로 8/2에 열린 PR 전량 종료 ② 라이선스 G3 자동 검사 ③ 비하 금지 M1 — 고위험 3표면(경기 카드 카피·개입 비교·공유 카드 제목) 개별 검수</div></div></li>
       <li><span class="tag t-progress">WATCH</span><div>일정 — 7일에 F01~F16 전량 + 노트북 03~09 + QA + 시연영상<div class="sub">강등 트리거 4개 배치: 7/29 P0 배포 미달→GBDT 포기 · 7/31→F11 축소 · 8/1→OG 정적 고정 · 8/2 정오→신규 기능 중단. <b>P0(F01~F08) 수용 기준은 어떤 트리거에서도 불가침</b></div></div></li>
-      <li><span class="tag t-todo">TODO</span><div>B3 선결 — features_v1.parquet 재생성 (<code>02_fe.py</code> 재실행)<div class="sub"><code>data/</code>가 gitignore·워크트리 미이동으로 디스크에 없음. 원본 입력은 전부 존재</div></div></li>
+      <li><span class="tag t-progress">WATCH</span><div>성능 방어선 — <b>정확도 0.4844로 밴드(0.50~0.55) 미달</b> (RPS 0.1975는 충족)<div class="sub">B6 GBDT 앙상블로 재측정. 미달이 지속되면 ML_설계 §7.1 3단 — <b>측정값을 그대로 공개</b>한다(측정 조건을 바꾸지 않는다). test=2022는 B6에서 1회만 개봉</div></div></li>
+      <li><span class="tag t-progress">WATCH</span><div>캘리브레이션 EV-R4 임계 미충족 상태로 배포 중<div class="sub">최대 편차 0.2166 &gt; 0.10. 처방(온도 스케일링) 진단 결과 T=1.0537(항등)이고 적용 시 악화 → 표본 잡음으로 판정하고 미적용. <b>divergence 적재됨</b> · B6 재검 항목</div></div></li>
+      <li><span class="tag t-progress">WATCH</span><div>비커밋 로컬 자산이 워크트리를 따라가지 않는다<div class="sub">B3 착수 시 <code>data/</code>가 비어 G1 대조 목록·features_v1이 모두 없었다. features_v1은 노트북 재실행으로, G1 목록은 다른 워크트리에서 복사해 해소. <b>B8 최종 검증은 목록·생성물이 모두 있는 워크트리에서 수행</b></div></div></li>
     </ul>
   </section>
 

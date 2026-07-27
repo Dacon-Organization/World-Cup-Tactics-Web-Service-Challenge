@@ -28,8 +28,11 @@
 | 산출물 | 위치 |
 |---|---|
 | 분석 노트북의 통계·그림 | `notebooks/*.ipynb` 출력 셀 · `notebooks/figures/` |
-| 학습된 모델 가중치·계수 (예정) | `public/model/` (구현 후) |
-| 팀·선수 능력 프로파일 집계 통계 (예정) | `src/data/*.json`의 profile 필드 (구현 후) |
+| 학습된 결과 확률 모델 가중치 | `public/model/outcome.onnx` |
+| 스코어 모델 계수·Dixon-Coles 파라미터·2026 컨텍스트 집계값 | `public/model/score-params.json` |
+| 빌드 타임 사전 계산 확률 | `src/data/defaults.json`의 `precomputed` |
+| 모델 정합 검증 픽스처(기대 확률) | `tests/fixtures/onnx-cases.json` |
+| 팀·선수 능력 프로파일 집계 통계 | `src/data/players.json`의 `profile` 필드 |
 
 ## 적용 제외 (별도 라이선스)
 
