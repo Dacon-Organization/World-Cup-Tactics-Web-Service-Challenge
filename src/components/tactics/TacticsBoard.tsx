@@ -15,6 +15,8 @@ import {
   nearestSlot,
   resolveDrop,
   toNormalized,
+  PITCH_HORIZONTAL_MQ,
+  type PitchOrientation,
 } from '@/lib/tactics/geometry';
 import {
   previewGeometry,
@@ -79,6 +81,26 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
   );
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [previewTier, setPreviewTier] = useState<PreviewTier>('full');
+
+  /**
+   * 피치 방향 — **조작 계산에만** 쓴다
+   *
+   * 화면 매핑(프레임 종횡비·토큰 좌표·SVG 회전)은 전부 CSS 미디어쿼리가 합니다. 여기서
+   * 방향을 아는 것은 포인터 역변환·방향키 축·정보 카드가 열리는 쪽 세 군데 때문이고,
+   * 셋 다 마운트 이후에만 실행되므로 초기값이 `vertical`이어도 어긋나지 않습니다.
+   *
+   * 반대로 방향을 렌더에까지 쓰면 서버가 뷰포트를 모르므로 데스크톱 첫 페인트가 세로로
+   * 나왔다가 튑니다.
+   */
+  const [orientation, setOrientation] = useState<PitchOrientation>('vertical');
+
+  useEffect(() => {
+    const query = window.matchMedia(PITCH_HORIZONTAL_MQ);
+    const sync = () => setOrientation(query.matches ? 'horizontal' : 'vertical');
+    sync();
+    query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
+  }, []);
 
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previewSamples = useRef<number[]>([]);
@@ -227,11 +249,16 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
   );
 
   // --- F02 드래그 ------------------------------------------------------------
-  function pointerToNormalized(clientX: number, clientY: number): Position | null {
-    const rect = frameRef.current?.getBoundingClientRect();
-    if (!rect || rect.width === 0 || rect.height === 0) return null;
-    return toNormalized(clientX, clientY, rect);
-  }
+  // `orientation`을 의존성에 넣어 두는 것이 중요하다 — 이 함수를 붙잡은 핸들러들이
+  // 방향이 바뀐 뒤에도 옛 축으로 계산하면 잡은 곳과 다른 곳에 토큰이 놓인다.
+  const pointerToNormalized = useCallback(
+    (clientX: number, clientY: number): Position | null => {
+      const rect = frameRef.current?.getBoundingClientRect();
+      if (!rect || rect.width === 0 || rect.height === 0) return null;
+      return toNormalized(clientX, clientY, rect, orientation);
+    },
+    [orientation],
+  );
 
   const handleTokenPointerDown = useCallback(
     (index: number, event: React.PointerEvent<HTMLButtonElement>) => {
@@ -267,7 +294,7 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
       setDrag(next);
       setKeyboardDraft(null);
     },
-    [isTransitioning, positions],
+    [isTransitioning, positions, pointerToNormalized],
   );
 
   const handleTokenPointerMove = useCallback(
@@ -290,7 +317,7 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
       // 드롭존 하이라이트는 좌표 근접 판정 — 캡처 중 pointerenter 는 발화하지 않는다 (P19 C3)
       setSnapTargetIndex(nearestSlot(current, slots, positions, index));
     },
-    [slots, positions],
+    [slots, positions, pointerToNormalized],
   );
 
   const handleTokenPointerUp = useCallback(
@@ -318,7 +345,7 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
       nextPositions[index] = clampPosition(target);
       scheduleCommit(nextPositions, sliders);
     },
-    [slots, positions, movePlayer, sliders, scheduleCommit, cancelDrag],
+    [slots, positions, movePlayer, sliders, scheduleCommit, cancelDrag, pointerToNormalized],
   );
 
   const handleTokenPointerCancel = useCallback(
@@ -400,7 +427,7 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
       setKeyboardDraft(null);
       selectToken(null);
     },
-    [selectedTokenIndex, isTransitioning, commitTo, selectToken],
+    [selectedTokenIndex, isTransitioning, commitTo, selectToken, pointerToNormalized],
   );
 
   const handleTokenKeyDown = useCallback(
@@ -449,25 +476,39 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
         return;
       }
 
-      const moved = applyKeyboardStep(draft.position, event.key);
+      // 방향키는 화면 기준이다 — 가로 피치에서 `→`가 전진이 되게 축을 넘긴다
+      const moved = applyKeyboardStep(draft.position, event.key, orientation);
       if (!moved) return;
       // 선택 모드에서 페이지가 스크롤되면 토큰이 시야에서 사라진다
       event.preventDefault();
       setKeyboardDraft({ index, position: moved });
     },
-    [isTransitioning, keyboardDraft, positions, selectToken, commitTo],
+    [isTransitioning, keyboardDraft, positions, selectToken, commitTo, orientation],
   );
 
   const selectedPlayer = selectedTokenIndex === null ? null : squad[selectedTokenIndex];
 
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-      <div className="flex min-w-0 flex-col items-center gap-3 lg:basis-2/3">
+    /*
+      데스크톱 골격이 "피치 좌 · 패널 우"에서 "피치 위 · 전술 바 아래"로 바뀌었습니다.
+
+      전 골격은 1280×720에서 오른쪽 320px 기둥에 1360px(뷰포트 높이의 1.9배)를 쌓고
+      왼쪽 640px에는 269px 피치만 둬서, 무게중심이 오른쪽으로 쏠리고 피치는 오히려
+      작았습니다. 세로 피치의 폭이 가용 **높이**에 묶여 있어 가로를 더 줘도 커지지
+      않는 구조였습니다 (globals.css `max-width: calc(56dvh * 2/3)`).
+
+      가로 피치는 그 병목을 풉니다. 컨트롤은 아래 가로 바로 내리되 **예측을 같은 줄
+      오른쪽**에 둬서, 슬라이더를 조작하는 내내 확률이 눈에 남는 D-1의 원칙을
+      세로에서 가로로 옮깁니다.
+    */
+    <div className="flex flex-col gap-5">
+      <div className="flex min-w-0 flex-col items-center gap-3">
         <Pitch
           frameRef={frameRef}
           positions={renderPositions}
           slots={slots}
           squad={squad}
+          orientation={orientation}
           preview={preview}
           previewTier={previewTier}
           draggingIndex={drag?.index ?? null}
@@ -498,17 +539,14 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
       </div>
 
       {/*
-        오른쪽(모바일에서는 피치 아래) — 조작 → 예측 상세 → 요약 도크 순.
+        하단 전술 바 — 데스크톱 2열(좌 전술 · 우 예측), 모바일 1열.
 
-        카드 래퍼(`rounded-lg border bg-surface p-4`)를 걷어냈습니다. 같은 규격의 카드를
-        세 번 반복하면 셋 다 같은 무게가 되어 위계가 사라집니다. 대신 `.control-group`이
+        카드 래퍼(`rounded-lg border bg-surface p-4`)는 걷어낸 채로 둡니다. 같은 규격의
+        카드를 세 번 반복하면 셋 다 같은 무게가 되어 위계가 사라집니다. `.control-group`이
         구분선과 간격만으로 묶습니다.
-
-        도크가 **이 열의 마지막**인 것이 중요합니다 — `sticky bottom-0`은 부모가 화면에
-        걸쳐 있는 동안만 붙어 있으므로, 슬라이더·상세를 스크롤하는 내내 확률이 남습니다.
       */}
-      <div className="flex min-w-0 flex-col lg:basis-1/3">
-        <section className="control-group">
+      <div className="min-w-0 lg:flex lg:items-start lg:gap-8">
+        <section className="control-group lg:min-w-0 lg:flex-1">
           <h2 className="mb-3 text-[15px] font-semibold">전술</h2>
           <FormationPicker
             formations={formations}
@@ -520,11 +558,20 @@ export function TacticsBoard({ opponentMatchId, opponentName }: TacticsBoardProp
           </div>
         </section>
 
-        <div className="control-group">
-          <PredictionDetails />
-        </div>
+        {/*
+          모바일에서 `display: contents`인 이유 — `PredictionDock`의 `sticky bottom-0`은
+          **부모가 화면에 걸쳐 있는 동안만** 붙어 있습니다. 세로 배치에서 이 래퍼가 상자를
+          가지면 도크가 전술 섹션을 스크롤하는 동안 떨어져 나가, "슬라이더를 만지는 내내
+          확률이 보인다"는 D-1의 결론이 깨집니다. 상자를 없애면 도크의 부모가 바깥 바가 되어
+          전술 섹션까지 포함합니다.
+        */}
+        <div className="contents lg:block lg:w-[380px] lg:shrink-0">
+          <div className="control-group">
+            <PredictionDetails />
+          </div>
 
-        <PredictionDock opponentName={opponentName} />
+          <PredictionDock opponentName={opponentName} />
+        </div>
       </div>
     </div>
   );

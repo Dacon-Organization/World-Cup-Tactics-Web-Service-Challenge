@@ -26,7 +26,9 @@ export default function Home() {
   const opponentName = opponent?.nameKo ?? '상대';
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-5xl flex-col px-4 py-4">
+    /* 폭 상한을 1024px → 1280px로 넓혔습니다. 전 값은 1280px 화면에서 좌우 121px씩을
+       버리면서 정작 피치는 269px이라, 좁게 잡은 폭이 쏠림을 키우고 있었습니다. */
+    <main className="mx-auto flex min-h-dvh max-w-7xl flex-col px-4 py-4">
       <header className="mb-4 flex items-center justify-between gap-4">
         <div className="min-w-0">
           {/* f00 표지의 2색 워드마크 — "RE:"는 본문색, "FORMATION"은 강조색.

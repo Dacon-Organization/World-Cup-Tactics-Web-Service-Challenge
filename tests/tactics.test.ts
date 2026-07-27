@@ -19,9 +19,10 @@ import {
   nearestSlot,
   pitchDistance,
   resolveDrop,
+  toFramePercent,
   toNormalized,
   toViewBox,
-  tokenLabel,
+  POSITION_LABEL,
 } from '@/lib/tactics/geometry';
 import {
   PREVIEW_BUDGET_MS,
@@ -31,7 +32,7 @@ import {
   shouldDegradePreview,
 } from '@/lib/tactics/preview';
 import { createCommitScheduler } from '@/lib/tactics/scheduler';
-import { defaults, getFormation, koreaSquad } from '@/lib/data';
+import { defaults, formations, getFormation, koreaSquad } from '@/lib/data';
 import type { Position, PositionSlot } from '@/types/data';
 
 const slots = getFormation(defaults.formationId).slots;
@@ -229,11 +230,96 @@ describe('선수 배정 (F01 impl §4.3)', () => {
     expect(() => assignSquad(slots, koreaSquad.slice(0, 5))).toThrow();
   });
 
-  it('토큰 라벨은 가공명 성 1음절이다', () => {
-    const first = koreaSquad[0];
-    expect(first).toBeDefined();
-    expect(tokenLabel(first!.displayName)).toBe([...first!.displayName][0]);
-    expect(tokenLabel(first!.displayName)).toHaveLength(1);
+});
+
+describe('세부 포지션 약어 (토큰 라벨 · ADR-005)', () => {
+  it('한 포메이션 안에서 11개 약어가 전부 고유하다', () => {
+    // 이것이 성 1음절을 버린 이유다 — 중복이 생기면 같은 문제가 형태만 바꿔 돌아온다
+    for (const formation of formations) {
+      const codes = formation.slots.map((slot) => slot.code);
+      expect(new Set(codes).size, `${formation.label}의 약어가 겹칩니다`).toBe(11);
+    }
+  });
+
+  it('약어가 3글자를 넘지 않는다 — 44px 토큰에 들어가야 한다', () => {
+    for (const formation of formations) {
+      for (const slot of formation.slots) {
+        expect(slot.code.length).toBeLessThanOrEqual(3);
+      }
+    }
+  });
+
+  it('모든 약어에 한글명이 있다 — 스크린리더가 "엘씨비"로 읽지 않게', () => {
+    for (const formation of formations) {
+      for (const slot of formation.slots) {
+        expect(POSITION_LABEL[slot.code]).toBeTruthy();
+      }
+    }
+  });
+
+  it('약어의 좌우 접두사가 실제 x좌표와 어긋나지 않는다', () => {
+    for (const formation of formations) {
+      for (const slot of formation.slots) {
+        if (slot.code.startsWith('L')) {
+          // LWB·LCB·LCM·LM·LW·LST — 전부 팀 기준 왼쪽(x < 0.5)이어야 한다
+          expect(slot.x, `${formation.label} ${slot.code}`).toBeLessThan(0.5);
+        } else if (slot.code.startsWith('R')) {
+          expect(slot.x, `${formation.label} ${slot.code}`).toBeGreaterThan(0.5);
+        }
+      }
+    }
+  });
+
+  it('DM은 미드필더 라인에서 가장 뒤에 있다', () => {
+    for (const formation of formations) {
+      const dm = formation.slots.find((slot) => slot.code === 'DM');
+      if (!dm) continue;
+      const midfielders = formation.slots.filter((slot) => slot.role === 'MF');
+      expect(Math.min(...midfielders.map((slot) => slot.y))).toBeCloseTo(dm.y, 12);
+    }
+  });
+});
+
+describe('피치 방향 (가로 데스크톱 · 세로 모바일)', () => {
+  const rect = { left: 0, top: 0, width: 600, height: 400 };
+
+  it('가로에서 자기 골대가 왼쪽, 상대 골대가 오른쪽이다', () => {
+    // GK(y≈0)는 화면 왼쪽 끝, 스트라이커(y≈0.8)는 오른쪽
+    expect(toFramePercent({ x: 0.5, y: 0 }, 'horizontal').left).toBe(0);
+    expect(toFramePercent({ x: 0.5, y: 1 }, 'horizontal').left).toBe(100);
+  });
+
+  it('가로에서 팀의 왼쪽 측면이 화면 위다 — 중계 화면 관례', () => {
+    expect(toFramePercent({ x: 0, y: 0.5 }, 'horizontal').top).toBe(0);
+    expect(toFramePercent({ x: 1, y: 0.5 }, 'horizontal').top).toBe(100);
+  });
+
+  it('포인터 역변환이 화면 매핑의 정확한 역이다 — 어긋나면 잡은 곳과 다른 곳에 놓인다', () => {
+    for (const orientation of ['vertical', 'horizontal'] as const) {
+      for (const position of presetPositions) {
+        const { left, top } = toFramePercent(position, orientation);
+        const back = toNormalized(
+          rect.left + (left / 100) * rect.width,
+          rect.top + (top / 100) * rect.height,
+          rect,
+          orientation,
+        );
+        expect(back.x).toBeCloseTo(position.x, 12);
+        expect(back.y).toBeCloseTo(position.y, 12);
+      }
+    }
+  });
+
+  it('가로에서 → 가 전진이고 ↑ 가 팀의 왼쪽이다', () => {
+    const start = { x: 0.5, y: 0.5 };
+    expect(applyKeyboardStep(start, 'ArrowRight', 'horizontal')?.y).toBeCloseTo(0.52, 12);
+    expect(applyKeyboardStep(start, 'ArrowLeft', 'horizontal')?.y).toBeCloseTo(0.48, 12);
+    expect(applyKeyboardStep(start, 'ArrowUp', 'horizontal')?.x).toBeCloseTo(0.48, 12);
+    expect(applyKeyboardStep(start, 'ArrowDown', 'horizontal')?.x).toBeCloseTo(0.52, 12);
+  });
+
+  it('방향이 달라도 지원하지 않는 키는 null이다', () => {
+    expect(applyKeyboardStep({ x: 0.5, y: 0.5 }, 'Tab', 'horizontal')).toBeNull();
   });
 });
 

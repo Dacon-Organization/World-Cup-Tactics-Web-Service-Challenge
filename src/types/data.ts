@@ -59,6 +59,45 @@ export interface PlayersFile {
 
 export type FormationId = 'f433' | 'f442' | 'f343' | 'f352';
 
+/**
+ * 세부 포지션 약어 — 화면 토큰에 그대로 찍히는 값
+ *
+ * ## 등번호가 아니라 포지션인 이유
+ *
+ * ADR-005 결정 3이 등번호를 금지합니다 — "등번호+포지션 조합(예: 7번 FW)은 특정 선수
+ * 연상 리스크". 포지션 약어는 **선수가 아니라 슬롯에 붙으므로** 그 경로가 아예 없습니다.
+ * 같은 선수가 다른 포메이션에서는 다른 약어를 답니다.
+ *
+ * ## 좌우 접두사가 있는 이유
+ *
+ * `CB`가 둘, `CM`이 둘이면 "같은 글자 두 개"라는 원래 문제(가공명 성 첫 글자 충돌)가
+ * 형태만 바꿔 되살아납니다. Football Manager가 쓰는 `DCL`/`DCR` 방식으로 좌우를 갈라
+ * **한 포메이션 안에서 11개 약어가 전부 고유**하게 만듭니다.
+ *
+ * 표기 체계는 [Wikipedia 축구 포지션](https://en.wikipedia.org/wiki/Association_football_positions)의
+ * 공용 약어입니다 — 특정 게임사 표기(EA의 `CAM`/`CDM`, Konami의 `-MF` 접미사)를 쓰지
+ * 않습니다.
+ */
+export type PositionCode =
+  | 'GK'
+  | 'LB'
+  | 'LCB'
+  | 'CB'
+  | 'RCB'
+  | 'RB'
+  | 'LWB'
+  | 'RWB'
+  | 'DM'
+  | 'LCM'
+  | 'RCM'
+  | 'LM'
+  | 'RM'
+  | 'LW'
+  | 'RW'
+  | 'LST'
+  | 'ST'
+  | 'RST';
+
 export interface PositionSlot {
   /** 0(GK) ~ 10 */
   slotIndex: number;
@@ -67,6 +106,8 @@ export interface PositionSlot {
   /** 0~1 정규화 (자기 진영 → 상대 진영) */
   y: number;
   role: PositionRole;
+  /** 세부 포지션 약어 — 같은 포메이션 안에서 유일하다 */
+  code: PositionCode;
 }
 
 export interface Formation {

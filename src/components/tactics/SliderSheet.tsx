@@ -37,10 +37,16 @@ interface SliderSheetProps {
  * 접어도 `aria-describedby`는 그대로 가리킵니다 — `hidden` 요소도 접근성 이름·설명 계산에
  * 쓰이므로 스크린리더 사용자에게는 **접기 전과 동일하게** 읽힙니다. 설명이 사라진 것이
  * 아니라 시각적으로만 접힌 것입니다.
+ *
+ * ## 데스크톱에서 2×2로 접는 이유
+ *
+ * 가로 피치로 바뀌면서 슬라이더가 피치 **아래**로 내려왔습니다. 세로로 4개를 쌓으면 전술
+ * 섹션이 496px이라 첫 화면을 넘겨, 슬라이더를 만지려면 스크롤해야 하고 그 순간 확률이
+ * 화면 밖으로 나갑니다. 좌측 열이 821px로 넓으므로 2열로 접으면 높이가 절반이 됩니다.
  */
 export function SliderSheet({ sliders, onChange }: SliderSheetProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid gap-2 lg:grid-cols-2 lg:gap-x-6">
       {SLIDER_KEYS.map((key) => {
         const value = sliders[key];
         const qualitative = qualitativeLabel(value);
@@ -77,11 +83,11 @@ export function SliderSheet({ sliders, onChange }: SliderSheetProps) {
         );
       })}
 
-      <details className="mt-1">
+      <details className="mt-1 lg:col-span-2">
         <summary className="flex min-h-11 cursor-pointer items-center text-[13px] text-text-3">
           슬라이더가 무엇을 바꾸나요?
         </summary>
-        <dl className="mt-1 flex flex-col gap-2">
+        <dl className="mt-1 flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-x-6">
           {SLIDER_KEYS.map((key) => (
             <div key={key}>
               <dt className="text-[13px] font-semibold text-text-2">{SLIDER_LABEL[key]}</dt>

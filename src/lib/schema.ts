@@ -43,11 +43,34 @@ export const playersFileSchema = z.object({
   players: z.array(playerSchema).min(1),
 });
 
+// 등번호가 아니라 슬롯에 붙는 포지션 약어 — 연상 경로가 없다 (ADR-005 결정 3)
+export const positionCodeSchema = z.enum([
+  'GK',
+  'LB',
+  'LCB',
+  'CB',
+  'RCB',
+  'RB',
+  'LWB',
+  'RWB',
+  'DM',
+  'LCM',
+  'RCM',
+  'LM',
+  'RM',
+  'LW',
+  'RW',
+  'LST',
+  'ST',
+  'RST',
+]);
+
 export const positionSlotSchema = z.object({
   slotIndex: z.number().int().min(0).max(10),
   x: normalized,
   y: normalized,
   role: positionRoleSchema,
+  code: positionCodeSchema,
 });
 
 export const formationSchema = z.object({
@@ -55,7 +78,12 @@ export const formationSchema = z.object({
   label: z.string().min(1),
   // 길이 11 고정 — 프리셋이 10명이나 12명이 되는 상태를 아예 만들지 않는다
   slots: z.array(positionSlotSchema).length(11),
-});
+}).refine(
+  // 약어가 겹치면 "같은 글자 두 개"라는 원래 문제가 형태만 바꿔 되살아난다.
+  // 데이터를 고칠 때 실수로 CB를 둘 넣는 것을 로드 시점에 막는다.
+  (formation) => new Set(formation.slots.map((slot) => slot.code)).size === formation.slots.length,
+  { message: '한 포메이션 안에서 포지션 약어는 유일해야 합니다' },
+);
 
 export const formationsFileSchema = z.array(formationSchema).min(1);
 
