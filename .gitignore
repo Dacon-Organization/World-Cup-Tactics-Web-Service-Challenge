@@ -40,6 +40,11 @@ venv/
 # 모든 디렉터리가 걸려 **`src/data/`(서비스가 실제로 쓰는 JSON 4종)까지 사라진다.**
 /data/
 
+# ORT wasm 자체 호스팅 자산 — `npm run copy:ort`(prebuild·predev)가 node_modules에서 복사한다
+# 13.48MB를 git 히스토리에 남기지 않기 위해서이며, 없으면 빌드가 실패하도록 설계돼 있다
+# (scripts/copy-ort.ts · F05 impl §4.2)
+/public/ort/
+
 # 에이전트 세션 로컬
 .serena/
 

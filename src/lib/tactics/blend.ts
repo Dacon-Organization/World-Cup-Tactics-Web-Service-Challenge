@@ -46,29 +46,39 @@ function poissonPmf(lambda: number, gridMax: number): number[] {
   return pmf;
 }
 
+/** 미정규화 셀 행렬 + 총합. `cells[i][j]` = 자기 i골 · 상대 j골 */
+export interface ScoreGrid {
+  cells: number[][];
+  total: number;
+}
+
 /**
- * λ 쌍 → 승/무/패 확률 (파이썬 `grid_probs`)
+ * λ 쌍 → 스코어 격자 (파이썬 `grid_probs`의 셀 생성부)
  *
  * 격자 `M[i][j]` = 자기 i골 · 상대 j골. Dixon–Coles τ가 저점수 네 칸을 보정하고,
  * γ가 대각(무승부) 전체를 보정합니다 — τ가 2-2 이상의 대각을 손대지 못해서 생긴
  * 무승부 과소 예측을 일반화해 메웁니다 (c3 (4)).
+ *
+ * **왜 셀 행렬을 따로 내보내는가** — F06의 조건부 2단 샘플링은 집계된 승/무/패가 아니라
+ * 셀 하나하나를 씁니다(ML 설계 §4.3 ②). `gridProbabilities`가 셀을 합치면서 버리던 것을
+ * 여기서 붙잡아 둡니다. 합산은 아래에서 **같은 i·j 순서로** 이뤄지므로 덧셈 순서가 바뀌지
+ * 않고, 따라서 파이썬 대조값(1e-9)이 그대로 유지됩니다 (F06 impl §4.1).
  */
-export function gridProbabilities(
+export function scoreGrid(
   lambdaSelf: number,
   lambdaOpp: number,
   k: ScoreGridConstants,
-): Probabilities {
+): ScoreGrid {
   const { rho, gamma, gridMax } = k;
   const self = poissonPmf(lambdaSelf, gridMax);
   const opp = poissonPmf(lambdaOpp, gridMax);
   const diagonalFactor = Math.exp(gamma);
 
-  let win = 0;
-  let draw = 0;
-  let lose = 0;
+  const cells: number[][] = [];
   let total = 0;
 
   for (let i = 0; i <= gridMax; i += 1) {
+    const row = new Array<number>(gridMax + 1);
     for (let j = 0; j <= gridMax; j += 1) {
       let cell = (self[i] as number) * (opp[j] as number);
       // Dixon–Coles τ — 저점수 네 칸만
@@ -81,7 +91,36 @@ export function gridProbabilities(
       // τ가 음수 칸을 만들 수 있다 — 확률에 음수가 섞이면 정규화가 무의미해진다
       if (cell < 0) cell = 0;
 
+      row[j] = cell;
       total += cell;
+    }
+    cells.push(row);
+  }
+
+  return { cells, total };
+}
+
+/**
+ * λ 쌍 → 승/무/패 확률 (파이썬 `grid_probs`)
+ *
+ * 셀 생성은 `scoreGrid`가 하고 여기서는 같은 i·j 순서로 합칩니다. 리팩터 전과 덧셈
+ * 순서가 동일하므로 결과가 비트 단위로 같습니다 — `adjust-cases.json` 972건이 회귀 검사입니다.
+ */
+export function gridProbabilities(
+  lambdaSelf: number,
+  lambdaOpp: number,
+  k: ScoreGridConstants,
+): Probabilities {
+  const { cells, total } = scoreGrid(lambdaSelf, lambdaOpp, k);
+
+  let win = 0;
+  let draw = 0;
+  let lose = 0;
+
+  for (let i = 0; i < cells.length; i += 1) {
+    const row = cells[i] as number[];
+    for (let j = 0; j < row.length; j += 1) {
+      const cell = row[j] as number;
       if (i > j) win += cell;
       else if (i === j) draw += cell;
       else lose += cell;
