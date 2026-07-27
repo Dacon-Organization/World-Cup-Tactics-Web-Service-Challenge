@@ -191,8 +191,16 @@ export function gateLicense(): GateResult {
     const inProduction = production?.has(name) ? ' · production closure' : '';
     lines.push(note(`예외 적용: ${name} (${installed.get(name)})${inProduction}`));
   }
+  // 기재됐으나 설치되지 않은 예외 — 플랫폼별 네이티브 바이너리는 정상이다.
+  // 개발은 Windows, CI·배포 빌드는 Linux라서 양쪽 이름을 다 적어 두고, 지금 플랫폼에
+  // 없는 쪽은 여기로 떨어진다. 그것을 '정리 대상'이라고 부르면 지우게 되고, 지우면
+  // 반대 플랫폼에서 게이트가 깨진다.
+  const PLATFORM_SUFFIX = /-(win32|linux|linuxmusl|darwin|freebsd|android|wasm32)(-|$)/;
   for (const name of exceptions.keys()) {
-    if (!installed.has(name)) {
+    if (installed.has(name)) continue;
+    if (PLATFORM_SUFFIX.test(name)) {
+      lines.push(note(`다른 플랫폼용 기재 (이 환경에는 미설치): ${name}`));
+    } else {
       lines.push(note(`예외 기재됐으나 설치되어 있지 않음: ${name} — 정리 대상`));
     }
   }

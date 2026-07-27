@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B5-0 배포 파이프라인 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  code { background: rgba(255,255,255,.06); padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 8px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>B5-0 — 배포 파이프라인 (B5 착수 전 선행)</h1>
+  <div class="meta">
+    📅 <b>2026-07-27 (KST)</b> · 🌿 <b>feature/worldcup/deploy-pipeline</b> ·
+    GitHub Actions → Vercel · <b>인프라·문서만 · 앱 코드 0줄 변경</b>
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>🎯 왜 순서를 바꿨나</h2>
+    <ul>
+      <li><span class="tag t-done">이유 1</span><div><b>디자인 확인 루프를 먼저 연다</b><div class="sub">사용자 판단: 현재 화면이 "AI 스럽고" 라이트/다크 모드가 없다. 화면별 디자인 재설계는 별도 블록이지만, <b>실물 URL을 열어 놓고 지적할 수 있는 상태</b>가 먼저 있어야 한다. 로컬 dev 서버로는 모바일 실기기 확인이 안 된다</div></div></li>
+      <li><span class="tag t-done">이유 2</span><div><b>결격 조항 조기 해소</b><div class="sub">요강 "배포 URL 8/3~8/18 상시 접근"은 <b>결격</b>이다. 마감 직전에 배포를 처음 시도하는 것이 이 프로젝트의 가장 값싼 실격 경로다</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>✅ 완료 (Done)</h2>
+    <ul>
+      <li><span class="tag t-done">DONE</span><div><b><code>.github/workflows/ci.yml</code></b> — PR·main 푸시 검증 6단계<div class="sub">타입 → 린트 → 테스트 → G2 → G3 → 빌드. Node <b>24 고정</b>(게이트가 <code>node scripts/gates/*.ts</code>로 TS를 직접 실행) · 브랜치별 concurrency로 연속 푸시 시 이전 실행 취소</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b><code>.github/workflows/deploy.yml</code></b> — main 머지 시 Vercel 프로덕션 자동 배포<div class="sub"><code>vercel pull → build --prod → deploy --prebuilt --prod</code>. <b>빌드를 러너에서 수행</b>해 CI와 배포가 같은 Node·같은 명령을 쓰게 함 · <code>deploy-production</code> 단일 concurrency로 연속 머지 시 옛 배포가 새 배포를 덮지 않음 · 배포 URL을 Step Summary에 기록</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b>Secrets 사전 확인 단계</b> — 누락 시 사람이 읽는 말로 실패<div class="sub">토큰 없이 CLI를 부르면 의미를 알기 어려운 오류가 난다. 3종 중 무엇이 없는지 이름으로 알려 주고 <code>docs/배포.md §1</code>로 보낸다. <b>조용히 건너뛰고 초록불을 보여 주지 않는다</b>(G1 설계와 같은 원칙)</div></div></li>
+      <li><span class="tag t-done">DONE</span><div><b><code>docs/배포.md</code> 신설</b> — 셋업 3단계 · 워크플로 2종 · 게이트 경계 · 문제 해결 6종 · 배포 후 체크리스트 5항</div></li>
+      <li><span class="tag t-done">DONE</span><div><b>README "배포" 절 · <code>docs/제출-게이트.md</code> 3곳 갱신</b><div class="sub">요강 README 필수 4항목 중 ①(서비스 소개·배포 URL)의 자리를 만들고, 게이트 실행 시점 표에 <b>CI 자동화 열</b>을 추가</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 이 블록에서 발견한 것</h2>
+    <ul>
+      <li><span class="tag t-blocked">발견·해소</span><div><b>G3 라이선스 게이트는 Linux CI에서 그대로 두면 실패한다</b><div class="sub">네이티브 바이너리는 <b>플랫폼마다 패키지 이름이 다르다</b>. 예외 목록에는 개발 환경(Windows)의 <code>lightningcss-win32-x64-msvc</code>·<code>@img/sharp-win32-x64</code>만 있었는데, <code>npm ci --os=linux --cpu=x64</code> 실측 결과 CI는 <code>lightningcss-linux-x64-{gnu,musl}</code>·<code>@img/sharp-libvips-linux{,musl}-x64</code>를 설치한다 → <b>허용목록 밖 + 예외 기재 없음 = 실패</b>.<br>
+      <b>수정</b>: 4건을 예외 목록에 추가(사유 포함)하고, 게이트가 미설치 예외를 "정리 대상"이라고 부르던 문구를 <b>"다른 플랫폼용 기재"</b>로 분리했다 — 정리 대상이라고 부르면 지우게 되고, 지우면 반대 플랫폼에서 깨진다</div></div></li>
+      <li><span class="tag t-blocked">발견·해소</span><div><b>Secrets 확인을 <code>[ -z ... ] &amp;&amp; missing=...</code>로 쓰면 정상일 때 실패한다</b><div class="sub">GitHub Actions는 <code>bash -e -o pipefail</code>로 실행한다. 값이 <b>있으면</b> <code>[ -z ]</code>가 거짓 → <code>&amp;&amp;</code> 연쇄가 비영 종료 → <code>set -e</code>가 스텝을 죽인다. 즉 <b>Secrets를 제대로 등록한 사람만 배포에 실패</b>하는 정반대 동작. <code>if</code> 블록으로 재작성하고 두 경우를 로컬 <code>bash -e -o pipefail</code>로 실측 확인</div></div></li>
+      <li><span class="tag t-progress">기록</span><div><b>G1(실명 게이트)은 CI에 올릴 수 없다 — 설계 결정으로 못박음</b><div class="sub">대조 목록을 CI에서 쓰려면 실명을 Secrets에 올려야 하고, 그것은 게이트가 막으려던 위험(P7 실명 경계)을 <b>게이트 운영이 스스로 늘리는 일</b>이다. 대신 "CI가 G1을 검사하지 않는다"를 워크플로 주석·<code>docs/배포.md §3</code>·<code>제출-게이트</code> 실행 시점 표 <b>세 곳에 명시</b>했다. 실제 통과 시점은 B9 최종 커밋 직전 로컬 <code>npm run gate</code></div></div></li>
+      <li><span class="tag t-progress">기록</span><div>Vercel을 골랐으므로 <b>F13(<code>/t/[state]</code>)·F14(<code>next/og</code>)를 계획서 원안대로</b> 유지한다<div class="sub">GitHub Pages(정적 export)였다면 동적 경로와 동적 OG를 강등해야 했다. <code>next.config.ts</code>는 손대지 않았다</div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📊 검증 실측</h2>
+    <table>
+      <tr><th>항목</th><th>값</th><th>기준</th><th>판정</th></tr>
+      <tr><td>워크플로 YAML 파싱</td><td>ci 9스텝 · deploy 12스텝</td><td>구문 오류 0</td><td>충족</td></tr>
+      <tr><td>Secrets 프리플라이트 (3종 존재)</td><td>exit 0</td><td>통과</td><td>충족</td></tr>
+      <tr><td>Secrets 프리플라이트 (2종 누락)</td><td>exit 1 · 누락 이름 출력</td><td>실패+안내</td><td>충족</td></tr>
+      <tr><td>Linux 설치 패키지 실측 (<code>--dry-run --os=linux</code>)</td><td>gnu·musl 양쪽 설치 확인</td><td>—</td><td>예외 목록 반영</td></tr>
+      <tr><td>G2 · G3 게이트</td><td>2/2 통과</td><td>전부</td><td>충족</td></tr>
+      <tr><td>테스트 · <code>tsc --noEmit</code> · <code>next lint</code></td><td>82건 · 오류 0 · 경고 0</td><td>전부</td><td>충족</td></tr>
+      <tr><td><code>next build</code></td><td>정적 4/4 · First Load 132 kB</td><td>성공</td><td>충족</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>⚠️ 이 블록에서 못 한 것 (사용자 작업 대기)</h2>
+    <ul>
+      <li><span class="tag t-blocked">사용자</span><div><b>Vercel 가입 · 토큰 발급 · GitHub Secrets 3종 등록</b><div class="sub">자격증명 입력은 에이전트가 대신하지 않는다. <code>docs/배포.md §1</code>의 3단계. <b>등록 전에 머지하면 deploy 워크플로가 한 번 빨간불로 실패</b>한다(설계된 동작) — 등록 후 Actions 탭에서 수동 재실행하면 배포된다</div></div></li>
+      <li><span class="tag t-todo">배포 후</span><div>배포 URL을 README "배포" 절에 기록 · 시크릿 창·모바일 회선 접속 확인 · 네트워크 탭 외부 요청 0건 육안 확인(G4)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>▶️ 다음</h2>
+    <ul>
+      <li><span class="tag t-todo">B5</span><div><b>예측 엔진 F05·F06·F07</b><div class="sub">Worker + ORT-Web wasm 자체 호스팅(<code>public/ort/</code>) · MC 조건부 2단 샘플링 · 10×10 배열·Wilson 밴드 · 구현 명세 3건 선작성</div></div></li>
+      <li><span class="tag t-todo">디자인</span><div><b>화면별 디자인 설계 문서 + 라이트/다크 모드</b> — 사용자와 대화하며 진행<div class="sub">현재 토큰이 <code>@theme</code>의 시맨틱 변수(<code>--color-bg</code>·<code>--color-surface</code>…)라 <b>라이트 모드는 오버라이드 블록 추가로 가능</b>하다. 다만 이 토큰들은 <b>제출·동결된 기획서 PDF 그림에서 역추출</b>한 값이라, 색을 바꾸면 기획서와 구현이 갈린다 — 기획/구현 일관성 20점과의 거래를 문서에 남기고 판단해야 한다</div></div></li>
+    </ul>
+  </section>
+
+  <footer>Dacon 작업 대시보드 · skills/agent-ops/dashboard.md 규칙 (R2)</footer>
+</div>
+</body>
+</html>

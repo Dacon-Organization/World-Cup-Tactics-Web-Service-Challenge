@@ -1,0 +1,103 @@
+# 배포 — main 머지 시 Vercel 프로덕션 자동 배포
+#
+# 요강 대응: "배포 URL 8/3~8/18 상시 접근"은 결격 조항입니다(docs/제출-게이트.md).
+# 마감 직전에 배포를 처음 시도하지 않기 위해 파이프라인을 미리 세워 둡니다.
+#
+# 빌드를 이 러너에서 수행하고(`--prebuilt`) 산출물만 올립니다. Vercel 빌드 환경과
+# CI 환경이 갈라지지 않고, 같은 Node 24를 씁니다.
+#
+# 필요한 Secrets 3종 — 없으면 조용히 건너뛰지 않고 **실패**합니다:
+#   VERCEL_TOKEN · VERCEL_ORG_ID · VERCEL_PROJECT_ID
+# 등록 방법은 docs/배포.md §1.
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 연속 머지 시 옛 배포가 새 배포를 덮어쓰지 않게 합니다.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+
+    # Vercel CLI가 읽는 값들. 토큰을 run 스크립트 본문에 직접 박지 않고 환경으로 넘깁니다.
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      # 토큰이 없는 상태로 vercel CLI를 부르면 의미를 알기 어려운 오류가 납니다.
+      # 먼저 사람이 읽을 수 있는 말로 실패시킵니다.
+      - name: Secrets 사전 확인
+        run: |
+          missing=""
+          if [ -z "$VERCEL_TOKEN" ]; then missing="$missing VERCEL_TOKEN"; fi
+          if [ -z "$VERCEL_ORG_ID" ]; then missing="$missing VERCEL_ORG_ID"; fi
+          if [ -z "$VERCEL_PROJECT_ID" ]; then missing="$missing VERCEL_PROJECT_ID"; fi
+          if [ -n "$missing" ]; then
+            echo "::error::GitHub Secrets 누락:$missing — 등록 방법은 docs/배포.md §1"
+            exit 1
+          fi
+          echo "Secrets 3종 확인 완료."
+
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
+
+      # 배포 직전 마지막 방어선. G1(실명)은 로컬 전용이라 여기 없습니다 — 이유는 ci.yml 주석.
+      - name: G2 참조 무결성 게이트
+        run: npm run gate:refs
+
+      - name: G3 라이선스 게이트
+        run: npm run gate:license
+
+      - name: 단위 테스트
+        run: npm test
+
+      - name: Vercel CLI 설치
+        run: npm install --global vercel@latest
+
+      - name: Vercel 환경 설정 내려받기
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: 프로덕션 빌드
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: 배포
+        id: deploy
+        run: |
+          url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "배포 완료: $url"
+
+      - name: 요약에 배포 URL 기록
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          {
+            echo "## 배포 완료"
+            echo ""
+            echo "- 이번 배포: $DEPLOY_URL"
+            echo "- 커밋: \`$GITHUB_SHA\`"
+            echo ""
+            echo "> 심사자에게 공유하는 주소는 이 임시 URL이 아니라 Vercel 프로젝트의"
+            echo "> **프로덕션 도메인**입니다 (\`<프로젝트명>.vercel.app\`). \`--prod\` 배포는"
+            echo "> 그 도메인을 이 배포로 자동 전환합니다."
+          } >> "$GITHUB_STEP_SUMMARY"

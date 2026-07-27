@@ -124,6 +124,23 @@ npm run dev          # http://localhost:3000
 **실패**합니다 — 조용히 통과시키면 아무것도 검사하지 않으면서 초록으로 보이기
 때문입니다. 자세한 내용은 [docs/제출-게이트.md](docs/제출-게이트.md).
 
+## 배포
+
+**배포 URL**: *(첫 배포 후 기록)*
+
+가입·설치·API 키 없이 브라우저로 바로 열립니다. 모든 예측은 사용자 브라우저 안에서
+계산되며, 모델 파일을 내려받은 뒤에는 외부 요청이 발생하지 않습니다.
+
+| 워크플로 | 트리거 | 하는 일 |
+|---|---|---|
+| [`ci`](.github/workflows/ci.yml) | PR · `main` 푸시 | 타입 → 린트 → 테스트 → G2·G3 게이트 → 빌드 |
+| [`deploy`](.github/workflows/deploy.yml) | `main` 푸시(=PR 머지) · 수동 | 게이트·테스트 재확인 → Vercel 프로덕션 배포 |
+
+**main에 머지하면 자동으로 배포됩니다.** 배포 URL은 Actions 실행 요약(Step Summary)에
+표시됩니다. 실명 게이트 G1은 실명 목록을 CI에 올리지 않기 위해 **로컬 전용**으로 둡니다.
+
+셋업 절차·문제 해결·배포 후 체크리스트는 [docs/배포.md](docs/배포.md)를 보세요.
+
 ## 주요 파일 구조
 
 ```
@@ -154,6 +171,8 @@ docs/             대회요강 · 기획 문서 · 리서치 원장
 | 문서 | 내용 |
 |---|---|
 | **[docs/대회요강.md](docs/대회요강.md)** | **대회 공고 원문 — 모든 판단의 1차 출처** |
+| [docs/제출-게이트.md](docs/제출-게이트.md) | 요강 조항 ↔ 자동·수동 검사 매핑 |
+| [docs/배포.md](docs/배포.md) | 배포 파이프라인 셋업·트러블슈팅·배포 후 체크리스트 |
 | [docs/planning/README.md](docs/planning/README.md) | 기획서 목차 구성안 및 필수 항목 체크리스트 |
 | [docs/research/RESEARCH-LOG.md](docs/research/RESEARCH-LOG.md) | 리서치 원장 — 모든 조사 질문의 상태 추적 |
 | [docs/research/perplexity-space-setup.md](docs/research/perplexity-space-setup.md) | 리서치 Space 설정 및 고정 컨텍스트 |
