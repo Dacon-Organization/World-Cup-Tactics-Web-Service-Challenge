@@ -39,8 +39,8 @@
   <div class="meta">
     🏁 기획서 <b>제출 완료(7/27) → 동결</b> · 최종 제출 <b>2026-08-03 10:00 KST</b> (이후 커밋·<b>머지</b> = 실격) · 최종 갱신 <b>2026-07-27</b>
   </div>
-  <div class="bar"><i style="width:82%"></i></div>
-  <div class="pct">전체 진척률 약 82% — 기획 완료·동결. <b>구현 착수 B1/9 완료</b>(디자인 시스템·구현 규약·제출 게이트) · 임계 경로: B2 스캐폴드 → B3 모델 계약 동결 → P0 배포 (~8/3)</div>
+  <div class="bar"><i style="width:85%"></i></div>
+  <div class="pct">전체 진척률 약 85% — 기획 완료·동결. <b>구현 B2/9 완료</b>(스캐폴드·데이터층·제출 게이트 구현 — 빌드·게이트·테스트 전부 통과) · 임계 경로: B3 모델 계약 동결 → B4 전술보드 → P0 배포 (~8/3)</div>
 
   <section>
     <h2>🗺️ 단계별 진척</h2>
@@ -59,7 +59,8 @@
       <li><span class="tag t-done">DONE</span><div>기획서 조판·PDF(18p) 생성·전수 검수 — Pandoc+XeLaTeX 파이프라인<div class="sub">실명 0·비하 0·arXiv 0.127 0·FIFA IP 브랜딩 0 검수 통과 · mermaid 5+Elo 궤적 삽입 · 순수 디자인 그래픽 10건은 [그래픽 자리]로 명세만 표시(디자인 자산 별도)</div></div></li>
       <li><span class="tag t-done">DONE</span><div>기획서 v2.0 전면 개작 — 서비스명 RE:FORMATION · 서술형 문체 · 시각자료 23종<div class="sub">분석 실측 그림 7종 신설(Elo 확장·캘리브레이션·득점 분포·RPS 방어선 등) · 디자인 자산 5종 제작으로 [그래픽 자리] 10건 → 0건 · mermaid 확장 3종(quadrant·gantt·journey) · 대회 영문 워드마크 지면 표기 0건</div></div></li>
       <li><span class="tag t-done">DONE</span><div>구현 B1 — 디자인 시스템 v1.0 · 구현 규약 v1.0 · 제출 게이트 체계<div class="sub">디자인 토큰은 <code>make_figures.py</code> 실상수 역추출(제출 PDF와 어긋나지 않는 것이 일관성 20점) · 실격 방어를 자동 게이트 G1~G4(빌드 차단)+수동 M1~M3로 분리 · 발견: 포지션 4색=결과 3색 동일값 → 형태 분리로 해결, features_v1 재생성 필요</div></div></li>
-      <li><span class="tag t-progress">NOW</span><div>구현 B2~B5 — 스캐폴드·데이터층 → 모델 계약 동결(기준선) → 전술보드 → 예측 엔진 → <b>P0 1차 배포</b></div></li>
+      <li><span class="tag t-done">DONE</span><div>구현 B2 — 스캐폴드 · 데이터층 · 제출 게이트 구현<div class="sub">Next.js 15/TS strict/Tailwind v4/Zustand/Zod/Vitest 배선 + Pretendard 서브셋 자체 호스팅 · JSON 4종(가공명 26+3·프리셋 4×11·확정 이벤트) · <code>npm run gate</code> G1~G3 가동 · 발견: <b>OFL 서브셋은 예약 폰트 이름 사용 불가</b>(→ RF Sans), 커밋된 기획 문서·대시보드에 실명 3건 잔존(→ 치환), 가공명 자동 생성이 은퇴 선수와 완전 일치(→ 대조 목록 57명 보강)</div></div></li>
+      <li><span class="tag t-progress">NOW</span><div>구현 B3~B5 — 모델 계약 동결(기준선) → 전술보드 → 예측 엔진 → <b>P0 1차 배포</b></div></li>
       <li><span class="tag t-todo">TODO</span><div>구현 B6~B7 — GBDT 업그레이드 + 리플레이(F09~F12) → 공유(F13~F16)</div></li>
       <li><span class="tag t-todo">TODO</span><div>B8 QA·실기기·시연영상·문서 v1.1 일괄 버전업 → B9 저장소 동결 (8/2 밤 목표)</div></li>
     </ul>
@@ -68,11 +69,12 @@
   <section>
     <h2>📂 작업 로그</h2>
     <ul>
+      <li><span class="tag t-done">07-27</span><div><a href="log/2026-07-27-scaffold-data-layer.html">B2 스캐폴드 · 데이터층 · 제출 게이트 구현 (구현 2/9)</a><div class="sub">코드 0줄 → 빌드되는 앱(103 kB First Load, 정적 4/4) · 게이트 3종·테스트 20건·typecheck·lint 전부 통과 · Pretendard 서브셋 KS X 1001 2,350자(166 KB×3) 자체 호스팅 · 가공명은 무작위 96후보 → 수동 26선별 절차로 구현 · 발견 3건: <b>OFL FAQ 2.6 — 서브셋은 수정본이라 RFN 사용 불가</b>(→ RF Sans로 개명), 커밋된 문서·대시보드 실명 3건(→ 치환), 자동 생성명이 은퇴 선수와 완전 일치(→ 수동 검수의 필요성 실증)</div></div></li>
       <li><span class="tag t-done">07-27</span><div><a href="log/2026-07-27-design-system-gates.html">B1 디자인 시스템 · 제출 게이트 명세 (구현 1/9)</a><div class="sub">DESIGN.md v1.0(토큰 역추출·피치 기하·4-3-3 좌표·컴포넌트 12종·WCAG 2.5.7) · 구현 규약 v1.0(impl/ 신설 — features 무수정·Zustand 2슬라이스·조정 계층 7단계) · 제출-게이트(G1~G4 빌드 차단 + M1~M3 + 8/3 동결 절차) · 발견 5건: 포지션↔결과 색 동일값, features_v1 부재, 포지션 색맹 미전달, --text-4 대비 미달, <b>스쿼시 머지도 커밋</b></div></div></li>
       <li><span class="tag t-done">07-26</span><div><a href="log/2026-07-26-proposal-v2-rewrite.html">기획서 v2.0 전면 개작 — 서비스명·문체·시각자료</a><div class="sub">사용자 피드백 4건 전량 반영 · 「만약의 감독」→ <b>RE:FORMATION</b> · 16절 서술형 재작성(메타 구조 제거) · make_figures.py 신설로 렌더 그림 14종(분석 실측 7·산식 2·디자인 자산 5) · mermaid 9종 · xeCJK 공백 삼킴·표 열 폭 조판 이슈 해소 · 21p PDF</div></div></li>
       <li><span class="tag t-done">07-26</span><div><a href="log/2026-07-26-typeset-pdf.html">기획서 조판·PDF·최종 검수 (조판 블록 작업 4·5)</a><div class="sub">Pandoc+XeLaTeX+Pretendard+mermaid-cli 파이프라인(dev/typeset/) · 18p PDF · mermaid 5+Elo 궤적 삽입 · 실명/비하/0.127/FIFA IP 전수 검수 통과 · 디자인 그래픽 10건 [그래픽 자리] · PR #24</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-proposal-c2-sync.html">원고 9·10절 c2 동기화 (조판 블록 작업 2·3)</a><div class="sub">10절 Elo A매치 확장 서술·다이어그램 입력 분리·한계 고지 개정(신생팀 1500·승계 미연결)·궤적 그림 조판 태그 / 9절 martj42 CC0 2차 출처·DATA-LICENSE 정합 · PR #22</div></div></li>
-      <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-research-w2-verification.html">W2 검증 리서치 P13~P17 전량 회수 (조판 블록 작업 1)</a><div class="sub">FIFA FullTimeMatchReport·PMSR 원문 파싱 — 남아공전 경고 각 1건(김민재 65'=교체 오기재 규명) · 체코전 20:00 정정 · FIFA xG 실존 · 논문 3편 인용 불가 확정 · 잔여 라이선스 5건 종결 · Lucide 축구공 부재→Tabler/Phosphor 병용 · 카카오 TTL 1시간 · PR #20</div></div></li>
+      <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-research-w2-verification.html">W2 검증 리서치 P13~P17 전량 회수 (조판 블록 작업 1)</a><div class="sub">FIFA FullTimeMatchReport·PMSR 원문 파싱 — 남아공전 경고 각 1건(65' 건은 경고가 아니라 교체로 규명) · 체코전 20:00 정정 · FIFA xG 실존 · 논문 3편 인용 불가 확정 · 잔여 라이선스 5건 종결 · Lucide 축구공 부재→Tabler/Phosphor 병용 · 카카오 TTL 1시간 · PR #20</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-notebook-c2-elo-amatch.html">노트북 c2-2 — Elo A매치 확장·감쇠 제거 (c2 완료)</a><div class="sub">Elo 입력 964→49,520경기 · 공백 중앙값 1,456일→12일(FT-R7 제거 확정) · ρ 0.221→0.308 · 2026 본선 차단 재생 증명 · features_v1</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-notebook-00-collect-explore.html">노트북 00장 수집·탐색 신설 (c2-1)</a><div class="sub">커밋 핀·체크섬 수집 대장 · 마스킹 00장 이동 · pandera/FK/키 게이트 · 팀명 85팀 전부 연결(수동 6건) · 발견: fg-data-profiling 철회, 2026 본선 포함→02 컷오프 필수, 타히티 더블헤더</div></div></li>
       <li><span class="tag t-done">07-23</span><div><a href="log/2026-07-23-notebook-feedback-p18.html">노트북 피드백 반영 설계 · P18 도구 리서치</a><div class="sub">00장 신설안·마스킹 셀 이동·반복 사이클 규약(c1/c2)·ITERATION-LOG 신설 · P18: fg-data-profiling·pandera·missingno 채택 · <b>martj42(CC0) 채택 확정 — Elo 입력 전체 A매치 확장, c2 최우선·조판은 c2 후</b></div></div></li>

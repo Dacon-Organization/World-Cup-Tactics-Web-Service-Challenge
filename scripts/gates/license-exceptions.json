@@ -1,0 +1,42 @@
+{
+  "설명": "엄격 허용목록(MIT/ISC/BSD/Apache-2.0/OFL/CC0/0BSD/Unlicense/BlueOak) 밖의 라이선스를 쓰는 패키지의 명시적 예외 목록입니다. 여기 없는 패키지가 허용목록 밖 라이선스를 들고 나타나면 G3이 실패합니다.",
+  "판정규칙": "`브라우저전달`이 true 이면서 허용목록 밖이면 예외를 인정하지 않고 실패합니다. npm 의 production 의존성 여부는 '브라우저로 전달되는가'와 다릅니다 — Next.js 의 production 의존성에는 빌드 전용 도구(sharp·caniuse-lite)가 섞여 있습니다. 실제 번들 적재 여부는 B8 의 G4(번들 정적 분석)에서 확인합니다.",
+  "예외": [
+    {
+      "패키지": "lightningcss",
+      "라이선스": "MPL-2.0",
+      "브라우저전달": false,
+      "사유": "Tailwind v4의 CSS 변환기. 빌드 타임에만 실행되고 산출물에 코드가 포함되지 않습니다. MPL-2.0은 파일 단위 약한 카피레프트라 수정하지 않는 한 소스 공개 의무가 생기지 않습니다."
+    },
+    {
+      "패키지": "lightningcss-win32-x64-msvc",
+      "라이선스": "MPL-2.0",
+      "브라우저전달": false,
+      "사유": "lightningcss의 플랫폼별 네이티브 바이너리. 상동."
+    },
+    {
+      "패키지": "axe-core",
+      "라이선스": "MPL-2.0",
+      "브라우저전달": false,
+      "사유": "eslint-plugin-jsx-a11y의 접근성 규칙 데이터. devDependency이며 배포물에 포함되지 않습니다."
+    },
+    {
+      "패키지": "argparse",
+      "라이선스": "Python-2.0",
+      "브라우저전달": false,
+      "사유": "빌드 체인 내부 인자 파서. PSF 라이선스는 허용형이며 devDependency입니다."
+    },
+    {
+      "패키지": "caniuse-lite",
+      "라이선스": "CC-BY-4.0",
+      "브라우저전달": false,
+      "사유": "브라우저 지원 데이터셋(코드 아님). Next.js가 빌드 타임 타깃 산정에만 씁니다. CC-BY는 출처 표시 조건이며 이 파일 기재로 충족합니다. npm production 의존성이지만 번들에는 들어가지 않습니다."
+    },
+    {
+      "패키지": "@img/sharp-win32-x64",
+      "라이선스": "Apache-2.0 AND LGPL-3.0-or-later",
+      "브라우저전달": false,
+      "사유": "Next.js 이미지 최적화용 네이티브 바이너리(optionalDependency). 서버 측에서만 실행되고 브라우저로 전송되지 않습니다. 이 서비스는 원격 이미지를 쓰지 않아(next.config.ts remotePatterns 빈 배열) 실행 경로 자체가 없습니다."
+    }
+  ]
+}

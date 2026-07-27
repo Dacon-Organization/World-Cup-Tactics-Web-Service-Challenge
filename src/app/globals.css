@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* ---------------------------------------------------------------------------
+ * 서체 — Pretendard 서브셋 자체 호스팅
+ *
+ * 파일 이름·패밀리명이 'RF Sans'인 이유는 public/fonts/NOTICE.md 참조
+ * (OFL 1.1 §3 예약 폰트 이름 규정 — 서브셋은 수정본이라 RFN 사용 불가).
+ * 아웃라인은 Pretendard 원본과 동일하므로 기획서 PDF와 글자 모양이 같다.
+ *
+ * CDN을 쓰지 않는다 — 외부 요청 0건 원칙(C1) · 요강 "키 없이 확인".
+ * ------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'RF Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/RFSans-400.subset.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'RF Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/RFSans-600.subset.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'RF Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/RFSans-700.subset.woff2') format('woff2');
+}
+
+/* ---------------------------------------------------------------------------
+ * 디자인 토큰 — DESIGN.md v1.0 §1의 값을 그대로 옮긴다.
+ *
+ * 이 값들은 창작물이 아니라 제출된 기획서 그림(f13·f10)에서 역추출한 것이다.
+ * 값을 바꾸려면 DESIGN.md가 아니라 dev/typeset/make_figures.py 원본을 먼저 본다.
+ * ------------------------------------------------------------------------- */
+@theme {
+  /* 서피스·텍스트 (다크 단일 — 라이트 모드 없음, DESIGN.md §7) */
+  --color-bg: #10161f;
+  --color-surface: #1a2028;
+  --color-surface-raised: #232b35;
+  --color-track: #2a3442;
+  --color-line: #2a3442;
+
+  /* 텍스트 4계단 — 크기가 아니라 밝기로 위계를 만든다 (DESIGN.md §1.1) */
+  --color-text: #ffffff;
+  --color-text-2: #8e9cad;
+  --color-text-3: #6b7a8c;
+  --color-text-4: #55636f;
+
+  /* 브랜드 */
+  --color-brand: #1f4e79;
+  --color-brand-lit: #7fb3e0;
+
+  /* 결과 3색 — 의미 고정. 다른 용도로 재사용 금지 (DESIGN.md §1.3) */
+  --color-win: #2e7d5b;
+  --color-draw: #c98a21;
+  --color-lose: #b0413e;
+
+  /* 포지션 4색 — 결과 3색과 값이 같다. 오류가 아니라 제출된 상태이며,
+     색이 아니라 형태(원 vs 모난 사각)로 분리한다 (DESIGN.md §1.4) */
+  --color-pos-gk: #c98a21;
+  --color-pos-df: #1f4e79;
+  --color-pos-mf: #2e7d5b;
+  --color-pos-fw: #b0413e;
+
+  /* 상태색 */
+  --color-focus: #7fb3e0;
+  --color-warn: #c98a21;
+  --color-disabled: #55636f;
+
+  --font-sans: 'RF Sans', -apple-system, 'Malgun Gothic', sans-serif;
+
+  /* 모션 — DESIGN.md §5 지연 예산표와 1:1 */
+  --ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 포커스 표시 — 전 인터랙티브 요소 2px + 2px 오프셋 (DESIGN.md §6) */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* 모바일 12px 하한 — 그 아래로 내려가는 글자를 만들지 않는다 */
+  small {
+    font-size: 0.75rem;
+  }
+}
+
+/* 자동 애니메이션을 전부 끈다. HOPs는 정지 프레임 + 수동 넘김으로 강등된다
+   (DESIGN.md §5 — 구현은 F07에서). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
