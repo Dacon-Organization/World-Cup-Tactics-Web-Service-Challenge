@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-2b S2a 리플레이 경기 선택 · 작업 대시보드</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #8b93a7; --done: #3fb950; --progress: #d29922; --todo: #6e7681; --blocked: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .meta b { color: var(--text); }
+  .bar { height: 10px; border-radius: 6px; background: var(--border); overflow: hidden; margin: 8px 0 28px; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--done), var(--accent)); }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  section h2 { font-size: 1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 7px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  li:last-child { border-bottom: none; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600; flex-shrink: 0; }
+  .t-done { background: rgba(63,185,80,.15); color: var(--done); }
+  .t-progress { background: rgba(210,153,34,.15); color: var(--progress); }
+  .t-todo { background: rgba(110,118,129,.2); color: var(--todo); }
+  .t-blocked { background: rgba(248,81,73,.15); color: var(--blocked); }
+  .sub { color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 6px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  code { background: #0f1115; padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>D-2b S2a 리플레이 경기 선택 — 설계·구현 + P20 리서치</h1>
+  <div class="meta">
+    📅 <b>2026-07-28 (KST)</b> · 🌿 브랜치 <b>claude/s2a-replay-match-selection-5bbe63</b> · F09 구현 <b>완료</b> · F10 텍스트 부분 <b>선구현</b> · 동결 팔레트 값 변경 <b>0건</b>
+  </div>
+  <div class="bar"><i style="width:100%"></i></div>
+
+  <section>
+    <h2>🔬 P20 리서치 — 착수 전 회수 (자체 리서치)</h2>
+    <p class="sub">
+      <code>findings/</code> 전수 검색 결과 리플레이 화면의 시각 형태 근거가 P5의 <b>"FiveThirtyEight식 시간축 승률" 한 줄</b>뿐이었고,
+      그 한 줄이 F12 명세의 "538식 2라인"과 DESIGN.md §4로 내려와 있었습니다.
+    </p>
+    <table>
+      <tr><th>질문</th><th>회수 결과</th><th>이 세션에 미친 영향</th></tr>
+      <tr>
+        <td>축구 승률 차트는 몇 계열인가</td>
+        <td><b>3결과가 표준</b> — Opta LWP "win, draw <b>or</b> loss"(17/26/57 동시 표기) · arXiv 1906.05029 Fig.1 "minute-by-minute <b>win/tie/loss</b>" 3곡선 · 같은 논문이 난점 1번으로 "The frequent occurrence of ties" 명시</td>
+        <td><b>538식 = 무승부 없는 종목의 관행</b>이었음. F12를 "결과 선택 + 2라인"으로 개칭(vNEXT) · <b>S2a 카드에 단일 승률 수치를 넣지 않음</b></td>
+      </tr>
+      <tr>
+        <td>이벤트 마커의 위상</td>
+        <td>Opta: 득점·퇴장·PK가 확률을 "shift <b>rapidly</b>"(퇴장 1회에 38%→59% 실례)</td>
+        <td>우리 변곡점은 <b>득점 6건뿐</b>(경고 0 — F10-R3) → 사전계산 정당화 · 마커 = F11 개입점 UI이므로 44px 규칙 대상</td>
+      </tr>
+      <tr>
+        <td>모멘텀 차트를 따라 할 수 있나</td>
+        <td>Sofascore "a bar graph, each bar = one minute" · Opta는 분당 최고 위협 2건 비교 + 스무딩 — <b>둘 다 분 단위 이벤트 데이터 전제</b></td>
+        <td><b>기각</b> — 1차 데이터셋에 없고 StatsBomb 재업로드는 P10이 금지. 사유를 T5(반박 대비)로 기록</td>
+      </tr>
+      <tr>
+        <td>차트·스크러버 접근성 계약</td>
+        <td>WCAG 1.4.11은 차트 선에 3:1 요구하되 <b>"표가 뒤따르면 완화"</b> · WAI Complex Images는 <b>짧은+긴 설명 2부</b> · APG Slider는 화살표·Home·End 필수 + 터치 AT 경고</td>
+        <td>이벤트 <b>텍스트 목록이 접근성 보험 겸 F10 본체</b> → S2b 선구현의 근거. 스크러버 형태는 S2b로 이관(변곡점 6개라 이산 버튼이 유리)</td>
+      </tr>
+      <tr>
+        <td>경기 카드가 결과를 숨겨야 하나</td>
+        <td>BBC Sport 등의 스포일러 회피는 <b>"결과를 모르는 시청자"</b> 전제</td>
+        <td>우리 전제는 정반대(<b>결과를 아는 상태에서 되돌리기</b>) → 스코어를 1급 정보로 노출, 표기는 사실 진술로 한정</td>
+      </tr>
+      <tr>
+        <td>국기 4종의 전송 비용</td>
+        <td><b>실측</b>: mx 84,753 B(gzip 29,549) · kr 1,061 · za 860 · cz 225 — <b>멕시코가 raw 총합의 94.6%</b>(국장 독수리 패스). 1x1도 80,207 B로 대안 아님. npm 패키지는 unpacked <b>4.13 MB</b></td>
+        <td>npm 의존 대신 <b>4개 파일만 <code>public/flags/</code> 복사</b> — <code>&lt;img&gt;</code>라 JS 번들 밖이고 <code>/replay</code>에서만 요청 → S1 예산 무영향</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>🎨 설계 결정 (사용자 확인 8건)</h2>
+    <ul>
+      <li><span class="tag t-done">확정</span><div><b>S1 진입 = 헤더 우측 링크</b><div class="sub">모드 탭은 헤더를 2줄(+40px)로 만든다 — D-1이 106→52px로 깎은 것이 "조작 중 확률이 보인다"의 근거였다. 실측 대비 다크 8.15:1 · 라이트 7.65:1</div></div></li>
+      <li><span class="tag t-done">확정</span><div><b>카드에 결과색 미사용</b> — 승/패는 무채색 배지의 <b>글자</b>가 전달<div class="sub">한국 3경기는 1승 2패 → 결과색을 쓰면 한 화면에 결과색 3개. D-1이 회복한 "한 화면에 결과색 하나"에 화면마다 예외를 만들면 근거가 흐려진다. 색맹 대응도 동시 충족</div></div></li>
+      <li><span class="tag t-done">확정</span><div><b>카드 = 사실 최소 + 득점 분 요약</b><div class="sub">"59' 실점 · 67' 득점 · 80' 득점" — 시간순이라 <b>역전이 어휘 없이 순서만으로</b> 전달된다(비하 금지 정합). xG는 카드에 넣지 않음(체코전은 확정 xG가 없어 3장이 비대칭)</div></div></li>
+      <li><span class="tag t-done">확정</span><div><b>S2b에 정적 사실 화면 선구현</b><div class="sub">카드가 링크하는 이상 404는 요강의 "동적 인터랙션 미작동 = 평가 제외"에 직결. 지금 확정된 사실만으로 완결되는 화면(헤더+이벤트 목록)을 세웠고, 이 목록은 버리는 코드가 아니라 <b>WCAG 1.4.11 완화 조항이 요구하는 차트의 텍스트 대응물</b></div></div></li>
+      <li><span class="tag t-done">확정</span><div><b>진입 카피 "이 경기, 당신이라면?" 유지</b> — 위치만 카드 하단 → <code>h1</code><div class="sub">문구는 명세·화면흐름과 글자 그대로 일치(일관성 20점). 하단에 두면 화면에 <code>h1</code>이 없어 문서 개요·공유 제목이 빈다</div></div></li>
+      <li><span class="tag t-done">확정</span><div><b>맥락 한 줄</b> — "3경기 1승 2패 · 승점 3 · 골득실 −1 · 조 3위 12팀 중 10위 (8위까지 32강)"<div class="sub">승점·골득실은 <b>스코어에서 계산</b>(두 번째 사실을 만들지 않음). 순위·진출선만 P6 확정 상수 — 다른 조 결과에 달려 파생 불가</div></div></li>
+      <li><span class="tag t-done">확정</span><div><b>일자는 세 카드 모두 현지·KST 병기</b><div class="sub">체코전만 병기하면(P11 최소 요구) 카드가 비대칭이고, 무엇보다 <b>전 경기 멕시코 개최</b>라는 P11 정정이 화면에서 사라진다. 날짜가 다르다는 사실 자체가 국내 개최가 아님을 말한다</div></div></li>
+      <li><span class="tag t-done">확정</span><div><b>다크 <code>--color-text-3</code> #6B7A8C → #7C8B9D</b><div class="sub">07-27 적재된 divergence("승격 처방이 작동하지 않음")의 해소. 동결 대상은 결과 3색·포지션 4색·브랜드 2색이고 라이트 램프는 D-1이 이미 재계산했다 — 다크만 미검증이었다. D-1이 산출한 3색 램프 대신 한 값만 옮긴 이유: #91A5B9는 text-2보다 밝아 <b>램프 순서가 뒤집힌다</b></div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📐 브라우저 실측</h2>
+    <table>
+      <tr><th>항목</th><th>측정</th><th>판정</th></tr>
+      <tr><td>375×812 (모바일)</td><td>카드 343×180 · 3장 전부 첫 화면(마지막 카드 하단 y=711) · 가로 스크롤 0</td><td>통과</td></tr>
+      <tr><td>768 (태블릿 3열)</td><td>카드 235px(내용 203px) · 가장 긴 줄 "59' 실점 · 67' 득점 · 80' 득점" <b>151px</b> — 줄바꿈 0</td><td>통과 (md부터 3열 근거)</td></tr>
+      <tr><td>1280 (데스크톱)</td><td>카드 405px · 가로 스크롤 0</td><td>통과</td></tr>
+      <tr><td>텍스트 대비 (다크)</td><td>득점 요약 5.86 · 카드 메타 <b>4.71</b>(교정 전 3.74) · 맥락 줄 <b>5.22</b>(4.14) · 결과 배지 5.86</td><td>본문 4.5:1 전부 충족</td></tr>
+      <tr><td>텍스트 대비 (라이트)</td><td>득점 요약 7.47 · 카드 메타 6.14 · 맥락 줄 5.42</td><td>통과</td></tr>
+      <tr><td>국기 테두리 (비텍스트 3:1)</td><td>알파 22% → <b>55%</b>: 라이트 1.59→<b>3.81</b> · 다크 2.05→<b>5.85</b></td><td>교정 후 통과</td></tr>
+      <tr><td>F09-R5 국기 폴백</td><td>src를 없는 경로로 바꿔 실검증 — <code>naturalWidth 0</code>, <code>alt=""</code>라 깨진 아이콘 미표시, 아래층 <b>"CZE" 코드 노출</b></td><td>JS 없이 성립</td></tr>
+      <tr><td>F09-R3 잘못된 URL</td><td><code>/replay/xyz</code> → <code>/replay?unknown=xyz</code> · <code>role="status"</code> 안내 + 카드 3장 · 404 0건</td><td>통과</td></tr>
+      <tr><td>카드 클릭·키보드</td><td><code>::after</code> 오버레이가 카드 전면 적중(하단 히트 = 링크) · Tab×3에 <code>:focus-visible</code> 매칭 · 카드에 2px <code>--focus</code> 링 + 2px 오프셋</td><td>통과</td></tr>
+      <tr><td>빌드 산출</td><td><code>/replay</code> ƒ(동적 — <code>?unknown</code> 안내 때문) · <code>/replay/[matchId]</code> ● SSG 3건 · First Load <b>107 kB</b>(S1은 145 kB)</td><td>—</td></tr>
+      <tr><td>콘솔</td><td>에러 0건</td><td>통과</td></tr>
+    </table>
+    <p class="sub">⚠️ 이 환경에서는 브라우저 창이 화면에 표시되지 않아 <b>스크린샷을 캡처하지 못했습니다</b>. 위 수치는 전부 DOM·계산 스타일 직접 측정값입니다.</p>
+  </section>
+
+  <section>
+    <h2>✅ 검증</h2>
+    <ul>
+      <li><span class="tag t-done">PASS</span><div>테스트 <b>106 → 133건</b> (신규 <code>tests/replay.test.ts</code> 18건 + 기존 전량)<div class="sub">P11·P13 확정표를 테스트에 적어 두고 데이터와 대조 — 데이터를 나중에 고치면 테스트가 먼저 깨진다. 비하 어휘 금지·가공명 노출·교체 방향 미주장도 테스트로 고정</div></div></li>
+      <li><span class="tag t-done">PASS</span><div>typecheck · lint(경고 0) · 게이트 G1·G2·G3 · 프로덕션 빌드</div></li>
+      <li><span class="tag t-done">PASS</span><div>G3에 <code>public/flags/NOTICE.md</code> 검사 추가 — 국기는 파일 복사라 <code>node_modules</code> 스캔에 안 잡힌다</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔍 발견 3건</h2>
+    <ul>
+      <li><span class="tag t-done">해소</span><div><b>F12 명세가 종목이 다른 관행을 인용하고 있었다</b><div class="sub">"538식 2라인"의 538 차트는 무승부가 없는 NFL·NBA 것. 축구는 3결과 체계라는 것이 업계·학술 1차 출처 3건에서 일치. 2라인 구성은 살리고 계열의 의미를 "선택된 결과의 확률"로 바꿔 D-1의 결과 탭 규약과 통일</div></div></li>
+      <li><span class="tag t-done">해소</span><div><b>22% 알파 테두리는 목적을 달성하지 못한다</b><div class="sub">국기 테두리에 D-2a의 토큰 링과 같은 22%를 썼다가 실측하니 라이트 1.59:1 — "경계를 보장한다"는 선언이 실제로는 아무것도 보장하지 않았다. 55%로 교정</div></div></li>
+      <li><span class="tag t-blocked">이관</span><div><b>같은 문제가 S1 선수 토큰 링에 그대로 있다</b><div class="sub"><code>.player-token</code> 링 실측 <b>라이트 1.58:1 · 다크 2.04:1</b>(토큰 채움 자체는 라이트 1.05:1). D-2a 주석이 "3:1 보장"을 의도했으나 미달. 추가로 <code>--color-text-4</code> 고지문 다크 <b>2.94:1</b> 유지 — DESIGN.md §8이 예고한 "미달 시 승격" 조건이 충족된 상태. <b>S1 범위라 별도 과제로 분리</b></div></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>➡️ 다음</h2>
+    <ul>
+      <li><span class="tag t-progress">NEXT</span><div>D-2c S2b — 승률 라인차트(F12) + 이벤트 타임라인 상호작용(F10) + 개입(F11)<div class="sub">P20이 남긴 결정: 계열 전환 UI(결과 탭) · 스크러버 형태(이산 이벤트 버튼 vs <code>role="slider"</code>) · <code>winProbTimeline</code> 사전계산(현재 빈 배열)</div></div></li>
+      <li><span class="tag t-todo">TODO</span><div>D-2d S3 공유 수신 랜딩 + F13~F16 (공유 4종)</div></li>
+      <li><span class="tag t-blocked">차단</span><div><b>G1 대조 목록 <code>data/gate/real-names.txt</code> 소실 — 8/2 최종 커밋 전 복구 필수</b></div></li>
+      <li><span class="tag t-blocked">주의</span><div><b>8/3 10:00 이후 커밋·머지 = 실격</b> · 남은 5일</div></li>
+    </ul>
+  </section>
+
+  <footer>RE:FORMATION · 월드컵 전술 웹서비스 챌린지 · D-2b 작업 로그</footer>
+</div>
+</body>
+</html>
