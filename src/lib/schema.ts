@@ -105,6 +105,7 @@ export const matchSchema = z.object({
   opponentId: teamIdSchema,
   round: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   venue: z.string().min(1),
+  city: z.string().min(1),
   dateLocal: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   dateKst: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   scoreline: z.string().regex(/^\d+-\d+$/, '한국 기준 앞'),

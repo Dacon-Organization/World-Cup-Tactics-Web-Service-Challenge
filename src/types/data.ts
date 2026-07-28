@@ -149,6 +149,13 @@ export interface Match {
   round: 1 | 2 | 3;
   /** P11 확정: Estadio Akron(cze·mex) / Estadio BBVA(rsa) */
   venue: string;
+  /**
+   * 개최 도시 — P11이 정정한 "전 경기 멕시코 개최"를 화면이 스스로 드러내게 하는 필드.
+   *
+   * 코드에 `matchId → 도시` 표를 두면 F09-R2("카드는 matches.json에서만 렌더")를 어기고
+   * 사실이 두 곳에 존재하게 된다. 도시는 경기의 속성이므로 경기 데이터가 갖는다.
+   */
+  city: string;
   /** 현지 일자 — 체코전은 현지 6/11 · KST 6/12 병기 (P11·P13) */
   dateLocal: string;
   dateKst: string;

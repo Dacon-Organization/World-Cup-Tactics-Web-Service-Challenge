@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { TacticsBoard } from '@/components/tactics/TacticsBoard';
 import { defaults, getMatch, playersFile } from '@/lib/data';
@@ -41,7 +43,15 @@ export default function Home() {
           </p>
           <h1 className="truncate text-[22px] font-bold">같은 {opponentName}전, 다른 전술</h1>
         </div>
-        <ThemeToggle />
+        {/* 리플레이 진입 (F09 전제 조건) — 헤더 예산 52px을 지키려고 탭이 아니라 링크입니다.
+            모드 탭은 헤더를 2줄로 만들고, 그만큼 피치와 확률이 다시 아래로 밀립니다
+            (D-1이 106px → 52px로 깎은 것이 조작과 피드백을 한 화면에 넣은 근거였습니다). */}
+        <div className="flex shrink-0 items-center gap-3">
+          <Link className="text-[14px] font-semibold text-accent hover:underline" href="/replay">
+            리플레이
+          </Link>
+          <ThemeToggle />
+        </div>
       </header>
 
       <noscript>

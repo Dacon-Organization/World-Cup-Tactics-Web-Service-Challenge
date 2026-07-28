@@ -209,6 +209,9 @@ export function gateLicense(): GateResult {
   const assetChecks: [string, string][] = [
     ['public/fonts/OFL.txt', '폰트 OFL 1.1 사본'],
     ['public/fonts/NOTICE.md', '폰트 파생 고지 (서브셋·이름 변경 사유)'],
+    // 국기는 npm 의존이 아니라 파일 복사라 위의 node_modules 스캔에 잡히지 않는다.
+    // 고지가 사라져도 아무도 모르는 상태가 되지 않도록 게이트가 파일 존재를 붙든다 (P20).
+    ['public/flags/NOTICE.md', '국기 아이콘 MIT 고지 (flag-icons 복사본)'],
     ['DATA-LICENSE.md', '학습 데이터 라이선스 고지'],
   ];
   for (const [path, label] of assetChecks) {

@@ -36,7 +36,13 @@
 
 ## 적용 제외 (별도 라이선스)
 
-- 소스 코드(노트북의 코드 셀 포함 로직) · 문서(`docs/`) · UI 에셋 — 저장소 코드 라이선스를 따름
+- 소스 코드(노트북의 코드 셀 포함 로직) · 문서(`docs/`) · 자체 제작 UI 에셋 — 저장소 코드 라이선스를 따름
+- **제3자 UI 에셋은 각자의 고지 파일을 따름** — 아래 표의 위치에 원문 라이선스와 사용 범위가 있습니다
+
+| 에셋 | 출처 | 라이선스 | 고지 위치 |
+|---|---|---|---|
+| 서체 서브셋 `RF Sans` | Pretendard | SIL OFL 1.1 | [public/fonts/NOTICE.md](public/fonts/NOTICE.md) · [OFL.txt](public/fonts/OFL.txt) |
+| 국기 아이콘 4종 | [lipis/flag-icons](https://github.com/lipis/flag-icons) | MIT | [public/flags/NOTICE.md](public/flags/NOTICE.md) |
 - 리플레이 경기 팩트(스코어·이벤트 분): 공개 사실 정보로서 별도 교차 검증 출처 사용 (기획서 9절)
 
 ## 참고
